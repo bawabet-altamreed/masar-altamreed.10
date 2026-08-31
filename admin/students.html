@@ -10,36 +10,560 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>الطلاب | مسار التمريض</title>
+    <title>
+        إدارة الطلاب | مسار التمريض
+    </title>
 
     <link
         rel="stylesheet"
         href="../src/admin/admin.css"
     >
 
+    <style>
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 220px;
+            height: 45px;
+            border: 1px solid #d8e2e9;
+            border-radius: 10px;
+            padding: 0 14px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .search-box:focus {
+            border-color: #087ea4;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .students-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        .students-table th,
+        .students-table td {
+            padding: 13px 12px;
+            border-bottom: 1px solid #edf1f4;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .students-table th {
+            background: #f8fafc;
+            font-size: 12px;
+            color: #647586;
+        }
+
+        .students-table td {
+            font-size: 13px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: #eaf8f0;
+            color: #16834f;
+        }
+
+        .status-inactive {
+            background: #fff0f0;
+            color: #b42318;
+        }
+
+        .status-expired {
+            background: #fff7e6;
+            color: #a15c00;
+        }
+
+        .action-button {
+            border: none;
+            padding: 7px 10px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 4px;
+        }
+
+        .edit-button {
+            background: #eef8fb;
+            color: #087ea4;
+        }
+
+        .toggle-button {
+            background: #fff3e8;
+            color: #a45b00;
+        }
+
+        .subscription-button {
+            background: #effaf3;
+            color: #16794c;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 9999;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            width: 100%;
+            max-width: 560px;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 25px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .modal-header h2 {
+            font-size: 19px;
+        }
+
+        .close-button {
+            border: none;
+            background: #f1f4f6;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #445566;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            height: 44px;
+            border: 1px solid #d8e2e9;
+            border-radius: 9px;
+            padding: 0 11px;
+            outline: none;
+            font-size: 13px;
+            background: #ffffff;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #087ea4;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            height: 45px;
+            border: none;
+            border-radius: 9px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .save-button {
+            background: #087ea4;
+            color: #ffffff;
+        }
+
+        .cancel-button {
+            background: #edf1f4;
+            color: #445566;
+        }
+
+        .form-message {
+            display: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-bottom: 15px;
+            line-height: 1.7;
+        }
+
+        .form-message.show {
+            display: block;
+        }
+
+        .form-message.error {
+            background: #fff1f1;
+            color: #b42318;
+        }
+
+        .form-message.success {
+            background: #effaf3;
+            color: #16794c;
+        }
+
+        .code-preview {
+            background: #f5f8fb;
+            border-radius: 9px;
+            padding: 11px;
+            font-family: monospace;
+            direction: ltr;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .modal {
+                padding: 18px;
+            }
+
+        }
+
+    </style>
+
 </head>
+
 
 <body>
 
 <div id="adminApp"></div>
 
 
+<!-- =====================================================
+     Add Student Modal
+     ===================================================== -->
+
+<div
+    class="modal-overlay"
+    id="studentModal"
+>
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <h2 id="modalTitle">
+                إضافة طالب
+            </h2>
+
+            <button
+                class="close-button"
+                id="closeModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div
+            class="form-message"
+            id="formMessage"
+        ></div>
+
+
+        <form id="studentForm">
+
+            <div class="form-grid">
+
+
+                <div class="form-group full">
+
+                    <label>
+                        اسم الطالب
+                    </label>
+
+                    <input
+                        type="text"
+                        id="studentName"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        كود الاشتراك / Username
+                    </label>
+
+                    <input
+                        type="text"
+                        id="subscriptionCode"
+                        required
+                        dir="ltr"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        المرحلة
+                    </label>
+
+                    <input
+                        type="text"
+                        id="stageId"
+                        placeholder="مثال: stage-1"
+                        required
+                        dir="ltr"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        كلمة المرور
+                    </label>
+
+                    <input
+                        type="password"
+                        id="studentPassword"
+                        minlength="6"
+                        required
+                        dir="ltr"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        رقم الهاتف
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="studentPhone"
+                        dir="ltr"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        تاريخ بداية الاشتراك
+                    </label>
+
+                    <input
+                        type="date"
+                        id="startDate"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        تاريخ نهاية الاشتراك
+                    </label>
+
+                    <input
+                        type="date"
+                        id="endDate"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label>
+                        كود الحساب الداخلي
+                    </label>
+
+                    <div
+                        class="code-preview"
+                        id="codePreview"
+                    >
+                        سيتم إنشاء الحساب بعد الحفظ
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="cancel-button"
+                    id="cancelButton"
+                >
+                    إلغاء
+                </button>
+
+                <button
+                    type="submit"
+                    class="save-button"
+                    id="saveButton"
+                >
+                    إنشاء الطالب
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
 <script type="module">
 
-    import { protectAdminPage }
-        from "../src/admin/auth-guard.js";
+    // =====================================================
+    // Firebase
+    // =====================================================
 
-    import { createAdminLayout }
-        from "../src/admin/layout.js";
+    import {
+        auth,
+        db
+    } from "../src/firebase/init.js";
 
-    const admin = await protectAdminPage();
+    import {
+        initializeApp
+    } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+    import {
+        getAuth,
+        createUserWithEmailAndPassword,
+        updateProfile
+    } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+    import {
+        collection,
+        getDocs,
+        doc,
+        setDoc,
+        updateDoc,
+        Timestamp
+    } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+    import {
+        firebaseConfig
+    } from "../src/firebase/config.js";
+
+    import {
+        protectAdminPage
+    } from "../src/admin/auth-guard.js";
+
+    import {
+        createAdminLayout
+    } from "../src/admin/layout.js";
+
+
+    // =====================================================
+    // Protect Page
+    // =====================================================
+
+    const admin =
+        await protectAdminPage();
 
     createAdminLayout(admin.data);
 
     document.getElementById("pageTitle").textContent =
         "إدارة الطلاب";
 
+
+    // =====================================================
+    // Page
+    // =====================================================
+
     document.getElementById("pageContent").innerHTML = `
+
+        <div class="toolbar">
+
+            <input
+                type="search"
+                id="searchInput"
+                class="search-box"
+                placeholder="ابحث باسم الطالب أو كود الاشتراك..."
+            >
+
+            <button
+                class="primary-button"
+                id="addStudentButton"
+            >
+                + إضافة طالب
+            </button>
+
+        </div>
+
 
         <div class="panel">
 
@@ -49,29 +573,1231 @@
                     الطلاب
                 </h2>
 
-                <button class="primary-button">
-                    + إضافة طالب
-                </button>
+                <span id="studentsCount">
+                    جاري التحميل...
+                </span>
 
             </div>
 
-            <div class="empty-state">
 
-                لا توجد بيانات معروضة حاليًا.
+            <div
+                id="studentsContainer"
+                class="table-container"
+            >
 
-                <br>
-
-                سيتم ربط هذه الصفحة مع
-                <strong>users</strong>
-                و
-                <strong>subscriptions</strong>
-                بعد الانتهاء من اختبار الصلاحيات.
+                جاري تحميل الطلاب...
 
             </div>
 
         </div>
 
     `;
+
+
+    // =====================================================
+    // Secondary Firebase App
+    // =====================================================
+    //
+    // نستخدم Firebase App ثانية لإنشاء حساب الطالب
+    // بدون إخراج الـAdmin من حسابه الحالي.
+    //
+
+    const studentApp =
+        initializeApp(
+            firebaseConfig,
+            "studentCreationApp"
+        );
+
+    const studentAuth =
+        getAuth(studentApp);
+
+
+    // =====================================================
+    // Variables
+    // =====================================================
+
+    let students = [];
+
+    let filteredStudents = [];
+
+
+    const searchInput =
+        document.getElementById(
+            "searchInput"
+        );
+
+    const studentsContainer =
+        document.getElementById(
+            "studentsContainer"
+        );
+
+    const studentsCount =
+        document.getElementById(
+            "studentsCount"
+        );
+
+    const modal =
+        document.getElementById(
+            "studentModal"
+        );
+
+    const form =
+        document.getElementById(
+            "studentForm"
+        );
+
+    const formMessage =
+        document.getElementById(
+            "formMessage"
+        );
+
+    const saveButton =
+        document.getElementById(
+            "saveButton"
+        );
+
+
+    // =====================================================
+    // Load Students
+    // =====================================================
+
+    async function loadStudents() {
+
+        try {
+
+            const snapshot =
+                await getDocs(
+                    collection(
+                        db,
+                        "users"
+                    )
+                );
+
+
+            const subscriptionSnapshot =
+                await getDocs(
+                    collection(
+                        db,
+                        "subscriptions"
+                    )
+                );
+
+
+            const subscriptions = {};
+
+            subscriptionSnapshot.docs.forEach(
+                document => {
+
+                    subscriptions[
+                        document.id
+                    ] = {
+                        id: document.id,
+                        ...document.data()
+                    };
+
+                }
+            );
+
+
+            students =
+                snapshot.docs
+                    .map(document => {
+
+                        const data =
+                            document.data();
+
+
+                        return {
+                            id: document.id,
+                            ...data,
+                            subscription:
+                                data.subscriptionCode
+                                    ? subscriptions[
+                                        data.subscriptionCode
+                                    ] || null
+                                    : null
+                        };
+
+                    })
+                    .filter(
+                        student =>
+                            student.role === "student"
+                    );
+
+
+            filteredStudents =
+                [...students];
+
+
+            renderStudents();
+
+        } catch (error) {
+
+            console.error(
+                "Load students error:",
+                error
+            );
+
+
+            studentsContainer.innerHTML = `
+
+                <div class="empty-state">
+
+                    🔴 حدث خطأ أثناء تحميل الطلاب.
+
+                    <br><br>
+
+                    ${escapeHtml(
+                        error.message
+                    )}
+
+                </div>
+
+            `;
+
+        }
+
+    }
+
+
+    // =====================================================
+    // Render Students
+    // =====================================================
+
+    function renderStudents() {
+
+        studentsCount.textContent =
+            `${filteredStudents.length} طالب`;
+
+
+        if (
+            filteredStudents.length === 0
+        ) {
+
+            studentsContainer.innerHTML = `
+
+                <div class="empty-state">
+
+                    لا يوجد طلاب مطابقون للبحث.
+
+                </div>
+
+            `;
+
+            return;
+        }
+
+
+        studentsContainer.innerHTML = `
+
+            <table class="students-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            الطالب
+                        </th>
+
+                        <th>
+                            كود الاشتراك
+                        </th>
+
+                        <th>
+                            المرحلة
+                        </th>
+
+                        <th>
+                            الحساب
+                        </th>
+
+                        <th>
+                            الاشتراك
+                        </th>
+
+                        <th>
+                            الانتهاء
+                        </th>
+
+                        <th>
+                            الإجراءات
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    ${filteredStudents
+                        .map(student =>
+                            studentRow(student)
+                        )
+                        .join("")}
+
+                </tbody>
+
+            </table>
+
+        `;
+
+
+        document
+            .querySelectorAll(
+                "[data-action]"
+            )
+            .forEach(button => {
+
+                button.addEventListener(
+                    "click",
+                    handleAction
+                );
+
+            });
+
+    }
+
+
+    // =====================================================
+    // Student Row
+    // =====================================================
+
+    function studentRow(student) {
+
+        const subscription =
+            student.subscription;
+
+
+        const accountStatus =
+            student.isActive === true
+                ? `
+                    <span class="status status-active">
+                        نشط
+                    </span>
+                  `
+                : `
+                    <span class="status status-inactive">
+                        متوقف
+                    </span>
+                  `;
+
+
+        let subscriptionStatus =
+            `
+                <span class="status status-inactive">
+                    بدون اشتراك
+                </span>
+            `;
+
+
+        if (subscription) {
+
+            if (
+                subscription.status ===
+                "active"
+            ) {
+
+                subscriptionStatus =
+                    `
+                        <span class="status status-active">
+                            نشط
+                        </span>
+                    `;
+
+            }
+
+            else if (
+                subscription.status ===
+                "expired"
+            ) {
+
+                subscriptionStatus =
+                    `
+                        <span class="status status-expired">
+                            منتهي
+                        </span>
+                    `;
+
+            }
+
+            else if (
+                subscription.status ===
+                "suspended"
+            ) {
+
+                subscriptionStatus =
+                    `
+                        <span class="status status-inactive">
+                            موقوف
+                        </span>
+                    `;
+
+            }
+
+        }
+
+
+        const endDate =
+            subscription?.endDate
+                ? formatDate(
+                    subscription.endDate
+                )
+                : "—";
+
+
+        return `
+
+            <tr>
+
+                <td>
+
+                    <strong>
+                        ${escapeHtml(
+                            student.name ||
+                            "بدون اسم"
+                        )}
+                    </strong>
+
+                </td>
+
+
+                <td dir="ltr">
+
+                    ${escapeHtml(
+                        student.subscriptionCode ||
+                        "—"
+                    )}
+
+                </td>
+
+
+                <td>
+
+                    ${escapeHtml(
+                        student.stageId ||
+                        "—"
+                    )}
+
+                </td>
+
+
+                <td>
+
+                    ${accountStatus}
+
+                </td>
+
+
+                <td>
+
+                    ${subscriptionStatus}
+
+                </td>
+
+
+                <td>
+
+                    ${endDate}
+
+                </td>
+
+
+                <td>
+
+                    <button
+                        class="action-button edit-button"
+                        data-action="edit"
+                        data-id="${student.id}"
+                    >
+                        تعديل
+                    </button>
+
+
+                    <button
+                        class="action-button toggle-button"
+                        data-action="toggle"
+                        data-id="${student.id}"
+                    >
+                        ${
+                            student.isActive === true
+                                ? "إيقاف"
+                                : "تفعيل"
+                        }
+                    </button>
+
+
+                    ${
+                        subscription
+                            ? `
+                                <button
+                                    class="action-button subscription-button"
+                                    data-action="subscription"
+                                    data-id="${student.id}"
+                                >
+                                    اشتراك
+                                </button>
+                              `
+                            : ""
+                    }
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+
+    // =====================================================
+    // Search
+    // =====================================================
+
+    searchInput.addEventListener(
+        "input",
+        () => {
+
+            const query =
+                searchInput.value
+                    .trim()
+                    .toLowerCase();
+
+
+            if (!query) {
+
+                filteredStudents =
+                    [...students];
+
+            } else {
+
+                filteredStudents =
+                    students.filter(
+                        student => {
+
+                            const name =
+                                String(
+                                    student.name ||
+                                    ""
+                                ).toLowerCase();
+
+
+                            const code =
+                                String(
+                                    student.subscriptionCode ||
+                                    ""
+                                ).toLowerCase();
+
+
+                            return (
+                                name.includes(query) ||
+                                code.includes(query)
+                            );
+
+                        }
+                    );
+
+            }
+
+
+            renderStudents();
+
+        }
+    );
+
+
+    // =====================================================
+    // Add Student
+    // =====================================================
+
+    document
+        .getElementById(
+            "addStudentButton"
+        )
+        .addEventListener(
+            "click",
+            openAddModal
+        );
+
+
+    function openAddModal() {
+
+        form.reset();
+
+        formMessage.className =
+            "form-message";
+
+        formMessage.textContent =
+            "";
+
+
+        document.getElementById(
+            "modalTitle"
+        ).textContent =
+            "إضافة طالب";
+
+
+        saveButton.textContent =
+            "إنشاء الطالب";
+
+
+        document.getElementById(
+            "studentModal"
+        ).classList.add("show");
+
+    }
+
+
+    // =====================================================
+    // Close Modal
+    // =====================================================
+
+    function closeModal() {
+
+        modal.classList.remove(
+            "show"
+        );
+
+    }
+
+
+    document
+        .getElementById(
+            "closeModal"
+        )
+        .addEventListener(
+            "click",
+            closeModal
+        );
+
+
+    document
+        .getElementById(
+            "cancelButton"
+        )
+        .addEventListener(
+            "click",
+            closeModal
+        );
+
+
+    // =====================================================
+    // Create Student
+    // =====================================================
+
+    form.addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+
+            const name =
+                document
+                    .getElementById(
+                        "studentName"
+                    )
+                    .value
+                    .trim();
+
+
+            const code =
+                document
+                    .getElementById(
+                        "subscriptionCode"
+                    )
+                    .value
+                    .trim()
+                    .toUpperCase();
+
+
+            const stageId =
+                document
+                    .getElementById(
+                        "stageId"
+                    )
+                    .value
+                    .trim();
+
+
+            const password =
+                document
+                    .getElementById(
+                        "studentPassword"
+                    )
+                    .value;
+
+
+            const phone =
+                document
+                    .getElementById(
+                        "studentPhone"
+                    )
+                    .value
+                    .trim();
+
+
+            const startDateValue =
+                document
+                    .getElementById(
+                        "startDate"
+                    )
+                    .value;
+
+
+            const endDateValue =
+                document
+                    .getElementById(
+                        "endDate"
+                    )
+                    .value;
+
+
+            if (password.length < 6) {
+
+                showFormMessage(
+                    "كلمة المرور يجب أن تكون 6 أحرف أو أكثر.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            if (
+                new Date(endDateValue) <
+                new Date(startDateValue)
+            ) {
+
+                showFormMessage(
+                    "تاريخ نهاية الاشتراك يجب أن يكون بعد تاريخ البداية.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            const existing =
+                students.find(
+                    student =>
+                        String(
+                            student.subscriptionCode ||
+                            ""
+                        ).toUpperCase() === code
+                );
+
+
+            if (existing) {
+
+                showFormMessage(
+                    "كود الاشتراك مستخدم بالفعل.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            saveButton.disabled =
+                true;
+
+            saveButton.textContent =
+                "جاري إنشاء الطالب...";
+
+
+            try {
+
+                /*
+                 * Firebase Authentication requires
+                 * an email for Email/Password accounts.
+                 *
+                 * The student never sees this internal email.
+                 * Their public username remains the subscription code.
+                 */
+
+                const internalEmail =
+                    `${code.toLowerCase()}@students.masar-altamreed.com`;
+
+
+                const credential =
+                    await createUserWithEmailAndPassword(
+                        studentAuth,
+                        internalEmail,
+                        password
+                    );
+
+
+                const studentUser =
+                    credential.user;
+
+
+                // Store display name in Firebase Auth.
+                await updateProfile(
+                    studentUser,
+                    {
+                        displayName: name
+                    }
+                );
+
+
+                const now =
+                    Timestamp.now();
+
+
+                const startTimestamp =
+                    Timestamp.fromDate(
+                        new Date(
+                            `${startDateValue}T00:00:00`
+                        )
+                    );
+
+
+                const endTimestamp =
+                    Timestamp.fromDate(
+                        new Date(
+                            `${endDateValue}T23:59:59`
+                        )
+                    );
+
+
+                // users/{uid}
+                await setDoc(
+                    doc(
+                        db,
+                        "users",
+                        studentUser.uid
+                    ),
+                    {
+                        name: name,
+                        username: code,
+                        subscriptionCode: code,
+                        role: "student",
+                        stageId: stageId,
+                        phone: phone,
+                        isActive: true,
+                        createdAt: now,
+                        updatedAt: now
+                    }
+                );
+
+
+                // subscriptions/{CODE}
+                await setDoc(
+                    doc(
+                        db,
+                        "subscriptions",
+                        code
+                    ),
+                    {
+                        userId: studentUser.uid,
+                        code: code,
+                        stageId: stageId,
+                        status: "active",
+                        startDate: startTimestamp,
+                        endDate: endTimestamp,
+                        createdAt: now,
+                        updatedAt: now
+                    }
+                );
+
+
+                showFormMessage(
+                    "تم إنشاء الطالب والاشتراك بنجاح.",
+                    "success"
+                );
+
+
+                setTimeout(
+                    () => {
+
+                        closeModal();
+
+                        loadStudents();
+
+                    },
+                    700
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Create student error:",
+                    error
+                );
+
+
+                let message =
+                    "حدث خطأ أثناء إنشاء الطالب.";
+
+
+                if (
+                    error.code ===
+                    "auth/email-already-in-use"
+                ) {
+
+                    message =
+                        "كود الاشتراك مستخدم بالفعل في Firebase Authentication.";
+
+                }
+
+                else if (
+                    error.code ===
+                    "auth/weak-password"
+                ) {
+
+                    message =
+                        "كلمة المرور ضعيفة. استخدم 6 أحرف أو أكثر.";
+
+                }
+
+                else if (
+                    error.code ===
+                    "auth/invalid-email"
+                ) {
+
+                    message =
+                        "كود الاشتراك غير صالح لإنشاء الحساب.";
+
+                }
+
+                else if (
+                    error.code ===
+                    "permission-denied"
+                ) {
+
+                    message =
+                        "تم رفض العملية بواسطة Firestore Security Rules.";
+
+                }
+
+
+                showFormMessage(
+                    message,
+                    "error"
+                );
+
+
+            } finally {
+
+                saveButton.disabled =
+                    false;
+
+                saveButton.textContent =
+                    "إنشاء الطالب";
+
+            }
+
+        }
+    );
+
+
+    // =====================================================
+    // Actions
+    // =====================================================
+
+    async function handleAction(event) {
+
+        const button =
+            event.currentTarget;
+
+
+        const action =
+            button.dataset.action;
+
+
+        const uid =
+            button.dataset.id;
+
+
+        const student =
+            students.find(
+                item =>
+                    item.id === uid
+            );
+
+
+        if (!student) {
+            return;
+        }
+
+
+        if (action === "toggle") {
+
+            await toggleStudent(
+                student
+            );
+
+        }
+
+
+        if (action === "subscription") {
+
+            await toggleSubscription(
+                student
+            );
+
+        }
+
+
+        if (action === "edit") {
+
+            alert(
+                "تعديل بيانات الطالب سيتم تفعيله في الخطوة التالية."
+            );
+
+        }
+
+    }
+
+
+    // =====================================================
+    // Toggle Student
+    // =====================================================
+
+    async function toggleStudent(
+        student
+    ) {
+
+        const newStatus =
+            student.isActive !== true;
+
+
+        const confirmation =
+            newStatus
+                ? "هل تريد تفعيل حساب الطالب؟"
+                : "هل تريد إيقاف حساب الطالب؟";
+
+
+        if (
+            !confirm(
+                confirmation
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        try {
+
+            await updateDoc(
+                doc(
+                    db,
+                    "users",
+                    student.id
+                ),
+                {
+                    isActive:
+                        newStatus,
+                    updatedAt:
+                        Timestamp.now()
+                }
+            );
+
+
+            await loadStudents();
+
+        } catch (error) {
+
+            console.error(
+                error
+            );
+
+
+            alert(
+                "تعذر تحديث حالة الطالب."
+            );
+
+        }
+
+    }
+
+
+    // =====================================================
+    // Toggle Subscription
+    // =====================================================
+
+    async function toggleSubscription(
+        student
+    ) {
+
+        const subscription =
+            student.subscription;
+
+
+        if (!subscription) {
+
+            alert(
+                "لا يوجد اشتراك لهذا الطالب."
+            );
+
+            return;
+
+        }
+
+
+        let newStatus;
+
+
+        if (
+            subscription.status ===
+            "active"
+        ) {
+
+            newStatus =
+                "suspended";
+
+        } else {
+
+            newStatus =
+                "active";
+
+        }
+
+
+        const confirmation =
+            newStatus === "active"
+                ? "هل تريد تفعيل الاشتراك؟"
+                : "هل تريد إيقاف الاشتراك؟";
+
+
+        if (
+            !confirm(
+                confirmation
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        try {
+
+            await updateDoc(
+                doc(
+                    db,
+                    "subscriptions",
+                    subscription.id
+                ),
+                {
+                    status:
+                        newStatus,
+                    updatedAt:
+                        Timestamp.now()
+                }
+            );
+
+
+            await loadStudents();
+
+        } catch (error) {
+
+            console.error(
+                error
+            );
+
+
+            alert(
+                "تعذر تحديث حالة الاشتراك."
+            );
+
+        }
+
+    }
+
+
+    // =====================================================
+    // Form Message
+    // =====================================================
+
+    function showFormMessage(
+        text,
+        type
+    ) {
+
+        formMessage.textContent =
+            text;
+
+        formMessage.className =
+            `form-message show ${type}`;
+
+    }
+
+
+    // =====================================================
+    // Format Date
+    // =====================================================
+
+    function formatDate(
+        timestamp
+    ) {
+
+        if (
+            !timestamp ||
+            typeof timestamp.toDate !==
+            "function"
+        ) {
+
+            return "—";
+
+        }
+
+
+        return timestamp
+            .toDate()
+            .toLocaleDateString(
+                "ar-EG"
+            );
+
+    }
+
+
+    // =====================================================
+    // Escape HTML
+    // =====================================================
+
+    function escapeHtml(
+        value
+    ) {
+
+        return String(value)
+            .replaceAll(
+                "&",
+                "&amp;"
+            )
+            .replaceAll(
+                "<",
+                "&lt;"
+            )
+            .replaceAll(
+                ">",
+                "&gt;"
+            )
+            .replaceAll(
+                '"',
+                "&quot;"
+            )
+            .replaceAll(
+                "'",
+                "&#039;"
+            );
+
+    }
+
+
+    // =====================================================
+    // Initial Load
+    // =====================================================
+
+    loadStudents();
 
 </script>
 
