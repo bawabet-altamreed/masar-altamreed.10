@@ -32,43 +32,506 @@
     import { createAdminLayout }
         from "../src/admin/layout.js";
 
-    const admin = await protectAdminPage();
+    import { db }
+        from "../src/firebase/init.js";
 
-    createAdminLayout(admin.data);
+    import {
+        collection,
+        query,
+        where,
+        getDocs
+    } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-    document.getElementById("pageTitle").textContent =
-        "إدارة المدرسين";
 
-    document.getElementById("pageContent").innerHTML = `
+    try {
 
-        <div class="panel">
+        const admin =
+            await protectAdminPage();
 
-            <div class="panel-header">
 
-                <h2>
-                    المدرسون
-                </h2>
+        createAdminLayout(
+            admin.data
+        );
 
-                <button class="primary-button">
+
+        document.getElementById(
+            "pageTitle"
+        ).textContent =
+            "إدارة المدرسين";
+
+
+        const content =
+            document.getElementById(
+                "pageContent"
+            );
+
+
+        content.innerHTML = `
+
+            <div class="admin-page-intro">
+
+                <div>
+
+                    <h2>
+                        👨‍🏫 المدرسون
+                    </h2>
+
+                    <p>
+                        إدارة حسابات المدرسين المسجلين
+                        في منصة مسار التمريض.
+                    </p>
+
+                </div>
+
+                <button
+                    class="primary-button"
+                    id="addTeacherButton"
+                >
                     + إضافة مدرس
                 </button>
 
             </div>
 
-            <div class="empty-state">
 
-                إدارة المدرسين ستُربط ببيانات
-                <strong>users</strong>
-                بعد الانتهاء من اختبار النظام.
+            <div class="admin-stats-grid">
+
+                <div class="admin-mini-card">
+
+                    <span>
+                        👨‍🏫
+                    </span>
+
+                    <div>
+
+                        <small>
+                            إجمالي المدرسين
+                        </small>
+
+                        <strong id="teachersCount">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="admin-mini-card">
+
+                    <span>
+                        🟢
+                    </span>
+
+                    <div>
+
+                        <small>
+                            المدرسون النشطون
+                        </small>
+
+                        <strong id="activeTeachersCount">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
 
             </div>
 
-        </div>
 
-    `;
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h2>
+                        قائمة المدرسين
+                    </h2>
+
+                    <input
+                        id="teacherSearch"
+                        class="admin-search"
+                        type="search"
+                        placeholder="ابحث باسم المدرس..."
+                    >
+
+                </div>
+
+
+                <div
+                    id="teachersContainer"
+                    class="admin-list"
+                >
+
+                    <div class="admin-loading">
+                        ⏳ جاري تحميل المدرسين...
+                    </div>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        const container =
+            document.getElementById(
+                "teachersContainer"
+            );
+
+
+        const search =
+            document.getElementById(
+                "teacherSearch"
+            );
+
+
+        let teachers = [];
+
+
+        // =================================================
+        // تحميل المدرسين من users
+        // =================================================
+
+        const teachersQuery =
+            query(
+
+                collection(
+                    db,
+                    "users"
+                ),
+
+                where(
+                    "role",
+                    "==",
+                    "teacher"
+                )
+
+            );
+
+
+        const snapshot =
+            await getDocs(
+                teachersQuery
+            );
+
+
+        teachers =
+            snapshot.docs
+                .map(
+                    item => ({
+                        id: item.id,
+                        ...item.data()
+                    })
+                );
+
+
+        updateStats();
+
+
+        render();
+
+
+        search.addEventListener(
+            "input",
+            render
+        );
+
+
+        function updateStats() {
+
+            const total =
+                teachers.length;
+
+
+            const active =
+                teachers.filter(
+                    teacher =>
+                        teacher.isActive !== false
+                ).length;
+
+
+            document.getElementById(
+                "teachersCount"
+            ).textContent =
+                total;
+
+
+            document.getElementById(
+                "activeTeachersCount"
+            ).textContent =
+                active;
+
+        }
+
+
+        function render() {
+
+            const value =
+                search.value
+                    .trim()
+                    .toLowerCase();
+
+
+            const filtered =
+                teachers.filter(
+                    teacher => {
+
+                        const name =
+                            String(
+                                teacher.name ||
+                                teacher.displayName ||
+                                ""
+                            ).toLowerCase();
+
+
+                        const email =
+                            String(
+                                teacher.email ||
+                                ""
+                            ).toLowerCase();
+
+
+                        const username =
+                            String(
+                                teacher.username ||
+                                ""
+                            ).toLowerCase();
+
+
+                        return (
+                            !value ||
+                            name.includes(value) ||
+                            email.includes(value) ||
+                            username.includes(value)
+                        );
+
+                    }
+                );
+
+
+            if (!filtered.length) {
+
+                container.innerHTML = `
+
+                    <div class="admin-empty">
+
+                        👨‍🏫
+
+                        <br><br>
+
+                        ${
+                            teachers.length
+                                ? "لا توجد نتائج مطابقة للبحث."
+                                : "لا يوجد مدرسون مسجلون حاليًا."
+                        }
+
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+
+            container.innerHTML =
+                filtered
+                    .map(
+                        teacher =>
+                            teacherCard(
+                                teacher
+                            )
+                    )
+                    .join("");
+
+        }
+
+
+        function teacherCard(
+            teacher
+        ) {
+
+            const name =
+                teacher.name ||
+                teacher.displayName ||
+                "مدرس بدون اسم";
+
+
+            const email =
+                teacher.email ||
+                "لا يوجد بريد إلكتروني";
+
+
+            const username =
+                teacher.username ||
+                "—";
+
+
+            const subject =
+                teacher.subject ||
+                teacher.subjectName ||
+                "غير محدد";
+
+
+            const isActive =
+                teacher.isActive !== false;
+
+
+            return `
+
+                <div class="admin-list-card">
+
+                    <div class="admin-list-avatar">
+                        👨‍🏫
+                    </div>
+
+
+                    <div class="admin-list-info">
+
+                        <h3>
+                            ${escapeHtml(name)}
+                        </h3>
+
+                        <p>
+                            المادة:
+                            ${escapeHtml(subject)}
+                        </p>
+
+                        <small>
+                            البريد:
+                            ${escapeHtml(email)}
+                        </small>
+
+                    </div>
+
+
+                    <div class="admin-list-meta">
+
+                        <span
+                            class="
+                                admin-status
+                                ${
+                                    isActive
+                                        ? "admin-status-active"
+                                        : "admin-status-disabled"
+                                }
+                        "
+                        >
+
+                            ${
+                                isActive
+                                    ? "نشط"
+                                    : "غير نشط"
+                            }
+
+                        </span>
+
+                        <small>
+                            المستخدم:
+                            ${escapeHtml(username)}
+                        </small>
+
+                    </div>
+
+
+                    <div class="admin-list-actions">
+
+                        <button
+                            class="secondary-button"
+                            data-teacher-id="${escapeHtml(
+                                teacher.id
+                            )}"
+                        >
+                            عرض
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+
+        document
+            .getElementById(
+                "addTeacherButton"
+            )
+            .addEventListener(
+                "click",
+                () => {
+
+                    alert(
+                        "سيتم ربط إضافة المدرس بإنشاء حساب المستخدم بعد تثبيت نظام حسابات المدرسين."
+                    );
+
+                }
+            );
+
+
+    } catch (error) {
+
+        console.error(
+            "Admin teachers error:",
+            error
+        );
+
+
+        document.getElementById(
+            "pageContent"
+        ).innerHTML = `
+
+            <div class="admin-error">
+
+                ⚠️ حدث خطأ أثناء تحميل المدرسين.
+
+                <br><br>
+
+                ${escapeHtml(
+                    error?.message ||
+                    "حدث خطأ غير معروف."
+                )}
+
+            </div>
+
+        `;
+
+    }
+
+
+    function escapeHtml(
+        value
+    ) {
+
+        return String(
+            value ?? ""
+        )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+    }
 
 </script>
 
 </body>
-
 </html>
