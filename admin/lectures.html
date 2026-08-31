@@ -10,7 +10,9 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>المحاضرات | مسار التمريض</title>
+    <title>
+        إدارة المحاضرات | مسار التمريض
+    </title>
 
     <link
         rel="stylesheet"
@@ -19,16 +21,200 @@
 
     <style>
 
-        .lecture-form {
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 220px;
+            height: 45px;
+            border: 1px solid #d8e2e9;
+            border-radius: 10px;
+            padding: 0 14px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .search-box:focus {
+            border-color: #087ea4;
+        }
+
+        .filter-select {
+            height: 45px;
+            min-width: 180px;
+            border: 1px solid #d8e2e9;
+            border-radius: 10px;
+            padding: 0 12px;
+            outline: none;
+            font-size: 13px;
+            background: white;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .lectures-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1050px;
+        }
+
+        .lectures-table th,
+        .lectures-table td {
+            padding: 13px 12px;
+            border-bottom: 1px solid #edf1f4;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .lectures-table th {
+            background: #f8fafc;
+            font-size: 12px;
+            color: #647586;
+        }
+
+        .lectures-table td {
+            font-size: 13px;
+        }
+
+        .lecture-name {
+            font-weight: bold;
+        }
+
+        .lecture-subject {
+            color: #82919d;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .status-published {
+            background: #eaf8f0;
+            color: #16834f;
+        }
+
+        .status-unpublished {
+            background: #fff3e8;
+            color: #a45b00;
+        }
+
+        .status-scheduled {
+            background: #eef8fb;
+            color: #087ea4;
+        }
+
+        .status-live {
+            background: #eaf8f0;
+            color: #16834f;
+        }
+
+        .status-ended {
+            background: #f1f3f5;
+            color: #687783;
+        }
+
+        .status-cancelled {
+            background: #fff1f1;
+            color: #b42318;
+        }
+
+        .action-button {
+            border: none;
+            padding: 7px 10px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 4px;
+            margin-bottom: 4px;
+        }
+
+        .edit-button {
+            background: #eef8fb;
+            color: #087ea4;
+        }
+
+        .delete-button {
+            background: #fff1f1;
+            color: #b42318;
+        }
+
+        .publish-button {
+            background: #effaf3;
+            color: #16794c;
+        }
+
+        .unpublish-button {
+            background: #fff7e6;
+            color: #a15c00;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 9999;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            width: 100%;
+            max-width: 650px;
+            max-height: 92vh;
+            overflow-y: auto;
+            background: #fff;
+            border-radius: 18px;
+            padding: 25px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .modal-header h2 {
+            font-size: 19px;
+        }
+
+        .close-button {
+            border: none;
+            background: #f1f4f6;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .form-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr 1fr;
             gap: 15px;
         }
 
         .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 7px;
+            margin-bottom: 15px;
         }
 
         .form-group.full {
@@ -36,21 +222,28 @@
         }
 
         .form-group label {
-            font-size: 13px;
-            font-weight: 700;
-            color: #34495e;
+            display: block;
+            margin-bottom: 7px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #445566;
         }
 
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            border: 1px solid #d7e3eb;
+            border: 1px solid #d8e2e9;
             border-radius: 9px;
-            padding: 11px;
-            font-family: inherit;
+            padding: 10px 11px;
             outline: none;
+            font-size: 13px;
             background: #fff;
+        }
+
+        .form-group input,
+        .form-group select {
+            height: 44px;
         }
 
         .form-group textarea {
@@ -64,143 +257,84 @@
             border-color: #087ea4;
         }
 
-        .form-actions {
-            grid-column: 1 / -1;
-            display: flex;
-            gap: 10px;
-            margin-top: 5px;
-        }
-
-        .secondary-button {
-            border: none;
-            border-radius: 9px;
-            padding: 11px 20px;
-            cursor: pointer;
-            background: #edf1f4;
-            color: #526575;
-            font-weight: 700;
-        }
-
-        .lecture-table-wrapper {
-            overflow-x: auto;
-        }
-
-        .lecture-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 850px;
-        }
-
-        .lecture-table th,
-        .lecture-table td {
-            padding: 12px 10px;
-            border-bottom: 1px solid #edf1f4;
-            text-align: right;
-            font-size: 12px;
-        }
-
-        .lecture-table th {
-            color: #60717f;
-            background: #f7fafc;
-        }
-
-        .lecture-table td {
-            color: #34495e;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 5px 9px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: bold;
-        }
-
-        .status-published {
-            background: #eaf8f0;
-            color: #16834f;
-        }
-
-        .status-hidden {
-            background: #f1f3f5;
-            color: #687783;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 6px;
-        }
-
-        .action-button {
-            border: none;
-            border-radius: 7px;
-            padding: 7px 10px;
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: bold;
-        }
-
-        .edit-button {
-            background: #eef8fb;
-            color: #087ea4;
-        }
-
-        .delete-button {
-            background: #fff1f1;
-            color: #b42318;
-        }
-
-        .message-box {
-            display: none;
-            margin-bottom: 15px;
-            padding: 12px;
-            border-radius: 9px;
-            font-size: 13px;
-            text-align: center;
-        }
-
-        .message-box.success {
-            display: block;
-            background: #effaf3;
-            color: #147a3e;
-            border: 1px solid #ccebd8;
-        }
-
-        .message-box.error {
-            display: block;
-            background: #fff1f1;
-            color: #b42318;
-            border: 1px solid #ffd5d5;
-        }
-
-        .form-title {
-            margin-bottom: 18px;
-        }
-
-        .form-title h3 {
-            font-size: 17px;
-            margin-bottom: 5px;
-        }
-
-        .form-title p {
-            color: #82919d;
-            font-size: 12px;
-        }
-
-        .publish-row {
+        .checkbox-row {
             display: flex;
             align-items: center;
             gap: 9px;
-            margin-top: 5px;
+            background: #f7fafc;
+            padding: 12px;
+            border-radius: 9px;
         }
 
-        .publish-row input {
-            width: auto;
+        .checkbox-row input {
+            width: 18px;
+            height: 18px;
         }
 
-        @media (max-width: 700px) {
+        .checkbox-row label {
+            margin: 0;
+            cursor: pointer;
+        }
 
-            .lecture-form {
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            height: 45px;
+            border: none;
+            border-radius: 9px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .save-button {
+            background: #087ea4;
+            color: white;
+        }
+
+        .cancel-button {
+            background: #edf1f4;
+            color: #445566;
+        }
+
+        .form-message {
+            display: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-bottom: 15px;
+            line-height: 1.7;
+        }
+
+        .form-message.show {
+            display: block;
+        }
+
+        .form-message.error {
+            background: #fff1f1;
+            color: #b42318;
+        }
+
+        .form-message.success {
+            background: #effaf3;
+            color: #16794c;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 45px 20px;
+            color: #8795a0;
+            font-size: 13px;
+            line-height: 2;
+        }
+
+        @media (max-width: 600px) {
+
+            .form-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -208,8 +342,8 @@
                 grid-column: auto;
             }
 
-            .form-actions {
-                grid-column: auto;
+            .modal {
+                padding: 18px;
             }
 
         }
@@ -218,108 +352,87 @@
 
 </head>
 
+
 <body>
 
 <div id="adminApp"></div>
 
 
-<script type="module">
+<!-- =====================================================
+     Lecture Modal
+     ===================================================== -->
 
-    import { protectAdminPage }
-        from "../src/admin/auth-guard.js";
+<div
+    class="modal-overlay"
+    id="lectureModal"
+>
 
-    import { createAdminLayout }
-        from "../src/admin/layout.js";
+    <div class="modal">
 
-    import {
-        db
-    } from "../src/firebase/init.js";
+        <div class="modal-header">
 
-    import {
-        collection,
-        getDocs,
-        doc,
-        addDoc,
-        updateDoc,
-        deleteDoc,
-        serverTimestamp
-    } from
-        "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+            <h2 id="modalTitle">
+                إضافة محاضرة
+            </h2>
 
+            <button
+                class="close-button"
+                id="closeModal"
+            >
+                ×
+            </button>
 
-    // =====================================================
-    // Protect
-    // =====================================================
+        </div>
 
-    const admin =
-        await protectAdminPage();
-
-
-    createAdminLayout(
-        admin.data
-    );
-
-
-    document.getElementById(
-        "pageTitle"
-    ).textContent =
-        "إدارة المحاضرات";
-
-
-    const content =
-        document.getElementById(
-            "pageContent"
-        );
-
-
-    // =====================================================
-    // Page
-    // =====================================================
-
-    content.innerHTML = `
 
         <div
-            id="messageBox"
-            class="message-box"
+            class="form-message"
+            id="formMessage"
         ></div>
 
 
-        <div class="panel">
+        <form id="lectureForm">
 
-            <div class="form-title">
-
-                <h3 id="formTitle">
-                    ➕ إضافة محاضرة جديدة
-                </h3>
-
-                <p>
-                    أضف المحاضرة ليتم حفظها تلقائيًا
-                    في Firestore وعرضها للطلاب.
-                </p>
-
-            </div>
+            <div class="form-grid">
 
 
-            <form
-                id="lectureForm"
-                class="lecture-form"
-            >
+                <!-- Title -->
 
-                <div class="form-group">
+                <div class="form-group full">
 
                     <label>
                         اسم المحاضرة
                     </label>
 
                     <input
-                        id="title"
                         type="text"
-                        placeholder="مثال: المحاضرة الأولى في الباطنة"
+                        id="lectureTitle"
+                        placeholder="مثال: المحاضرة الأولى - الالتهاب"
                         required
                     >
 
                 </div>
 
+
+                <!-- Subject -->
+
+                <div class="form-group">
+
+                    <label>
+                        المادة
+                    </label>
+
+                    <input
+                        type="text"
+                        id="lectureSubject"
+                        placeholder="مثال: طب الجراحة"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Stage -->
 
                 <div class="form-group">
 
@@ -328,34 +441,40 @@
                     </label>
 
                     <select
-                        id="stageId"
+                        id="lectureStage"
                         required
                     >
+
                         <option value="">
-                            جاري تحميل المراحل...
+                            اختر المرحلة
                         </option>
+
+                        <option value="stage-1">
+                            الصف الأول الثانوي التمريض
+                        </option>
+
+                        <option value="stage-2">
+                            الصف الثاني الثانوي التمريض
+                        </option>
+
+                        <option value="stage-3">
+                            الصف الثالث الثانوي التمريض
+                        </option>
+
+                        <option value="stage-4">
+                            الصف الأول المعهد
+                        </option>
+
+                        <option value="stage-5">
+                            الصف الثاني المعهد
+                        </option>
+
                     </select>
 
                 </div>
 
 
-                <div class="form-group">
-
-                    <label>
-                        المادة
-                    </label>
-
-                    <select
-                        id="subjectId"
-                        required
-                    >
-                        <option value="">
-                            جاري تحميل المواد...
-                        </option>
-                    </select>
-
-                </div>
-
+                <!-- Teacher -->
 
                 <div class="form-group">
 
@@ -364,99 +483,39 @@
                     </label>
 
                     <select
-                        id="teacherId"
+                        id="lectureTeacher"
                         required
                     >
+
                         <option value="">
-                            جاري تحميل المدرسين...
+                            اختر المدرس
                         </option>
+
+                        <option value="Dr.Nurhan">
+                            Dr.Nurhan
+                        </option>
+
+                        <option value="Dr.Sara">
+                            Dr.Sara
+                        </option>
+
                     </select>
 
                 </div>
 
 
+                <!-- Status -->
+
                 <div class="form-group">
 
                     <label>
-                        تاريخ ووقت البداية
+                        حالة المحاضرة
                     </label>
 
-                    <input
-                        id="scheduledAt"
-                        type="datetime-local"
+                    <select
+                        id="lectureStatus"
                         required
                     >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        تاريخ ووقت النهاية
-                    </label>
-
-                    <input
-                        id="endAt"
-                        type="datetime-local"
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        رابط Live
-                    </label>
-
-                    <input
-                        id="liveUrl"
-                        type="url"
-                        dir="ltr"
-                        placeholder="https://..."
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        رابط التسجيل
-                    </label>
-
-                    <input
-                        id="recordingUrl"
-                        type="url"
-                        dir="ltr"
-                        placeholder="https://..."
-                    >
-
-                </div>
-
-
-                <div class="form-group full">
-
-                    <label>
-                        الوصف
-                    </label>
-
-                    <textarea
-                        id="description"
-                        placeholder="وصف مختصر للمحاضرة..."
-                    ></textarea>
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label>
-                        الحالة
-                    </label>
-
-                    <select id="status">
 
                         <option value="scheduled">
                             قادمة
@@ -479,56 +538,252 @@
                 </div>
 
 
+                <!-- Date -->
+
                 <div class="form-group">
 
                     <label>
-                        النشر
+                        موعد المحاضرة
                     </label>
 
-                    <div class="publish-row">
+                    <input
+                        type="datetime-local"
+                        id="lectureDate"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- End -->
+
+                <div class="form-group">
+
+                    <label>
+                        نهاية المحاضرة
+                    </label>
+
+                    <input
+                        type="datetime-local"
+                        id="lectureEnd"
+                    >
+
+                </div>
+
+
+                <!-- Live -->
+
+                <div class="form-group full">
+
+                    <label>
+                        رابط المحاضرة Live
+                    </label>
+
+                    <input
+                        type="url"
+                        id="liveUrl"
+                        placeholder="https://..."
+                        dir="ltr"
+                    >
+
+                </div>
+
+
+                <!-- Recording -->
+
+                <div class="form-group full">
+
+                    <label>
+                        رابط التسجيل
+                    </label>
+
+                    <input
+                        type="url"
+                        id="recordingUrl"
+                        placeholder="https://..."
+                        dir="ltr"
+                    >
+
+                </div>
+
+
+                <!-- Description -->
+
+                <div class="form-group full">
+
+                    <label>
+                        وصف المحاضرة
+                    </label>
+
+                    <textarea
+                        id="lectureDescription"
+                        placeholder="اكتب وصفًا مختصرًا للمحاضرة..."
+                    ></textarea>
+
+                </div>
+
+
+                <!-- Publish -->
+
+                <div class="form-group full">
+
+                    <div class="checkbox-row">
 
                         <input
-                            id="isPublished"
                             type="checkbox"
-                            checked
+                            id="isPublished"
                         >
 
-                        <span>
+                        <label for="isPublished">
                             نشر المحاضرة للطلاب
-                        </span>
+                        </label>
 
                     </div>
 
                 </div>
 
+            </div>
 
-                <div class="form-actions">
 
-                    <button
-                        type="submit"
-                        class="primary-button"
-                        id="saveButton"
-                    >
-                        حفظ المحاضرة
-                    </button>
+            <div class="modal-actions">
 
-                    <button
-                        type="button"
-                        class="secondary-button"
-                        id="cancelButton"
-                        style="display:none"
-                    >
-                        إلغاء التعديل
-                    </button>
+                <button
+                    type="button"
+                    class="cancel-button"
+                    id="cancelButton"
+                >
+                    إلغاء
+                </button>
 
-                </div>
+                <button
+                    type="submit"
+                    class="save-button"
+                    id="saveButton"
+                >
+                    حفظ المحاضرة
+                </button>
 
-            </form>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script type="module">
+
+    // =====================================================
+    // Firebase
+    // =====================================================
+
+    import {
+        db
+    } from "../src/firebase/init.js";
+
+    import {
+        collection,
+        getDocs,
+        doc,
+        addDoc,
+        updateDoc,
+        deleteDoc,
+        Timestamp
+    } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+    // =====================================================
+    // Admin
+    // =====================================================
+
+    import {
+        protectAdminPage
+    } from "../src/admin/auth-guard.js";
+
+    import {
+        createAdminLayout
+    } from "../src/admin/layout.js";
+
+
+    // =====================================================
+    // Protect
+    // =====================================================
+
+    const admin =
+        await protectAdminPage();
+
+
+    createAdminLayout(
+        admin.data
+    );
+
+
+    document.getElementById(
+        "pageTitle"
+    ).textContent =
+        "إدارة المحاضرات";
+
+
+    // =====================================================
+    // Page
+    // =====================================================
+
+    document.getElementById(
+        "pageContent"
+    ).innerHTML = `
+
+        <div class="toolbar">
+
+            <input
+                type="search"
+                id="searchInput"
+                class="search-box"
+                placeholder="ابحث باسم المحاضرة أو المادة أو المدرس..."
+            >
+
+
+            <select
+                id="stageFilter"
+                class="filter-select"
+            >
+
+                <option value="all">
+                    كل المراحل
+                </option>
+
+                <option value="stage-1">
+                    الصف الأول الثانوي
+                </option>
+
+                <option value="stage-2">
+                    الصف الثاني الثانوي
+                </option>
+
+                <option value="stage-3">
+                    الصف الثالث الثانوي
+                </option>
+
+                <option value="stage-4">
+                    الصف الأول المعهد
+                </option>
+
+                <option value="stage-5">
+                    الصف الثاني المعهد
+                </option>
+
+            </select>
+
+
+            <button
+                class="primary-button"
+                id="addLectureButton"
+            >
+                + إضافة محاضرة
+            </button>
 
         </div>
-
-
-        <br>
 
 
         <div class="panel">
@@ -536,24 +791,23 @@
             <div class="panel-header">
 
                 <h2>
-                    📚 المحاضرات
+                    المحاضرات
                 </h2>
 
-                <button
-                    id="refreshButton"
-                    class="secondary-button"
-                >
-                    🔄 تحديث
-                </button>
+                <span id="lecturesCount">
+                    جاري التحميل...
+                </span>
 
             </div>
 
 
             <div
-                id="lecturesTable"
-                class="lecture-table-wrapper"
+                id="lecturesContainer"
+                class="table-container"
             >
+
                 جاري تحميل المحاضرات...
+
             </div>
 
         </div>
@@ -565,64 +819,39 @@
     // Elements
     // =====================================================
 
+    const searchInput =
+        document.getElementById(
+            "searchInput"
+        );
+
+    const stageFilter =
+        document.getElementById(
+            "stageFilter"
+        );
+
+    const lecturesContainer =
+        document.getElementById(
+            "lecturesContainer"
+        );
+
+    const lecturesCount =
+        document.getElementById(
+            "lecturesCount"
+        );
+
+    const modal =
+        document.getElementById(
+            "lectureModal"
+        );
+
     const form =
         document.getElementById(
             "lectureForm"
         );
 
-    const titleInput =
+    const formMessage =
         document.getElementById(
-            "title"
-        );
-
-    const stageSelect =
-        document.getElementById(
-            "stageId"
-        );
-
-    const subjectSelect =
-        document.getElementById(
-            "subjectId"
-        );
-
-    const teacherSelect =
-        document.getElementById(
-            "teacherId"
-        );
-
-    const scheduledInput =
-        document.getElementById(
-            "scheduledAt"
-        );
-
-    const endInput =
-        document.getElementById(
-            "endAt"
-        );
-
-    const liveUrlInput =
-        document.getElementById(
-            "liveUrl"
-        );
-
-    const recordingUrlInput =
-        document.getElementById(
-            "recordingUrl"
-        );
-
-    const descriptionInput =
-        document.getElementById(
-            "description"
-        );
-
-    const statusSelect =
-        document.getElementById(
-            "status"
-        );
-
-    const publishedInput =
-        document.getElementById(
-            "isPublished"
+            "formMessage"
         );
 
     const saveButton =
@@ -630,34 +859,16 @@
             "saveButton"
         );
 
-    const cancelButton =
-        document.getElementById(
-            "cancelButton"
-        );
 
-    const formTitle =
-        document.getElementById(
-            "formTitle"
-        );
+    // =====================================================
+    // Variables
+    // =====================================================
 
-    const table =
-        document.getElementById(
-            "lecturesTable"
-        );
+    let lectures = [];
 
-    const messageBox =
-        document.getElementById(
-            "messageBox"
-        );
+    let filteredLectures = [];
 
-
-    let editingLectureId = null;
-
-    let stages = [];
-
-    let subjects = [];
-
-    let teachers = [];
+    let editingLecture = null;
 
 
     // =====================================================
@@ -666,297 +877,213 @@
 
     function escapeHtml(value) {
 
-        return String(value ?? "")
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll('"', "&quot;")
-            .replaceAll("'", "&#039;");
+        return String(
+            value ?? ""
+        )
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
     }
 
 
-    function getDate(value) {
+    function getStageName(stageId) {
+
+        const stages = {
+
+            "stage-1":
+                "الصف الأول الثانوي التمريض",
+
+            "stage-2":
+                "الصف الثاني الثانوي التمريض",
+
+            "stage-3":
+                "الصف الثالث الثانوي التمريض",
+
+            "stage-4":
+                "الصف الأول المعهد",
+
+            "stage-5":
+                "الصف الثاني المعهد"
+
+        };
+
+        return stages[
+            stageId
+        ] || stageId || "—";
+
+    }
+
+
+    function formatDateTime(value) {
+
+        if (!value) {
+            return "—";
+        }
+
+        try {
+
+            const date =
+                typeof value.toDate === "function"
+                    ? value.toDate()
+                    : new Date(value);
+
+            if (
+                isNaN(
+                    date.getTime()
+                )
+            ) {
+                return "—";
+            }
+
+            return date.toLocaleString(
+                "ar-EG",
+                {
+                    dateStyle: "medium",
+                    timeStyle: "short"
+                }
+            );
+
+        } catch {
+
+            return "—";
+
+        }
+
+    }
+
+
+    function timestampToInput(value) {
+
+        if (!value) {
+            return "";
+        }
+
+        try {
+
+            const date =
+                typeof value.toDate === "function"
+                    ? value.toDate()
+                    : new Date(value);
+
+            if (
+                isNaN(
+                    date.getTime()
+                )
+            ) {
+                return "";
+            }
+
+            const year =
+                date.getFullYear();
+
+            const month =
+                String(
+                    date.getMonth() + 1
+                ).padStart(
+                    2,
+                    "0"
+                );
+
+            const day =
+                String(
+                    date.getDate()
+                ).padStart(
+                    2,
+                    "0"
+                );
+
+            const hours =
+                String(
+                    date.getHours()
+                ).padStart(
+                    2,
+                    "0"
+                );
+
+            const minutes =
+                String(
+                    date.getMinutes()
+                ).padStart(
+                    2,
+                    "0"
+                );
+
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+
+        } catch {
+
+            return "";
+
+        }
+
+    }
+
+
+    function dateInputToTimestamp(
+        value
+    ) {
 
         if (!value) {
             return null;
         }
 
-        if (
-            typeof value.toDate ===
-            "function"
-        ) {
-            return value.toDate();
-        }
-
         const date =
             new Date(value);
 
-        return isNaN(date.getTime())
-            ? null
-            : date;
-    }
-
-
-    function formatDate(value) {
-
-        const date =
-            getDate(value);
-
-        if (!date) {
-            return "—";
+        if (
+            isNaN(
+                date.getTime()
+            )
+        ) {
+            return null;
         }
 
-        return date.toLocaleString(
-            "ar-EG"
+        return Timestamp.fromDate(
+            date
         );
+
     }
 
 
-    function toInputDate(value) {
+    function getStatusInfo(
+        status
+    ) {
 
-        const date =
-            getDate(value);
+        const data = {
 
-        if (!date) {
-            return "";
-        }
+            scheduled: {
+                label: "قادمة",
+                className:
+                    "status-scheduled"
+            },
 
-        const pad =
-            number =>
-                String(number)
-                    .padStart(2, "0");
+            live: {
+                label: "مباشر الآن",
+                className:
+                    "status-live"
+            },
+
+            ended: {
+                label: "انتهت",
+                className:
+                    "status-ended"
+            },
+
+            cancelled: {
+                label: "ملغاة",
+                className:
+                    "status-cancelled"
+            }
+
+        };
 
         return (
-            date.getFullYear() +
-            "-" +
-            pad(date.getMonth() + 1) +
-            "-" +
-            pad(date.getDate()) +
-            "T" +
-            pad(date.getHours()) +
-            ":" +
-            pad(date.getMinutes())
+            data[status] ||
+            data.scheduled
         );
-    }
-
-
-    function showMessage(
-        message,
-        type = "success"
-    ) {
-
-        messageBox.textContent =
-            message;
-
-        messageBox.className =
-            "message-box " + type;
-
-        setTimeout(() => {
-
-            messageBox.className =
-                "message-box";
-
-        }, 4000);
-
-    }
-
-
-    function getStageName(
-        stageId
-    ) {
-
-        const stage =
-            stages.find(
-                item =>
-                    item.id === stageId
-            );
-
-        return stage
-            ? (
-                stage.name ||
-                stage.title ||
-                stageId
-            )
-            : stageId || "—";
-    }
-
-
-    function getSubjectName(
-        subjectId
-    ) {
-
-        const subject =
-            subjects.find(
-                item =>
-                    item.id === subjectId
-            );
-
-        return subject
-            ? (
-                subject.name ||
-                subject.title ||
-                subjectId
-            )
-            : subjectId || "—";
-    }
-
-
-    function getTeacherName(
-        teacherId
-    ) {
-
-        const teacher =
-            teachers.find(
-                item =>
-                    item.id === teacherId
-            );
-
-        return teacher
-            ? (
-                teacher.name ||
-                teacher.displayName ||
-                teacherId
-            )
-            : teacherId || "—";
-    }
-
-
-    // =====================================================
-    // Load Base Data
-    // =====================================================
-
-    async function loadBaseData() {
-
-        const [
-            stagesSnapshot,
-            subjectsSnapshot,
-            usersSnapshot
-        ] = await Promise.all([
-
-            getDocs(
-                collection(
-                    db,
-                    "stages"
-                )
-            ),
-
-            getDocs(
-                collection(
-                    db,
-                    "subjects"
-                )
-            ),
-
-            getDocs(
-                collection(
-                    db,
-                    "users"
-                )
-            )
-
-        ]);
-
-
-        stages =
-            stagesSnapshot.docs.map(
-                item => ({
-                    id: item.id,
-                    ...item.data()
-                })
-            );
-
-
-        subjects =
-            subjectsSnapshot.docs.map(
-                item => ({
-                    id: item.id,
-                    ...item.data()
-                })
-            );
-
-
-        teachers =
-            usersSnapshot.docs
-                .map(
-                    item => ({
-                        id: item.id,
-                        ...item.data()
-                    })
-                )
-                .filter(
-                    user =>
-                        user.role ===
-                        "teacher"
-                );
-
-
-        stageSelect.innerHTML = `
-
-            <option value="">
-                اختر المرحلة
-            </option>
-
-            ${
-                stages.map(
-                    stage => `
-                        <option value="${escapeHtml(stage.id)}">
-                            ${escapeHtml(
-                                stage.name ||
-                                stage.title ||
-                                stage.id
-                            )}
-                        </option>
-                    `
-                ).join("")
-            }
-
-        `;
-
-
-        subjectSelect.innerHTML = `
-
-            <option value="">
-                اختر المادة
-            </option>
-
-            ${
-                subjects.map(
-                    subject => `
-                        <option value="${escapeHtml(subject.id)}">
-                            ${escapeHtml(
-                                subject.name ||
-                                subject.title ||
-                                subject.id
-                            )}
-                        </option>
-                    `
-                ).join("")
-            }
-
-        `;
-
-
-        teacherSelect.innerHTML = `
-
-            <option value="">
-                اختر المدرس
-            </option>
-
-            ${
-                teachers.map(
-                    teacher => `
-                        <option value="${escapeHtml(teacher.id)}">
-                            ${escapeHtml(
-                                teacher.name ||
-                                teacher.displayName ||
-                                teacher.id
-                            )}
-                        </option>
-                    `
-                ).join("")
-            }
-
-        `;
 
     }
 
@@ -969,10 +1096,6 @@
 
         try {
 
-            table.innerHTML =
-                "⏳ جاري تحميل المحاضرات...";
-
-
             const snapshot =
                 await getDocs(
                     collection(
@@ -982,7 +1105,7 @@
                 );
 
 
-            const lectures =
+            lectures =
                 snapshot.docs
                     .map(
                         item => ({
@@ -993,262 +1116,35 @@
                     .sort(
                         (a, b) => {
 
-                            const da =
-                                getDate(
-                                    a.scheduledAt
-                                );
+                            const aDate =
+                                a.scheduledAt?.toDate
+                                    ? a.scheduledAt.toDate()
+                                    : new Date(
+                                        a.scheduledAt ||
+                                        0
+                                    );
 
-                            const dbDate =
-                                getDate(
-                                    b.scheduledAt
-                                );
-
-                            if (!da) return 1;
-                            if (!dbDate) return -1;
+                            const bDate =
+                                b.scheduledAt?.toDate
+                                    ? b.scheduledAt.toDate()
+                                    : new Date(
+                                        b.scheduledAt ||
+                                        0
+                                    );
 
                             return (
-                                da.getTime() -
-                                dbDate.getTime()
+                                aDate - bDate
                             );
 
                         }
                     );
 
 
-            if (!lectures.length) {
-
-                table.innerHTML = `
-
-                    <div class="empty-state">
-                        لا توجد محاضرات حتى الآن.
-                    </div>
-
-                `;
-
-                return;
-
-            }
+            filteredLectures =
+                [...lectures];
 
 
-            table.innerHTML = `
-
-                <table class="lecture-table">
-
-                    <thead>
-
-                        <tr>
-
-                            <th>
-                                المحاضرة
-                            </th>
-
-                            <th>
-                                المرحلة
-                            </th>
-
-                            <th>
-                                المادة
-                            </th>
-
-                            <th>
-                                المدرس
-                            </th>
-
-                            <th>
-                                الموعد
-                            </th>
-
-                            <th>
-                                الحالة
-                            </th>
-
-                            <th>
-                                النشر
-                            </th>
-
-                            <th>
-                                الإجراءات
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody>
-
-                        ${
-                            lectures.map(
-                                lecture => `
-
-                                    <tr>
-
-                                        <td>
-                                            <strong>
-                                                ${escapeHtml(
-                                                    lecture.title ||
-                                                    "محاضرة"
-                                                )}
-                                            </strong>
-                                        </td>
-
-                                        <td>
-                                            ${escapeHtml(
-                                                getStageName(
-                                                    lecture.stageId
-                                                )
-                                            )}
-                                        </td>
-
-                                        <td>
-                                            ${escapeHtml(
-                                                getSubjectName(
-                                                    lecture.subjectId
-                                                )
-                                            )}
-                                        </td>
-
-                                        <td>
-                                            ${escapeHtml(
-                                                lecture.teacherName ||
-                                                getTeacherName(
-                                                    lecture.teacherId
-                                                )
-                                            )}
-                                        </td>
-
-                                        <td>
-                                            ${escapeHtml(
-                                                formatDate(
-                                                    lecture.scheduledAt
-                                                )
-                                            )}
-                                        </td>
-
-                                        <td>
-                                            ${escapeHtml(
-                                                lecture.status ||
-                                                "scheduled"
-                                            )}
-                                        </td>
-
-                                        <td>
-
-                                            <span
-                                                class="
-                                                    status-badge
-                                                    ${
-                                                        lecture.isPublished === true
-                                                            ? "status-published"
-                                                            : "status-hidden"
-                                                    }
-                                                "
-                                            >
-                                                ${
-                                                    lecture.isPublished === true
-                                                        ? "منشورة"
-                                                        : "مخفية"
-                                                }
-                                            </span>
-
-                                        </td>
-
-                                        <td>
-
-                                            <div class="action-buttons">
-
-                                                <button
-                                                    class="
-                                                        action-button
-                                                        edit-button
-                                                    "
-                                                    data-edit="${escapeHtml(
-                                                        lecture.id
-                                                    )}"
-                                                >
-                                                    ✏️ تعديل
-                                                </button>
-
-                                                <button
-                                                    class="
-                                                        action-button
-                                                        delete-button
-                                                    "
-                                                    data-delete="${escapeHtml(
-                                                        lecture.id
-                                                    )}"
-                                                >
-                                                    🗑️ حذف
-                                                </button>
-
-                                            </div>
-
-                                        </td>
-
-                                    </tr>
-
-                                `
-                            ).join("")
-                        }
-
-                    </tbody>
-
-                </table>
-
-            `;
-
-
-            document
-                .querySelectorAll(
-                    "[data-edit]"
-                )
-                .forEach(
-                    button => {
-
-                        button.addEventListener(
-                            "click",
-                            () => {
-
-                                const lecture =
-                                    lectures.find(
-                                        item =>
-                                            item.id ===
-                                            button.dataset.edit
-                                    );
-
-                                if (lecture) {
-                                    editLecture(
-                                        lecture
-                                    );
-                                }
-
-                            }
-                        );
-
-                    }
-                );
-
-
-            document
-                .querySelectorAll(
-                    "[data-delete]"
-                )
-                .forEach(
-                    button => {
-
-                        button.addEventListener(
-                            "click",
-                            () => {
-
-                                deleteLecture(
-                                    button.dataset.delete
-                                );
-
-                            }
-                        );
-
-                    }
-                );
+            renderLectures();
 
         } catch (error) {
 
@@ -1257,10 +1153,19 @@
                 error
             );
 
-            table.innerHTML = `
+
+            lecturesContainer.innerHTML = `
 
                 <div class="empty-state">
-                    حدث خطأ أثناء تحميل المحاضرات.
+
+                    🔴 حدث خطأ أثناء تحميل المحاضرات.
+
+                    <br><br>
+
+                    ${escapeHtml(
+                        error.message
+                    )}
+
                 </div>
 
             `;
@@ -1271,7 +1176,575 @@
 
 
     // =====================================================
-    // Add / Update
+    // Render
+    // =====================================================
+
+    function renderLectures() {
+
+        lecturesCount.textContent =
+            `${filteredLectures.length} محاضرة`;
+
+
+        if (
+            !filteredLectures.length
+        ) {
+
+            lecturesContainer.innerHTML = `
+
+                <div class="empty-state">
+
+                    🎥
+
+                    <br>
+
+                    لا توجد محاضرات حاليًا.
+
+                    <br>
+
+                    اضغط على
+                    <strong>
+                        + إضافة محاضرة
+                    </strong>
+                    لإنشاء أول محاضرة.
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        lecturesContainer.innerHTML = `
+
+            <table class="lectures-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            المحاضرة
+                        </th>
+
+                        <th>
+                            المرحلة
+                        </th>
+
+                        <th>
+                            المدرس
+                        </th>
+
+                        <th>
+                            الموعد
+                        </th>
+
+                        <th>
+                            الحالة
+                        </th>
+
+                        <th>
+                            النشر
+                        </th>
+
+                        <th>
+                            الإجراءات
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    ${filteredLectures
+                        .map(
+                            lecture =>
+                                lectureRow(
+                                    lecture
+                                )
+                        )
+                        .join("")}
+
+                </tbody>
+
+            </table>
+
+        `;
+
+
+        document
+            .querySelectorAll(
+                "[data-action]"
+            )
+            .forEach(
+                button => {
+
+                    button.addEventListener(
+                        "click",
+                        handleAction
+                    );
+
+                }
+            );
+
+    }
+
+
+    // =====================================================
+    // Lecture Row
+    // =====================================================
+
+    function lectureRow(
+        lecture
+    ) {
+
+        const statusInfo =
+            getStatusInfo(
+                lecture.status
+            );
+
+
+        const published =
+            lecture.isPublished === true;
+
+
+        return `
+
+            <tr>
+
+                <td>
+
+                    <div class="lecture-name">
+
+                        ${escapeHtml(
+                            lecture.title ||
+                            "بدون عنوان"
+                        )}
+
+                    </div>
+
+                    <div class="lecture-subject">
+
+                        ${escapeHtml(
+                            lecture.subject ||
+                            "بدون مادة"
+                        )}
+
+                    </div>
+
+                </td>
+
+
+                <td>
+
+                    ${escapeHtml(
+                        getStageName(
+                            lecture.stageId
+                        )
+                    )}
+
+                </td>
+
+
+                <td>
+
+                    ${escapeHtml(
+                        lecture.teacherName ||
+                        lecture.teacherId ||
+                        "—"
+                    )}
+
+                </td>
+
+
+                <td>
+
+                    ${formatDateTime(
+                        lecture.scheduledAt
+                    )}
+
+                </td>
+
+
+                <td>
+
+                    <span
+                        class="status
+                            ${statusInfo.className}"
+                    >
+
+                        ${statusInfo.label}
+
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                    ${
+                        published
+
+                            ? `
+                                <span
+                                    class="status status-published"
+                                >
+                                    منشورة
+                                </span>
+                              `
+
+                            : `
+                                <span
+                                    class="status status-unpublished"
+                                >
+                                    غير منشورة
+                                </span>
+                              `
+                    }
+
+                </td>
+
+
+                <td>
+
+                    <button
+                        class="action-button edit-button"
+                        data-action="edit"
+                        data-id="${lecture.id}"
+                    >
+                        تعديل
+                    </button>
+
+
+                    <button
+                        class="action-button
+                            ${
+                                published
+                                    ? "unpublish-button"
+                                    : "publish-button"
+                            }"
+                        data-action="publish"
+                        data-id="${lecture.id}"
+                    >
+                        ${
+                            published
+                                ? "إلغاء النشر"
+                                : "نشر"
+                        }
+                    </button>
+
+
+                    <button
+                        class="action-button delete-button"
+                        data-action="delete"
+                        data-id="${lecture.id}"
+                    >
+                        حذف
+                    </button>
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+
+    // =====================================================
+    // Search / Filter
+    // =====================================================
+
+    function applyFilters() {
+
+        const search =
+            searchInput.value
+                .trim()
+                .toLowerCase();
+
+
+        const selectedStage =
+            stageFilter.value;
+
+
+        filteredLectures =
+            lectures.filter(
+                lecture => {
+
+                    const title =
+                        String(
+                            lecture.title ||
+                            ""
+                        ).toLowerCase();
+
+
+                    const subject =
+                        String(
+                            lecture.subject ||
+                            ""
+                        ).toLowerCase();
+
+
+                    const teacher =
+                        String(
+                            lecture.teacherName ||
+                            lecture.teacherId ||
+                            ""
+                        ).toLowerCase();
+
+
+                    const matchesSearch =
+                        !search ||
+                        title.includes(search) ||
+                        subject.includes(search) ||
+                        teacher.includes(search);
+
+
+                    const matchesStage =
+                        selectedStage === "all" ||
+                        lecture.stageId ===
+                            selectedStage;
+
+
+                    return (
+                        matchesSearch &&
+                        matchesStage
+                    );
+
+                }
+            );
+
+
+        renderLectures();
+
+    }
+
+
+    searchInput.addEventListener(
+        "input",
+        applyFilters
+    );
+
+
+    stageFilter.addEventListener(
+        "change",
+        applyFilters
+    );
+
+
+    // =====================================================
+    // Add
+    // =====================================================
+
+    document
+        .getElementById(
+            "addLectureButton"
+        )
+        .addEventListener(
+            "click",
+            openAddModal
+        );
+
+
+    function openAddModal() {
+
+        editingLecture =
+            null;
+
+
+        form.reset();
+
+
+        document.getElementById(
+            "modalTitle"
+        ).textContent =
+            "إضافة محاضرة";
+
+
+        document.getElementById(
+            "lectureStatus"
+        ).value =
+            "scheduled";
+
+
+        document.getElementById(
+            "isPublished"
+        ).checked =
+            true;
+
+
+        formMessage.className =
+            "form-message";
+
+
+        formMessage.textContent =
+            "";
+
+
+        saveButton.textContent =
+            "حفظ المحاضرة";
+
+
+        modal.classList.add(
+            "show"
+        );
+
+    }
+
+
+    // =====================================================
+    // Edit
+    // =====================================================
+
+    function openEditModal(
+        lecture
+    ) {
+
+        editingLecture =
+            lecture;
+
+
+        document.getElementById(
+            "modalTitle"
+        ).textContent =
+            "تعديل المحاضرة";
+
+
+        document.getElementById(
+            "lectureTitle"
+        ).value =
+            lecture.title || "";
+
+
+        document.getElementById(
+            "lectureSubject"
+        ).value =
+            lecture.subject || "";
+
+
+        document.getElementById(
+            "lectureStage"
+        ).value =
+            lecture.stageId || "";
+
+
+        document.getElementById(
+            "lectureTeacher"
+        ).value =
+            lecture.teacherName ||
+            lecture.teacherId ||
+            "";
+
+
+        document.getElementById(
+            "lectureStatus"
+        ).value =
+            lecture.status ||
+            "scheduled";
+
+
+        document.getElementById(
+            "lectureDate"
+        ).value =
+            timestampToInput(
+                lecture.scheduledAt
+            );
+
+
+        document.getElementById(
+            "lectureEnd"
+        ).value =
+            timestampToInput(
+                lecture.endAt
+            );
+
+
+        document.getElementById(
+            "liveUrl"
+        ).value =
+            lecture.liveUrl || "";
+
+
+        document.getElementById(
+            "recordingUrl"
+        ).value =
+            lecture.recordingUrl || "";
+
+
+        document.getElementById(
+            "lectureDescription"
+        ).value =
+            lecture.description || "";
+
+
+        document.getElementById(
+            "isPublished"
+        ).checked =
+            lecture.isPublished === true;
+
+
+        formMessage.className =
+            "form-message";
+
+
+        formMessage.textContent =
+            "";
+
+
+        saveButton.textContent =
+            "حفظ التعديلات";
+
+
+        modal.classList.add(
+            "show"
+        );
+
+    }
+
+
+    // =====================================================
+    // Close
+    // =====================================================
+
+    function closeModal() {
+
+        modal.classList.remove(
+            "show"
+        );
+
+        editingLecture =
+            null;
+
+        form.reset();
+
+    }
+
+
+    document
+        .getElementById(
+            "closeModal"
+        )
+        .addEventListener(
+            "click",
+            closeModal
+        );
+
+
+    document
+        .getElementById(
+            "cancelButton"
+        )
+        .addEventListener(
+            "click",
+            closeModal
+        );
+
+
+    // =====================================================
+    // Save
     // =====================================================
 
     form.addEventListener(
@@ -1281,153 +1754,302 @@
             event.preventDefault();
 
 
+            const title =
+                document.getElementById(
+                    "lectureTitle"
+                ).value.trim();
+
+
+            const subject =
+                document.getElementById(
+                    "lectureSubject"
+                ).value.trim();
+
+
+            const stageId =
+                document.getElementById(
+                    "lectureStage"
+                ).value;
+
+
+            const teacherName =
+                document.getElementById(
+                    "lectureTeacher"
+                ).value;
+
+
+            const status =
+                document.getElementById(
+                    "lectureStatus"
+                ).value;
+
+
+            const scheduledAt =
+                document.getElementById(
+                    "lectureDate"
+                ).value;
+
+
+            const endAt =
+                document.getElementById(
+                    "lectureEnd"
+                ).value;
+
+
+            const liveUrl =
+                document.getElementById(
+                    "liveUrl"
+                ).value.trim();
+
+
+            const recordingUrl =
+                document.getElementById(
+                    "recordingUrl"
+                ).value.trim();
+
+
+            const description =
+                document.getElementById(
+                    "lectureDescription"
+                ).value.trim();
+
+
+            const isPublished =
+                document.getElementById(
+                    "isPublished"
+                ).checked;
+
+
+            // =================================================
+            // Validation
+            // =================================================
+
+            if (!title) {
+
+                showFormMessage(
+                    "اكتب اسم المحاضرة.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            if (!subject) {
+
+                showFormMessage(
+                    "اكتب اسم المادة.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            if (!stageId) {
+
+                showFormMessage(
+                    "اختر المرحلة.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            if (!teacherName) {
+
+                showFormMessage(
+                    "اختر المدرس.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            if (!scheduledAt) {
+
+                showFormMessage(
+                    "حدد موعد المحاضرة.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            const scheduledTimestamp =
+                dateInputToTimestamp(
+                    scheduledAt
+                );
+
+
+            const endTimestamp =
+                dateInputToTimestamp(
+                    endAt
+                );
+
+
+            if (!scheduledTimestamp) {
+
+                showFormMessage(
+                    "موعد المحاضرة غير صحيح.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            if (
+                endTimestamp &&
+                endTimestamp.toDate() <=
+                    scheduledTimestamp.toDate()
+            ) {
+
+                showFormMessage(
+                    "وقت نهاية المحاضرة يجب أن يكون بعد وقت البداية.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            // =================================================
+            // Save
+            // =================================================
+
             saveButton.disabled =
                 true;
 
 
+            saveButton.textContent =
+                "جاري الحفظ...";
+
+
             try {
 
-                const stageId =
-                    stageSelect.value;
-
-                const subjectId =
-                    subjectSelect.value;
-
-                const teacherId =
-                    teacherSelect.value;
+                const now =
+                    Timestamp.now();
 
 
-                const subjectName =
-                    getSubjectName(
-                        subjectId
-                    );
-
-                const teacherName =
-                    getTeacherName(
-                        teacherId
-                    );
-
-
-                const scheduledDate =
-                    new Date(
-                        scheduledInput.value
-                    );
-
-
-                let endDate = null;
-
-                if (
-                    endInput.value
-                ) {
-
-                    endDate =
-                        new Date(
-                            endInput.value
-                        );
-
-                }
-
-
-                const data = {
+                const lectureData = {
 
                     title:
-                        titleInput.value.trim(),
+                        title,
+
+                    subject:
+                        subject,
 
                     stageId:
                         stageId,
 
-                    subjectId:
-                        subjectId,
-
-                    subject:
-                        subjectName,
-
                     teacherId:
-                        teacherId,
+                        teacherName,
 
                     teacherName:
                         teacherName,
 
-                    description:
-                        descriptionInput.value.trim(),
-
-                    liveUrl:
-                        liveUrlInput.value.trim(),
-
-                    recordingUrl:
-                        recordingUrlInput.value.trim(),
-
-                    status:
-                        statusSelect.value,
-
-                    isPublished:
-                        publishedInput.checked,
-
                     scheduledAt:
-                        scheduledDate,
+                        scheduledTimestamp,
 
                     endAt:
-                        endDate
+                        endTimestamp,
+
+                    liveUrl:
+                        liveUrl,
+
+                    recordingUrl:
+                        recordingUrl,
+
+                    description:
+                        description,
+
+                    status:
+                        status,
+
+                    isPublished:
+                        isPublished,
+
+                    updatedAt:
+                        now
 
                 };
 
 
+                // =================================================
+                // Edit
+                // =================================================
+
                 if (
-                    editingLectureId
+                    editingLecture
                 ) {
 
-                    data.updatedAt =
-                        serverTimestamp();
-
-
                     await updateDoc(
-
                         doc(
                             db,
                             "lectures",
-                            editingLectureId
+                            editingLecture.id
                         ),
-
-                        data
-
+                        lectureData
                     );
 
 
-                    showMessage(
-                        "تم تعديل المحاضرة بنجاح."
-                    );
-
-                } else {
-
-                    data.createdAt =
-                        serverTimestamp();
-
-                    data.updatedAt =
-                        serverTimestamp();
-
-
-                    await addDoc(
-
-                        collection(
-                            db,
-                            "lectures"
-                        ),
-
-                        data
-
-                    );
-
-
-                    showMessage(
-                        "تمت إضافة المحاضرة بنجاح."
+                    showFormMessage(
+                        "تم تعديل المحاضرة بنجاح.",
+                        "success"
                     );
 
                 }
 
 
-                resetForm();
+                // =================================================
+                // Create
+                // =================================================
 
-                await loadLectures();
+                else {
+
+                    await addDoc(
+                        collection(
+                            db,
+                            "lectures"
+                        ),
+                        {
+                            ...lectureData,
+                            createdAt:
+                                now
+                        }
+                    );
+
+
+                    showFormMessage(
+                        "تم إنشاء المحاضرة بنجاح.",
+                        "success"
+                    );
+
+                }
+
+
+                setTimeout(
+                    async () => {
+
+                        closeModal();
+
+                        await loadLectures();
+
+                    },
+                    600
+                );
+
 
             } catch (error) {
 
@@ -1436,8 +2058,11 @@
                     error
                 );
 
-                showMessage(
-                    "حدث خطأ أثناء حفظ المحاضرة.",
+
+                showFormMessage(
+                    getFirebaseErrorMessage(
+                        error
+                    ),
                     "error"
                 );
 
@@ -1446,6 +2071,12 @@
                 saveButton.disabled =
                     false;
 
+
+                saveButton.textContent =
+                    editingLecture
+                        ? "حفظ التعديلات"
+                        : "حفظ المحاضرة";
+
             }
 
         }
@@ -1453,82 +2084,142 @@
 
 
     // =====================================================
-    // Edit
+    // Actions
     // =====================================================
 
-    function editLecture(
+    async function handleAction(
+        event
+    ) {
+
+        const button =
+            event.currentTarget;
+
+
+        const action =
+            button.dataset.action;
+
+
+        const id =
+            button.dataset.id;
+
+
+        const lecture =
+            lectures.find(
+                item =>
+                    item.id === id
+            );
+
+
+        if (!lecture) {
+            return;
+        }
+
+
+        if (
+            action === "edit"
+        ) {
+
+            openEditModal(
+                lecture
+            );
+
+            return;
+
+        }
+
+
+        if (
+            action === "publish"
+        ) {
+
+            await togglePublish(
+                lecture
+            );
+
+            return;
+
+        }
+
+
+        if (
+            action === "delete"
+        ) {
+
+            await deleteLecture(
+                lecture
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    // =====================================================
+    // Publish
+    // =====================================================
+
+    async function togglePublish(
         lecture
     ) {
 
-        editingLectureId =
-            lecture.id;
+        const newValue =
+            lecture.isPublished !== true;
 
 
-        titleInput.value =
-            lecture.title || "";
+        const message =
+            newValue
+                ? "هل تريد نشر المحاضرة للطلاب؟"
+                : "هل تريد إلغاء نشر المحاضرة؟";
 
 
-        stageSelect.value =
-            lecture.stageId || "";
+        if (
+            !confirm(
+                message
+            )
+        ) {
+
+            return;
+
+        }
 
 
-        subjectSelect.value =
-            lecture.subjectId || "";
+        try {
 
+            await updateDoc(
+                doc(
+                    db,
+                    "lectures",
+                    lecture.id
+                ),
+                {
+                    isPublished:
+                        newValue,
 
-        teacherSelect.value =
-            lecture.teacherId || "";
-
-
-        scheduledInput.value =
-            toInputDate(
-                lecture.scheduledAt
+                    updatedAt:
+                        Timestamp.now()
+                }
             );
 
 
-        endInput.value =
-            toInputDate(
-                lecture.endAt
+            await loadLectures();
+
+        } catch (error) {
+
+            console.error(
+                "Publish lecture error:",
+                error
             );
 
 
-        liveUrlInput.value =
-            lecture.liveUrl || "";
+            alert(
+                getFirebaseErrorMessage(
+                    error
+                )
+            );
 
-
-        recordingUrlInput.value =
-            lecture.recordingUrl || "";
-
-
-        descriptionInput.value =
-            lecture.description || "";
-
-
-        statusSelect.value =
-            lecture.status ||
-            "scheduled";
-
-
-        publishedInput.checked =
-            lecture.isPublished === true;
-
-
-        formTitle.textContent =
-            "✏️ تعديل المحاضرة";
-
-
-        saveButton.textContent =
-            "حفظ التعديلات";
-
-
-        cancelButton.style.display =
-            "inline-block";
-
-
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
+        }
 
     }
 
@@ -1538,16 +2229,16 @@
     // =====================================================
 
     async function deleteLecture(
-        lectureId
+        lecture
     ) {
 
-        const confirmed =
+        const confirmation =
             confirm(
-                "هل أنت متأكد من حذف هذه المحاضرة؟"
+                `هل أنت متأكد من حذف المحاضرة:\n\n${lecture.title || "بدون عنوان"}\n\nلا يمكن التراجع عن الحذف.`
             );
 
 
-        if (!confirmed) {
+        if (!confirmation) {
             return;
         }
 
@@ -1558,17 +2249,13 @@
                 doc(
                     db,
                     "lectures",
-                    lectureId
+                    lecture.id
                 )
             );
 
 
-            showMessage(
-                "تم حذف المحاضرة بنجاح."
-            );
-
-
             await loadLectures();
+
 
         } catch (error) {
 
@@ -1577,9 +2264,11 @@
                 error
             );
 
-            showMessage(
-                "حدث خطأ أثناء حذف المحاضرة.",
-                "error"
+
+            alert(
+                getFirebaseErrorMessage(
+                    error
+                )
             );
 
         }
@@ -1588,81 +2277,75 @@
 
 
     // =====================================================
-    // Reset
+    // Firebase Error
     // =====================================================
 
-    function resetForm() {
+    function getFirebaseErrorMessage(
+        error
+    ) {
 
-        editingLectureId =
-            null;
+        if (
+            error?.code ===
+            "permission-denied"
+        ) {
 
+            return (
+                "تم رفض العملية بواسطة Firestore Security Rules."
+            );
 
-        form.reset();
-
-
-        publishedInput.checked =
-            true;
-
-
-        statusSelect.value =
-            "scheduled";
-
-
-        formTitle.textContent =
-            "➕ إضافة محاضرة جديدة";
+        }
 
 
-        saveButton.textContent =
-            "حفظ المحاضرة";
+        if (
+            error?.code ===
+            "failed-precondition"
+        ) {
+
+            return (
+                "تعذر تنفيذ العملية بسبب حالة غير متوافقة في Firestore."
+            );
+
+        }
 
 
-        cancelButton.style.display =
-            "none";
+        return (
+            "حدث خطأ أثناء حفظ بيانات المحاضرة: " +
+            (
+                error?.message ||
+                "خطأ غير معروف"
+            )
+        );
+
+    }
+
+
+    // =====================================================
+    // Form Message
+    // =====================================================
+
+    function showFormMessage(
+        text,
+        type
+    ) {
+
+        formMessage.textContent =
+            text;
+
+
+        formMessage.className =
+            `form-message show ${type}`;
 
     }
 
 
-    cancelButton.addEventListener(
-        "click",
-        resetForm
-    );
-
-
-    document
-        .getElementById(
-            "refreshButton"
-        )
-        .addEventListener(
-            "click",
-            loadLectures
-        );
-
-
     // =====================================================
-    // Start
+    // Initial Load
     // =====================================================
 
-    try {
-
-        await loadBaseData();
-
-        await loadLectures();
-
-    } catch (error) {
-
-        console.error(
-            "Admin lectures initialization error:",
-            error
-        );
-
-        showMessage(
-            "حدث خطأ أثناء تحميل بيانات إدارة المحاضرات.",
-            "error"
-        );
-
-    }
+    loadLectures();
 
 </script>
 
 </body>
+
 </html>
