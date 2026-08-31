@@ -11,666 +11,331 @@
     >
 
     <title>
-        الاختبار | مسار التمريض
+        الاختبارات | بوابة التمريض
     </title>
-
 
     <style>
 
         * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
         }
-
 
         body {
+            margin: 0;
+            background: #f5f8fa;
             font-family:
-                Arial,
                 Tahoma,
+                Arial,
                 sans-serif;
+            color: #20313d;
+        }
 
-            background: #f3f8fb;
-
-            color: #17324a;
+        button,
+        input {
+            font-family: inherit;
         }
 
 
-        .student-app {
-            min-height: 100vh;
-            display: flex;
-        }
+        /* =====================================================
+           Header
+        ===================================================== */
 
-
-        .student-main {
-            flex: 1;
-        }
-
-
-        .student-content {
-            padding: 25px;
-        }
-
-
-        /* ================================
-           Exam Header
-        ================================= */
-
-        .exam-header {
-            background:
-                linear-gradient(
-                    135deg,
-                    #087ea4,
-                    #075f7c
-                );
-
+        .page-header {
+            background: #087ea4;
             color: white;
-
-            border-radius: 18px;
-
-            padding: 25px;
-
-            margin-bottom: 20px;
+            padding: 25px 20px;
+            box-shadow:
+                0 5px 20px rgba(0, 0, 0, .08);
         }
 
-
-        .exam-header h2 {
-            font-size: 21px;
-            margin-bottom: 8px;
-            line-height: 1.6;
+        .header-inner {
+            max-width: 1100px;
+            margin: auto;
         }
 
+        .page-header h1 {
+            margin: 0 0 7px;
+            font-size: 24px;
+        }
 
-        .exam-header p {
+        .page-header p {
+            margin: 0;
             font-size: 13px;
             opacity: .9;
             line-height: 1.8;
         }
 
 
-        .exam-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+        /* =====================================================
+           Container
+        ===================================================== */
 
-            margin-top: 18px;
+        .container {
+            width: min(1100px, calc(100% - 30px));
+            margin: 25px auto 40px;
         }
 
 
-        .exam-meta span {
-            background: rgba(255,255,255,.14);
+        /* =====================================================
+           User Info
+        ===================================================== */
 
-            border: 1px solid
-                rgba(255,255,255,.15);
-
-            padding: 7px 11px;
-
-            border-radius: 20px;
-
-            font-size: 11px;
-        }
-
-
-        /* ================================
-           Timer
-        ================================= */
-
-        .timer-box {
-            position: sticky;
-
-            top: 15px;
-
-            z-index: 20;
-
+        .student-info {
             background: white;
-
-            border: 1px solid #e4edf2;
-
+            border: 1px solid #e2ebf0;
             border-radius: 15px;
-
-            padding: 14px 18px;
-
-            margin-bottom: 18px;
+            padding: 16px 18px;
+            margin-bottom: 20px;
 
             display: flex;
-
             align-items: center;
-
             justify-content: space-between;
-
             gap: 15px;
+        }
+
+        .student-info strong {
+            font-size: 14px;
+        }
+
+        .student-stage {
+            color: #71808d;
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+
+        /* =====================================================
+           Section
+        ===================================================== */
+
+        .section-title {
+            margin-bottom: 15px;
+        }
+
+        .section-title h2 {
+            margin: 0 0 5px;
+            font-size: 18px;
+        }
+
+        .section-title p {
+            margin: 0;
+            color: #7b8993;
+            font-size: 12px;
+        }
+
+
+        /* =====================================================
+           Exams Grid
+        ===================================================== */
+
+        .exams-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .exam-card {
+            background: white;
+            border: 1px solid #e0e9ee;
+            border-radius: 17px;
+            padding: 20px;
+
+            transition:
+                transform .2s ease,
+                box-shadow .2s ease;
+        }
+
+        .exam-card:hover {
+            transform: translateY(-2px);
 
             box-shadow:
-                0 5px 20px
-                rgba(0,0,0,.04);
+                0 10px 30px rgba(0, 0, 0, .07);
         }
 
-
-        .timer-title {
-            font-size: 12px;
-            color: #687783;
-            font-weight: bold;
-        }
-
-
-        .timer {
-            font-size: 22px;
-            font-weight: bold;
-            color: #087ea4;
-
-            direction: ltr;
-        }
-
-
-        .timer.warning {
-            color: #b7791f;
-        }
-
-
-        .timer.danger {
-            color: #b42318;
-        }
-
-
-        /* ================================
-           Progress
-        ================================= */
-
-        .progress-box {
-            background: white;
-
-            border: 1px solid #e4edf2;
-
-            border-radius: 15px;
-
-            padding: 16px;
-
-            margin-bottom: 18px;
-        }
-
-
-        .progress-top {
+        .exam-card-header {
             display: flex;
-
             justify-content: space-between;
-
-            align-items: center;
-
-            margin-bottom: 10px;
-        }
-
-
-        .progress-top span {
-            font-size: 11px;
-            color: #71808d;
-        }
-
-
-        .progress-bar {
-            height: 8px;
-
-            background: #edf2f5;
-
-            border-radius: 20px;
-
-            overflow: hidden;
-        }
-
-
-        .progress-fill {
-            height: 100%;
-
-            width: 0%;
-
-            background: #087ea4;
-
-            border-radius: 20px;
-
-            transition: width .2s ease;
-        }
-
-
-        /* ================================
-           Question
-        ================================= */
-
-        .question-card {
-            background: white;
-
-            border: 1px solid #e4edf2;
-
-            border-radius: 17px;
-
-            padding: 22px;
-
-            margin-bottom: 18px;
-        }
-
-
-        .question-number {
-            color: #087ea4;
-
-            font-size: 12px;
-
-            font-weight: bold;
+            align-items: flex-start;
+            gap: 10px;
 
             margin-bottom: 12px;
         }
 
-
-        .question-text {
-            font-size: 17px;
-
-            font-weight: bold;
-
-            line-height: 1.9;
-
-            margin-bottom: 20px;
-        }
-
-
-        .options {
-            display: grid;
-
-            gap: 10px;
-        }
-
-
-        .option {
-            position: relative;
-
-            border: 1px solid #dce7ed;
-
-            border-radius: 12px;
-
-            padding: 14px;
-
-            cursor: pointer;
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 12px;
-
-            transition:
-                .15s ease;
-
-            background: #fff;
-        }
-
-
-        .option:hover {
-            border-color: #087ea4;
-
-            background: #f7fcfd;
-        }
-
-
-        .option.selected {
-            border-color: #087ea4;
-
-            background: #eaf7fb;
-        }
-
-
-        .option input {
-            position: absolute;
-
-            opacity: 0;
-
-            pointer-events: none;
-        }
-
-
-        .option-circle {
-            width: 22px;
-
-            height: 22px;
-
-            border: 2px solid #cbd8df;
-
-            border-radius: 50%;
-
-            flex-shrink: 0;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-        }
-
-
-        .option.selected
-        .option-circle {
-            border-color: #087ea4;
-        }
-
-
-        .option.selected
-        .option-circle::after {
-            content: "";
-
-            width: 10px;
-
-            height: 10px;
-
-            background: #087ea4;
-
-            border-radius: 50%;
-        }
-
-
-        .option-label {
-            font-size: 13px;
-
+        .exam-card h3 {
+            margin: 0;
+            font-size: 16px;
             line-height: 1.7;
         }
 
+        .published-badge {
+            flex-shrink: 0;
 
-        /* ================================
-           Navigation
-        ================================= */
-
-        .question-navigation {
-            display: flex;
-
-            justify-content: space-between;
-
-            gap: 10px;
-
-            margin-top: 20px;
-        }
-
-
-        .nav-button,
-        .submit-button {
-            min-height: 43px;
-
-            border: none;
-
-            border-radius: 10px;
-
-            padding: 0 18px;
-
-            font-size: 12px;
-
-            font-weight: bold;
-
-            cursor: pointer;
-        }
-
-
-        .nav-button {
-            background: #eef8fb;
-
-            color: #087ea4;
-        }
-
-
-        .nav-button:disabled {
-            background: #edf1f4;
-
-            color: #9aa5ac;
-
-            cursor: not-allowed;
-        }
-
-
-        .submit-button {
-            background: #087ea4;
-
-            color: white;
-        }
-
-
-        .submit-button:hover {
-            background: #075f7c;
-        }
-
-
-        /* ================================
-           Question Navigator
-        ================================= */
-
-        .question-list {
-            background: white;
-
-            border: 1px solid #e4edf2;
-
-            border-radius: 15px;
-
-            padding: 16px;
-
-            margin-bottom: 18px;
-        }
-
-
-        .question-list-title {
-            font-size: 13px;
-
-            font-weight: bold;
-
-            margin-bottom: 12px;
-        }
-
-
-        .question-numbers {
-            display: flex;
-
-            flex-wrap: wrap;
-
-            gap: 7px;
-        }
-
-
-        .question-number-button {
-            width: 36px;
-
-            height: 36px;
-
-            border: 1px solid #dce7ed;
-
-            background: white;
-
-            color: #617381;
-
-            border-radius: 9px;
-
-            cursor: pointer;
-
-            font-size: 11px;
-
-            font-weight: bold;
-        }
-
-
-        .question-number-button.current {
-            background: #087ea4;
-
-            color: white;
-
-            border-color: #087ea4;
-        }
-
-
-        .question-number-button.answered {
             background: #eaf8f0;
-
             color: #16834f;
 
-            border-color: #ccebdc;
+            padding: 5px 9px;
+            border-radius: 20px;
+
+            font-size: 10px;
+            font-weight: bold;
         }
 
 
-        .question-number-button.current.answered {
-            background: #087ea4;
+        /* =====================================================
+           Description
+        ===================================================== */
 
-            color: white;
+        .exam-description {
+            color: #71808d;
+            font-size: 12px;
+            line-height: 1.9;
 
-            border-color: #087ea4;
-        }
-
-
-        /* ================================
-           Loading / Error
-        ================================= */
-
-        .state-box {
-            background: white;
-
-            border: 1px solid #e4edf2;
-
-            border-radius: 15px;
-
-            padding: 45px 20px;
-
-            text-align: center;
-
-            color: #8795a0;
-
-            font-size: 13px;
-
-            line-height: 2;
-        }
-
-
-        .error-box {
-            background: #fff1f1;
-
-            border-color: #ffd5d5;
-
-            color: #b42318;
-        }
-
-
-        /* ================================
-           Result
-        ================================= */
-
-        .result-card {
-            background: white;
-
-            border: 1px solid #e4edf2;
-
-            border-radius: 18px;
-
-            padding: 30px 20px;
-
-            text-align: center;
-        }
-
-
-        .result-icon {
-            font-size: 45px;
-
+            min-height: 45px;
             margin-bottom: 15px;
         }
 
 
-        .result-card h2 {
-            font-size: 22px;
+        /* =====================================================
+           Meta
+        ===================================================== */
 
-            margin-bottom: 10px;
+        .exam-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+
+            margin-bottom: 17px;
+        }
+
+        .exam-meta span {
+            background: #f4f8fa;
+            color: #60717e;
+
+            padding: 7px 9px;
+            border-radius: 8px;
+
+            font-size: 10px;
         }
 
 
-        .result-score {
-            font-size: 38px;
+        /* =====================================================
+           Start Button
+        ===================================================== */
 
-            font-weight: bold;
+        .start-button {
+            width: 100%;
 
-            color: #087ea4;
+            border: none;
+            border-radius: 9px;
 
-            margin: 15px 0;
-        }
+            padding: 11px;
 
+            background: #087ea4;
+            color: white;
 
-        .result-details {
-            color: #71808d;
+            cursor: pointer;
 
             font-size: 12px;
+            font-weight: bold;
+
+            transition:
+                background .2s ease;
+        }
+
+        .start-button:hover {
+            background: #066b8c;
+        }
+
+
+        /* =====================================================
+           Empty State
+        ===================================================== */
+
+        .empty-state {
+            background: white;
+
+            border:
+                1px solid #e1eaf0;
+
+            border-radius: 15px;
+
+            padding: 35px 20px;
+
+            text-align: center;
+
+            color: #71808d;
+
+            font-size: 13px;
 
             line-height: 2;
         }
 
 
-        .result-actions {
-            margin-top: 20px;
+        /* =====================================================
+           Loading
+        ===================================================== */
 
-            display: flex;
-
-            justify-content: center;
-
-            gap: 10px;
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #71808d;
+            font-size: 13px;
         }
 
 
-        .result-button {
-            display: inline-flex;
+        /* =====================================================
+           Error
+        ===================================================== */
 
-            align-items: center;
+        .error-box {
+            background: #fff5f5;
+            border: 1px solid #f1cccc;
+            color: #b42318;
 
-            justify-content: center;
+            border-radius: 14px;
 
-            min-height: 42px;
+            padding: 20px;
 
-            padding: 0 18px;
+            text-align: center;
 
-            border-radius: 9px;
+            font-size: 13px;
 
-            text-decoration: none;
-
-            font-size: 12px;
-
-            font-weight: bold;
-
-            background: #087ea4;
-
-            color: white;
+            line-height: 1.8;
         }
 
 
-        /* ================================
+        /* =====================================================
            Responsive
-        ================================= */
+        ===================================================== */
 
-        @media (max-width: 650px) {
+        @media (max-width: 750px) {
 
-            .student-content {
-                padding: 15px;
+            .exams-grid {
+                grid-template-columns: 1fr;
             }
 
+        }
 
-            .exam-header {
-                padding: 20px;
+        @media (max-width: 550px) {
+
+            .page-header {
+                padding: 20px 15px;
             }
 
-
-            .question-card {
-                padding: 17px;
+            .page-header h1 {
+                font-size: 20px;
             }
 
-
-            .question-text {
-                font-size: 15px;
+            .container {
+                width:
+                    calc(100% - 20px);
+                margin-top: 15px;
             }
 
-
-            .timer-box {
-                top: 8px;
-            }
-
-
-            .question-navigation {
+            .student-info {
+                align-items: flex-start;
                 flex-direction: column;
-            }
-
-
-            .nav-button,
-            .submit-button {
-                width: 100%;
             }
 
         }
@@ -682,258 +347,391 @@
 
 <body>
 
-<div
-    id="studentApp"
-    class="student-app"
->
-    جاري تحميل الاختبار...
-</div>
+
+<header class="page-header">
+
+    <div class="header-inner">
+
+        <h1>
+            📝 الاختبارات
+        </h1>
+
+        <p>
+            اختبر معلوماتك وراجع مستواك في المواد الدراسية.
+        </p>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
+    <div
+        id="studentInfo"
+        class="student-info"
+    >
+
+        <div>
+
+            <strong id="studentName">
+                جاري تحميل بيانات الطالب...
+            </strong>
+
+            <div
+                id="studentStage"
+                class="student-stage"
+            >
+                ...
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="section-title">
+
+        <h2>
+            الاختبارات المتاحة
+        </h2>
+
+        <p>
+            الاختبارات المنشورة الخاصة بمرحلتك الدراسية.
+        </p>
+
+    </div>
+
+
+    <div
+        id="examsContainer"
+        class="exams-grid"
+    >
+
+        <div class="loading">
+            ⏳ جاري تحميل الاختبارات...
+        </div>
+
+    </div>
+
+
+</main>
 
 
 <script type="module">
 
-    import {
-        protectStudentPage,
-        createStudentLayout,
-        escapeHtml,
-        formatDateTime,
-        studentErrorMessage
-    } from "../src/student/student.js";
-
+    /* =========================================================
+       Imports
+    ========================================================= */
 
     import {
         db
     } from "../src/firebase/init.js";
 
+    import {
+        getAuth,
+        onAuthStateChanged
+    } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
     import {
-        doc,
-        getDoc,
         collection,
         query,
         where,
         getDocs,
-        addDoc
+        doc,
+        getDoc
     } from
         "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-    /* =====================================================
-       Global State
-    ===================================================== */
+    /* =========================================================
+       Firebase Auth
+    ========================================================= */
 
-    let student = null;
-
-    let exam = null;
-
-    let questions = [];
-
-    let currentQuestion = 0;
-
-    let answers = {};
-
-    let remainingSeconds = 0;
-
-    let timerInterval = null;
-
-    let submitting = false;
-
-    let alreadySubmitted = false;
+    const auth = getAuth();
 
 
-    /* =====================================================
+    /* =========================================================
        Start
-    ===================================================== */
+    ========================================================= */
 
-    try {
+    onAuthStateChanged(
+        auth,
+        async user => {
 
-        const result =
-            await protectStudentPage();
+            if (!user) {
 
+                showError(
+                    "يجب تسجيل الدخول أولًا للوصول إلى الاختبارات."
+                );
 
-        student =
-            result.student;
+                return;
 
-
-        createStudentLayout(
-            student,
-            "exams"
-        );
-
-
-        document.getElementById(
-            "studentPageTitle"
-        ).textContent =
-            "الاختبار";
+            }
 
 
-        const content =
-            document.getElementById(
-                "studentPageContent"
+            try {
+
+                await loadStudentAndExams(
+                    user
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Student exams error:",
+                    error
+                );
+
+                showError(
+                    getFriendlyError(
+                        error
+                    )
+                );
+
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       Load Student + Exams
+    ========================================================= */
+
+    async function loadStudentAndExams(
+        user
+    ) {
+
+        const userRef =
+            doc(
+                db,
+                "users",
+                user.uid
             );
 
 
-        /*
-         * examId يأتي من:
-         *
-         * student/exam.html?examId=XXXX
-         */
-
-        const params =
-            new URLSearchParams(
-                window.location.search
+        const userSnapshot =
+            await getDoc(
+                userRef
             );
 
 
-        const examId =
-            params.get(
-                "examId"
-            );
-
-
-        if (!examId) {
-
-            showError(
-                "لم يتم تحديد الاختبار."
-            );
+        if (!userSnapshot.exists()) {
 
             throw new Error(
-                "Missing examId"
+                "بيانات الطالب غير موجودة."
             );
 
         }
 
 
-        content.innerHTML = `
-
-            <div
-                id="examRoot"
-                class="state-box"
-            >
-                ⏳ جاري تحميل الاختبار...
-            </div>
-
-        `;
+        const student =
+            userSnapshot.data();
 
 
-        await loadExam(
-            examId
-        );
+        /* =====================================================
+           Check Student
+        ===================================================== */
+
+        if (
+            student.role !==
+            "student"
+        ) {
+
+            throw new Error(
+                "هذا الحساب ليس حساب طالب."
+            );
+
+        }
 
 
-    } catch (error) {
+        if (
+            student.isActive !==
+            true
+        ) {
 
-        console.error(
-            "Student exam error:",
-            error
+            throw new Error(
+                "حساب الطالب غير نشط."
+            );
+
+        }
+
+
+        /* =====================================================
+           Render Student
+        ===================================================== */
+
+        document.getElementById(
+            "studentName"
+        ).textContent =
+            student.name ||
+            student.displayName ||
+            user.displayName ||
+            "الطالب";
+
+
+        document.getElementById(
+            "studentStage"
+        ).textContent =
+            student.stageId
+                ? `المرحلة الدراسية: ${student.stageId}`
+                : "المرحلة الدراسية غير محددة";
+
+
+        /* =====================================================
+           Stage Required
+        ===================================================== */
+
+        if (
+            !student.stageId
+        ) {
+
+            throw new Error(
+                "لم يتم تحديد المرحلة الدراسية لحسابك."
+            );
+
+        }
+
+
+        /* =====================================================
+           Firestore Query
+           
+           مهم جدًا:
+           الاستعلام مطابق لشروط Firestore Rules:
+           
+           isPublished == true
+           stageId == student's stageId
+        ===================================================== */
+
+        const examsQuery =
+            query(
+                collection(
+                    db,
+                    "exams"
+                ),
+
+                where(
+                    "isPublished",
+                    "==",
+                    true
+                ),
+
+                where(
+                    "stageId",
+                    "==",
+                    student.stageId
+                )
+            );
+
+
+        const snapshot =
+            await getDocs(
+                examsQuery
+            );
+
+
+        const exams =
+            snapshot.docs.map(
+                item => ({
+
+                    id:
+                        item.id,
+
+                    ...item.data()
+
+                })
+            );
+
+
+        renderExams(
+            exams
         );
 
     }
 
 
-    /* =====================================================
-       Load Exam
-    ===================================================== */
+    /* =========================================================
+       Render Exams
+    ========================================================= */
 
-    async function loadExam(
-        examId
+    function renderExams(
+        exams
     ) {
 
-        /*
-         * جلب نفس Document الموجود
-         * في exams
-         */
-
-        const examRef =
-            doc(
-                db,
-                "exams",
-                examId
+        const container =
+            document.getElementById(
+                "examsContainer"
             );
 
 
-        const examSnapshot =
-            await getDoc(
-                examRef
-            );
+        if (!exams.length) {
 
+            container.innerHTML = `
 
-        if (!examSnapshot.exists()) {
+                <div class="empty-state">
 
-            showError(
-                "هذا الاختبار غير موجود."
-            );
+                    📭 لا توجد اختبارات متاحة حاليًا.
+
+                    <br>
+
+                    سيتم ظهور الاختبارات هنا
+                    عند نشرها لمرحلتك الدراسية.
+
+                </div>
+
+            `;
 
             return;
 
         }
 
 
-        exam = {
-            id: examSnapshot.id,
-            ...examSnapshot.data()
-        };
+        container.innerHTML =
+            exams
+                .map(
+                    exam =>
+                        renderExamCard(
+                            exam
+                        )
+                )
+                .join("");
+
+    }
 
 
-        /*
-         * حماية إضافية من ناحية الواجهة.
-         *
-         * الحماية الحقيقية يجب أن تكون
-         * موجودة أيضًا في Firestore Rules.
-         */
+    /* =========================================================
+       Render Exam Card
+    ========================================================= */
 
-        if (
-            exam.isPublished === false
-        ) {
+    function renderExamCard(
+        exam
+    ) {
 
-            showError(
-                "هذا الاختبار غير متاح حاليًا."
-            );
-
-            return;
-
-        }
-
-
-        if (
-            exam.stageId &&
-            exam.stageId !==
-            student.stageId
-        ) {
-
-            showError(
-                "هذا الاختبار غير متاح لمرحلتك الدراسية."
-            );
-
-            return;
-
-        }
-
-
-        /*
-         * تجهيز الأسئلة
-         */
-
-        questions =
-            normalizeQuestions(
-                exam.questions
+        const title =
+            escapeHtml(
+                exam.title ||
+                exam.name ||
+                "اختبار بدون عنوان"
             );
 
 
-        if (!questions.length) {
-
-            showError(
-                "هذا الاختبار لا يحتوي على أسئلة حاليًا."
+        const description =
+            escapeHtml(
+                exam.description ||
+                "لا يوجد وصف للاختبار."
             );
 
-            return;
 
-        }
+        const subject =
+            escapeHtml(
+                exam.subject ||
+                exam.subjectId ||
+                "غير محدد"
+            );
 
-
-        /*
-         * مدة الاختبار
-         */
 
         const duration =
             Number(
@@ -943,1664 +741,139 @@
             );
 
 
-        if (duration > 0) {
-
-            remainingSeconds =
-                duration * 60;
-
-        } else {
-
-            /*
-             * في حالة عدم وجود مدة:
-             * لا يوجد مؤقت.
-             */
-
-            remainingSeconds = 0;
-
-        }
-
-
-        /*
-         * التأكد هل الطالب سلّم الاختبار من قبل
-         */
-
-        const submitted =
-            await hasPreviousSubmission(
-                exam.id
-            );
-
-
-        if (submitted) {
-
-            alreadySubmitted = true;
-
-            renderAlreadySubmitted();
-
-            return;
-
-        }
-
-
-        renderExam();
-
-
-        if (
-            remainingSeconds > 0
-        ) {
-
-            startTimer();
-
-        }
-
-    }
-
-
-    /* =====================================================
-       Normalize Questions
-    ===================================================== */
-
-    function normalizeQuestions(
-        rawQuestions
-    ) {
-
-        if (
-            !Array.isArray(
-                rawQuestions
+        const questions =
+            Array.isArray(
+                exam.questions
             )
-        ) {
-
-            return [];
-
-        }
+                ? exam.questions.length
+                : 0;
 
 
-        return rawQuestions
-            .map(
-                (question, index) => {
+        return `
 
-                    const q = {
-                        ...question
-                    };
+            <div class="exam-card">
 
+                <div class="exam-card-header">
 
-                    q.id =
-                        String(
-                            q.id ||
-                            q.questionId ||
-                            index + 1
-                        );
+                    <h3>
+                        ${title}
+                    </h3>
 
+                    <span
+                        class="published-badge"
+                    >
+                        منشور
+                    </span>
 
-                    q.text =
-                        q.text ||
-                        q.question ||
-                        q.title ||
-                        "";
+                </div>
 
 
-                    /*
-                     * دعم:
-                     *
-                     * options: ["A","B","C"]
-                     *
-                     * أو:
-                     *
-                     * options: [
-                     *   {id:"a",text:"..."},
-                     *   ...
-                     * ]
-                     */
+                <div class="exam-description">
 
-                    q.options =
-                        normalizeOptions(
-                            q.options ||
-                            q.choices ||
-                            []
-                        );
+                    ${description}
 
-
-                    return q;
-
-                }
-            )
-            .filter(
-                question =>
-                    question.text
-            );
-
-    }
-
-
-    function normalizeOptions(
-        options
-    ) {
-
-        if (
-            !Array.isArray(
-                options
-            )
-        ) {
-
-            return [];
-
-        }
-
-
-        return options.map(
-            (option, index) => {
-
-                if (
-                    typeof option ===
-                    "object"
-                ) {
-
-                    return {
-
-                        id:
-                            String(
-                                option.id ||
-                                option.value ||
-                                option.key ||
-                                index
-                            ),
-
-                        text:
-                            option.text ||
-                            option.label ||
-                            option.value ||
-                            ""
-
-                    };
-
-                }
-
-
-                return {
-
-                    id:
-                        String(index),
-
-                    text:
-                        String(option)
-
-                };
-
-            }
-        );
-
-    }
-
-
-    /* =====================================================
-       Render Exam
-    ===================================================== */
-
-    function renderExam() {
-
-        const content =
-            document.getElementById(
-                "studentPageContent"
-            );
-
-
-        content.innerHTML = `
-
-            <div class="exam-header">
-
-                <h2>
-                    📝
-                    ${escapeHtml(
-                        exam.title ||
-                        exam.name ||
-                        "الاختبار"
-                    )}
-                </h2>
-
-
-                ${
-                    exam.description
-                        ? `
-                            <p>
-                                ${escapeHtml(
-                                    exam.description
-                                )}
-                            </p>
-                          `
-                        : `
-                            <p>
-                                أجب عن جميع الأسئلة ثم قم بتسليم الاختبار.
-                            </p>
-                          `
-                }
+                </div>
 
 
                 <div class="exam-meta">
 
+                    <span>
+                        📚 ${subject}
+                    </span>
+
+                    <span>
+                        📋 ${questions} سؤال
+                    </span>
+
                     ${
-                        exam.subject ||
-                        exam.subjectId
+                        duration
                             ? `
                                 <span>
-                                    📚
-                                    ${escapeHtml(
-                                        exam.subject ||
-                                        exam.subjectId
-                                    )}
+                                    ⏱️ ${duration} دقيقة
                                 </span>
-                              `
+                            `
                             : ""
                     }
 
-
-                    ${
-                        exam.duration ||
-                        exam.durationMinutes
-                            ? `
-                                <span>
-                                    ⏱️
-                                    ${escapeHtml(
-                                        String(
-                                            exam.duration ||
-                                            exam.durationMinutes
-                                        )
-                                    )}
-                                    دقيقة
-                                </span>
-                              `
-                            : ""
-                    }
-
-
-                    <span>
-                        📋
-                        ${questions.length}
-                        سؤال
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            ${
-                remainingSeconds > 0
-                    ? `
-                        <div class="timer-box">
-
-                            <div class="timer-title">
-                                ⏱️ الوقت المتبقي
-                            </div>
-
-                            <div
-                                id="timer"
-                                class="timer"
-                            >
-                                ${formatTimer(
-                                    remainingSeconds
-                                )}
-                            </div>
-
-                        </div>
-                      `
-                    : ""
-            }
-
-
-            <div class="progress-box">
-
-                <div class="progress-top">
-
-                    <span>
-                        التقدم في الاختبار
-                    </span>
-
-                    <span
-                        id="progressText"
-                    >
-                        1 / ${questions.length}
-                    </span>
-
                 </div>
 
 
-                <div class="progress-bar">
-
-                    <div
-                        id="progressFill"
-                        class="progress-fill"
-                    ></div>
-
-                </div>
-
-            </div>
-
-
-            <div class="question-list">
-
-                <div class="question-list-title">
-                    الانتقال إلى سؤال
-                </div>
-
-
-                <div
-                    id="questionNumbers"
-                    class="question-numbers"
-                ></div>
-
-            </div>
-
-
-            <div
-                id="questionContainer"
-            ></div>
-
-        `;
-
-
-        renderQuestionNumbers();
-
-        renderCurrentQuestion();
-
-    }
-
-
-    /* =====================================================
-       Render Question
-    ===================================================== */
-
-    function renderCurrentQuestion() {
-
-        const question =
-            questions[
-                currentQuestion
-            ];
-
-
-        if (!question) {
-            return;
-        }
-
-
-        const selected =
-            answers[
-                question.id
-            ];
-
-
-        const container =
-            document.getElementById(
-                "questionContainer"
-            );
-
-
-        container.innerHTML = `
-
-            <div class="question-card">
-
-                <div class="question-number">
-
-                    السؤال
-                    ${currentQuestion + 1}
-                    من
-                    ${questions.length}
-
-                </div>
-
-
-                <div class="question-text">
-
-                    ${escapeHtml(
-                        question.text
-                    )}
-
-                </div>
-
-
-                <div class="options">
-
-                    ${
-                        question.options
-                            .map(
-                                (option, index) => `
-
-                                    <label
-                                        class="
-                                            option
-                                            ${
-                                                String(
-                                                    selected
-                                                ) ===
-                                                String(
-                                                    option.id
-                                                )
-                                                    ? "selected"
-                                                    : ""
-                                            }
-                                        "
-                                        data-option-id="${escapeHtml(
-                                            option.id
-                                        )}"
-                                    >
-
-                                        <input
-                                            type="radio"
-                                            name="question"
-                                            value="${escapeHtml(
-                                                option.id
-                                            )}"
-                                            ${
-                                                String(
-                                                    selected
-                                                ) ===
-                                                String(
-                                                    option.id
-                                                )
-                                                    ? "checked"
-                                                    : ""
-                                            }
-                                        >
-
-                                        <span
-                                            class="option-circle"
-                                        ></span>
-
-                                        <span
-                                            class="option-label"
-                                        >
-                                            ${
-                                                String.fromCharCode(
-                                                    65 + index
-                                                )
-                                            }.
-
-                                            ${escapeHtml(
-                                                option.text
-                                            )}
-                                        </span>
-
-                                    </label>
-
-                                `
-                            )
-                            .join("")
-                    }
-
-                </div>
-
-
-                <div class="question-navigation">
-
-                    <button
-                        id="previousButton"
-                        class="nav-button"
-                        ${
-                            currentQuestion === 0
-                                ? "disabled"
-                                : ""
-                        }
-                    >
-                        ← السؤال السابق
-                    </button>
-
-
-                    ${
-                        currentQuestion ===
-                        questions.length - 1
-
-                            ? `
-
-                                <button
-                                    id="submitButton"
-                                    class="submit-button"
-                                >
-                                    📝 تسليم الاختبار
-                                </button>
-
-                              `
-
-                            : `
-
-                                <button
-                                    id="nextButton"
-                                    class="submit-button"
-                                >
-                                    السؤال التالي →
-                                </button>
-
-                              `
-                    }
-
-                </div>
-
-            </div>
-
-        `;
-
-
-        bindQuestionEvents();
-
-        updateProgress();
-
-        updateQuestionNumbers();
-
-    }
-
-
-    /* =====================================================
-       Question Events
-    ===================================================== */
-
-    function bindQuestionEvents() {
-
-        const options =
-            document.querySelectorAll(
-                ".option"
-            );
-
-
-        options.forEach(
-            option => {
-
-                option.addEventListener(
-                    "click",
-                    () => {
-
-                        const value =
-                            option.dataset
-                                .optionId;
-
-
-                        const question =
-                            questions[
-                                currentQuestion
-                            ];
-
-
-                        answers[
-                            question.id
-                        ] = value;
-
-
-                        document
-                            .querySelectorAll(
-                                ".option"
-                            )
-                            .forEach(
-                                item =>
-                                    item.classList
-                                        .remove(
-                                            "selected"
-                                        )
-                            );
-
-
-                        option.classList.add(
-                            "selected"
-                        );
-
-
-                        const radio =
-                            option.querySelector(
-                                "input"
-                            );
-
-
-                        if (radio) {
-
-                            radio.checked =
-                                true;
-
-                        }
-
-
-                        updateQuestionNumbers();
-
-                    }
-                );
-
-            }
-        );
-
-
-        const previousButton =
-            document.getElementById(
-                "previousButton"
-            );
-
-
-        if (previousButton) {
-
-            previousButton.addEventListener(
-                "click",
-                () => {
-
-                    if (
-                        currentQuestion >
-                        0
-                    ) {
-
-                        currentQuestion--;
-
-                        renderCurrentQuestion();
-
-                    }
-
-                }
-            );
-
-        }
-
-
-        const nextButton =
-            document.getElementById(
-                "nextButton"
-            );
-
-
-        if (nextButton) {
-
-            nextButton.addEventListener(
-                "click",
-                () => {
-
-                    if (
-                        currentQuestion <
-                        questions.length - 1
-                    ) {
-
-                        currentQuestion++;
-
-                        renderCurrentQuestion();
-
-                    }
-
-                }
-            );
-
-        }
-
-
-        const submitButton =
-            document.getElementById(
-                "submitButton"
-            );
-
-
-        if (submitButton) {
-
-            submitButton.addEventListener(
-                "click",
-                submitExam
-            );
-
-        }
-
-    }
-
-
-    /* =====================================================
-       Question Numbers
-    ===================================================== */
-
-    function renderQuestionNumbers() {
-
-        const container =
-            document.getElementById(
-                "questionNumbers"
-            );
-
-
-        if (!container) {
-            return;
-        }
-
-
-        container.innerHTML =
-            questions
-                .map(
-                    (question, index) => `
-
-                        <button
-                            type="button"
-                            class="
-                                question-number-button
-                                ${
-                                    index ===
-                                    currentQuestion
-                                        ? "current"
-                                        : ""
-                                }
-                                ${
-                                    answers[
-                                        question.id
-                                    ] !== undefined
-                                        ? "answered"
-                                        : ""
-                                }
-                            "
-                            data-question-index="${index}"
-                        >
-                            ${index + 1}
-                        </button>
-
-                    `
-                )
-                .join("");
-
-
-        container
-            .querySelectorAll(
-                "[data-question-index]"
-            )
-            .forEach(
-                button => {
-
-                    button.addEventListener(
-                        "click",
-                        () => {
-
-                            currentQuestion =
-                                Number(
-                                    button.dataset
-                                        .questionIndex
-                                );
-
-
-                            renderCurrentQuestion();
-
-                        }
-                    );
-
-                }
-            );
-
-    }
-
-
-    function updateQuestionNumbers() {
-
-        const buttons =
-            document.querySelectorAll(
-                ".question-number-button"
-            );
-
-
-        buttons.forEach(
-            (button, index) => {
-
-                button.classList.toggle(
-                    "current",
-                    index ===
-                    currentQuestion
-                );
-
-
-                button.classList.toggle(
-                    "answered",
-                    answers[
-                        questions[
-                            index
-                        ].id
-                    ] !== undefined
-                );
-
-            }
-        );
-
-    }
-
-
-    /* =====================================================
-       Progress
-    ===================================================== */
-
-    function updateProgress() {
-
-        const text =
-            document.getElementById(
-                "progressText"
-            );
-
-
-        const fill =
-            document.getElementById(
-                "progressFill"
-            );
-
-
-        if (text) {
-
-            text.textContent =
-                `${currentQuestion + 1} / ${questions.length}`;
-
-        }
-
-
-        if (fill) {
-
-            const percentage =
-                (
-                    (
-                        currentQuestion + 1
-                    ) /
-                    questions.length
-                ) * 100;
-
-
-            fill.style.width =
-                `${percentage}%`;
-
-        }
-
-    }
-
-
-    /* =====================================================
-       Timer
-    ===================================================== */
-
-    function startTimer() {
-
-        updateTimer();
-
-
-        timerInterval =
-            setInterval(
-                () => {
-
-                    remainingSeconds--;
-
-
-                    updateTimer();
-
-
-                    if (
-                        remainingSeconds <=
-                        0
-                    ) {
-
-                        clearInterval(
-                            timerInterval
-                        );
-
-
-                        autoSubmit();
-
-                    }
-
-                },
-                1000
-            );
-
-    }
-
-
-    function updateTimer() {
-
-        const timer =
-            document.getElementById(
-                "timer"
-            );
-
-
-        if (!timer) {
-            return;
-        }
-
-
-        timer.textContent =
-            formatTimer(
-                remainingSeconds
-            );
-
-
-        timer.classList.toggle(
-            "warning",
-            remainingSeconds <=
-            5 * 60 &&
-            remainingSeconds > 60
-        );
-
-
-        timer.classList.toggle(
-            "danger",
-            remainingSeconds <= 60
-        );
-
-    }
-
-
-    function formatTimer(
-        seconds
-    ) {
-
-        const safeSeconds =
-            Math.max(
-                0,
-                Number(seconds) || 0
-            );
-
-
-        const minutes =
-            Math.floor(
-                safeSeconds / 60
-            );
-
-
-        const remaining =
-            safeSeconds % 60;
-
-
-        return (
-            String(minutes)
-                .padStart(2, "0") +
-            ":" +
-            String(remaining)
-                .padStart(2, "0")
-        );
-
-    }
-
-
-    /* =====================================================
-       Submit
-    ===================================================== */
-
-    async function submitExam() {
-
-        if (submitting) {
-            return;
-        }
-
-
-        const answeredCount =
-            Object.keys(
-                answers
-            ).length;
-
-
-        const unanswered =
-            questions.length -
-            answeredCount;
-
-
-        const message =
-            unanswered > 0
-
-                ? `
-                    لديك
-                    ${unanswered}
-                    سؤال بدون إجابة.
-
-                    هل تريد تسليم الاختبار؟
-                  `
-
-                : `
-                    هل أنت متأكد من تسليم الاختبار؟
-                  `;
-
-
-        if (
-            !window.confirm(
-                message
-            )
-        ) {
-
-            return;
-
-        }
-
-
-        await finishExam(
-            "manual"
-        );
-
-    }
-
-
-    async function autoSubmit() {
-
-        if (submitting) {
-            return;
-        }
-
-
-        alert(
-            "انتهى وقت الاختبار، سيتم تسليم إجاباتك تلقائيًا."
-        );
-
-
-        await finishExam(
-            "timeout"
-        );
-
-    }
-
-
-    /* =====================================================
-       Finish Exam
-    ===================================================== */
-
-    async function finishExam(
-        submitReason
-    ) {
-
-        if (submitting) {
-            return;
-        }
-
-
-        submitting = true;
-
-
-        if (timerInterval) {
-
-            clearInterval(
-                timerInterval
-            );
-
-        }
-
-
-        const content =
-            document.getElementById(
-                "studentPageContent"
-            );
-
-
-        content.innerHTML = `
-
-            <div class="state-box">
-
-                ⏳
-
-                <br>
-
-                جاري تصحيح الاختبار
-                وحفظ النتيجة...
-
-            </div>
-
-        `;
-
-
-        try {
-
-            const result =
-                calculateResult();
-
-
-            /*
-             * تسجيل النتيجة.
-             *
-             * collection:
-             * examResults
-             */
-
-            const resultData = {
-
-                examId:
-                    exam.id,
-
-                studentId:
-                    student.id,
-
-                studentName:
-                    student.name ||
-                    "",
-
-                stageId:
-                    student.stageId ||
-                    "",
-
-                examTitle:
-                    exam.title ||
-                    exam.name ||
-                    "",
-
-                subject:
-                    exam.subject ||
-                    exam.subjectId ||
-                    "",
-
-                score:
-                    result.score,
-
-                total:
-                    result.total,
-
-                percentage:
-                    result.percentage,
-
-                correctAnswers:
-                    result.correctAnswers,
-
-                wrongAnswers:
-                    result.wrongAnswers,
-
-                unanswered:
-                    result.unanswered,
-
-                submitReason:
-                    submitReason,
-
-                submittedAt:
-                    new Date(),
-
-                /*
-                 * لا نحفظ الإجابات الصحيحة
-                 * داخل النتيجة.
-                 */
-
-                answers:
-                    answers
-
-            };
-
-
-            /*
-             * منع التكرار قبل الإضافة.
-             */
-
-            const existing =
-                await hasPreviousSubmission(
-                    exam.id
-                );
-
-
-            if (existing) {
-
-                alreadySubmitted = true;
-
-                renderAlreadySubmitted();
-
-                return;
-
-            }
-
-
-            await addDoc(
-                collection(
-                    db,
-                    "examResults"
-                ),
-                resultData
-            );
-
-
-            renderResult(
-                result
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                "Submit exam error:",
-                error
-            );
-
-
-            content.innerHTML = `
-
-                <div
-                    class="
-                        state-box
-                        error-box
-                    "
+                <button
+                    class="start-button"
+                    data-exam-id="${escapeAttribute(
+                        exam.id
+                    )}"
                 >
 
-                    ⚠️
+                    🚀 بدء الاختبار
 
-                    <br>
+                </button>
 
-                    حدث خطأ أثناء حفظ النتيجة.
+            </div>
 
-                    <br><br>
+        `;
 
-                    ${escapeHtml(
-                        studentErrorMessage(
-                            error
-                        )
-                    )}
-
-                    <br><br>
-
-                    <button
-                        class="submit-button"
-                        id="retrySubmit"
-                    >
-                        إعادة المحاولة
-                    </button>
-
-                </div>
-
-            `;
+    }
 
 
-            const retry =
-                document.getElementById(
-                    "retrySubmit"
+    /* =========================================================
+       Button Events
+    ========================================================= */
+
+    document.addEventListener(
+        "click",
+        event => {
+
+            const button =
+                event.target.closest(
+                    "[data-exam-id]"
                 );
 
 
-            if (retry) {
-
-                retry.addEventListener(
-                    "click",
-                    () =>
-                        finishExam(
-                            submitReason
-                        )
-                );
-
+            if (!button) {
+                return;
             }
 
 
-        } finally {
-
-            submitting = false;
-
-        }
-
-    }
+            const examId =
+                button.dataset.examId;
 
 
-    /* =====================================================
-       Calculate Result
-    ===================================================== */
-
-    function calculateResult() {
-
-        let correctAnswers = 0;
-
-        let wrongAnswers = 0;
-
-        let unanswered = 0;
-
-
-        questions.forEach(
-            question => {
-
-                const selected =
-                    answers[
-                        question.id
-                    ];
-
-
-                if (
-                    selected ===
-                    undefined ||
-                    selected ===
-                    null ||
-                    selected === ""
-                ) {
-
-                    unanswered++;
-
-                    return;
-
-                }
-
-
-                const correct =
-                    getCorrectAnswer(
-                        question
-                    );
-
-
-                if (
-                    normalizeAnswer(
-                        selected
-                    ) ===
-                    normalizeAnswer(
-                        correct
-                    )
-                ) {
-
-                    correctAnswers++;
-
-                } else {
-
-                    wrongAnswers++;
-
-                }
-
+            if (!examId) {
+                return;
             }
-        );
 
 
-        const total =
-            questions.length;
-
-
-        const percentage =
-            total > 0
-
-                ? Number(
-                    (
-                        (
-                            correctAnswers /
-                            total
-                        ) *
-                        100
-                    ).toFixed(2)
-                )
-
-                : 0;
-
-
-        return {
-
-            correctAnswers,
-
-            wrongAnswers,
-
-            unanswered,
-
-            total,
-
-            score:
-                correctAnswers,
-
-            percentage
-
-        };
-
-    }
-
-
-    /* =====================================================
-       Correct Answer
-    ===================================================== */
-
-    function getCorrectAnswer(
-        question
-    ) {
-
-        /*
-         * ندعم عدة أسماء حتى لا نكسر
-         * شكل البيانات الحالي.
-         */
-
-        return (
-            question.correctAnswer ??
-            question.answer ??
-            question.correct ??
-            question.correctOption ??
-            question.correctOptionId ??
-            ""
-        );
-
-    }
-
-
-    function normalizeAnswer(
-        value
-    ) {
-
-        if (
-            value === null ||
-            value === undefined
-        ) {
-
-            return "";
-
-        }
-
-
-        if (
-            typeof value ===
-            "object"
-        ) {
-
-            return String(
-                value.id ??
-                value.value ??
-                value.text ??
-                ""
-            )
-                .trim()
-                .toLowerCase();
-
-        }
-
-
-        return String(
-            value
-        )
-            .trim()
-            .toLowerCase();
-
-    }
-
-
-    /* =====================================================
-       Previous Submission
-    ===================================================== */
-
-    async function hasPreviousSubmission(
-        examId
-    ) {
-
-        /*
-         * مهم:
-         *
-         * هذا الاستعلام يحتاج Index/Rules
-         * مناسبة في Firestore.
-         */
-
-        const resultsQuery =
-            query(
-
-                collection(
-                    db,
-                    "examResults"
-                ),
-
-                where(
-                    "examId",
-                    "==",
+            window.location.href =
+                `exam.html?id=${encodeURIComponent(
                     examId
-                ),
+                )}`;
 
-                where(
-                    "studentId",
-                    "==",
-                    student.id
-                )
-
-            );
+        }
+    );
 
 
-        const snapshot =
-            await getDocs(
-                resultsQuery
-            );
-
-
-        return !snapshot.empty;
-
-    }
-
-
-    /* =====================================================
-       Result Screen
-    ===================================================== */
-
-    function renderResult(
-        result
-    ) {
-
-        const content =
-            document.getElementById(
-                "studentPageContent"
-            );
-
-
-        content.innerHTML = `
-
-            <div class="result-card">
-
-                <div class="result-icon">
-                    🎉
-                </div>
-
-
-                <h2>
-                    تم تسليم الاختبار بنجاح
-                </h2>
-
-
-                <div class="result-score">
-
-                    ${result.score}
-
-                    /
-
-                    ${result.total}
-
-                </div>
-
-
-                <div class="result-details">
-
-                    النسبة المئوية:
-                    <strong>
-                        ${result.percentage}%
-                    </strong>
-
-                    <br>
-
-                    الإجابات الصحيحة:
-                    ${result.correctAnswers}
-
-                    <br>
-
-                    الإجابات الخاطئة:
-                    ${result.wrongAnswers}
-
-                    <br>
-
-                    بدون إجابة:
-                    ${result.unanswered}
-
-                </div>
-
-
-                <div class="result-actions">
-
-                    <a
-                        href="exams.html"
-                        class="result-button"
-                    >
-                        العودة إلى الاختبارات
-                    </a>
-
-                </div>
-
-            </div>
-
-        `;
-
-    }
-
-
-    /* =====================================================
-       Already Submitted
-    ===================================================== */
-
-    function renderAlreadySubmitted() {
-
-        const content =
-            document.getElementById(
-                "studentPageContent"
-            );
-
-
-        content.innerHTML = `
-
-            <div class="result-card">
-
-                <div class="result-icon">
-                    ℹ️
-                </div>
-
-
-                <h2>
-                    تم أداء هذا الاختبار مسبقًا
-                </h2>
-
-
-                <div class="result-details">
-
-                    لا يمكنك إعادة الاختبار مرة أخرى.
-
-                </div>
-
-
-                <div class="result-actions">
-
-                    <a
-                        href="exams.html"
-                        class="result-button"
-                    >
-                        العودة إلى الاختبارات
-                    </a>
-
-                </div>
-
-            </div>
-
-        `;
-
-    }
-
-
-    /* =====================================================
+    /* =========================================================
        Error
-    ===================================================== */
+    ========================================================= */
 
     function showError(
         message
     ) {
 
-        const content =
+        const container =
             document.getElementById(
-                "studentPageContent"
+                "examsContainer"
             );
 
 
-        if (!content) {
-            return;
-        }
+        container.innerHTML = `
 
+            <div class="error-box">
 
-        content.innerHTML = `
-
-            <div
-                class="
-                    state-box
-                    error-box
-                "
-            >
-
-                ⚠️
-
-                <br>
-
-                ${escapeHtml(
+                🔴 ${escapeHtml(
                     message
                 )}
-
-                <br><br>
-
-                <a
-                    href="exams.html"
-                    class="result-button"
-                >
-                    العودة إلى الاختبارات
-                </a>
 
             </div>
 
@@ -2608,7 +881,83 @@
 
     }
 
+
+    /* =========================================================
+       Friendly Firebase Errors
+    ========================================================= */
+
+    function getFriendlyError(
+        error
+    ) {
+
+        if (
+            error?.code ===
+            "permission-denied"
+        ) {
+
+            return (
+                "ليس لديك صلاحية للوصول إلى الاختبارات. " +
+                "تأكد من أن الاشتراك فعال وأن المرحلة الدراسية صحيحة."
+            );
+
+        }
+
+
+        return (
+            error?.message ||
+            "حدث خطأ أثناء تحميل الاختبارات."
+        );
+
+    }
+
+
+    /* =========================================================
+       Escape
+    ========================================================= */
+
+    function escapeHtml(
+        value
+    ) {
+
+        return String(
+            value ?? ""
+        )
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    function escapeAttribute(
+        value
+    ) {
+
+        return escapeHtml(
+            value
+        );
+
+    }
+
 </script>
+
 
 </body>
 
