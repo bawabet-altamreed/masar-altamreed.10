@@ -1,0 +1,216 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>الجدول | مسار التمريض</title>
+
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial, Tahoma, sans-serif;
+    background: #f3f8fb;
+    color: #17324a;
+}
+
+.page {
+    max-width: 1100px;
+    margin: auto;
+    padding: 25px;
+}
+
+.panel {
+    background: white;
+    border: 1px solid #e3edf2;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+.item {
+    padding: 15px 0;
+    border-bottom: 1px solid #edf1f4;
+}
+
+.item:last-child {
+    border-bottom: 0;
+}
+
+.title {
+    font-weight: bold;
+    margin-bottom: 7px;
+}
+
+.meta {
+    color: #71808d;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="studentApp"></div>
+
+<script type="module">
+
+import {
+    protectStudentPage,
+    createStudentLayout,
+    getCollection,
+    escapeHtml,
+    formatDateTime,
+    studentErrorMessage
+} from "../src/student/student.js";
+
+
+const {
+    student
+} = await protectStudentPage();
+
+
+createStudentLayout(
+    student,
+    "schedule"
+);
+
+
+document.getElementById(
+    "studentPageTitle"
+).textContent =
+    "جدول المحاضرات";
+
+
+const content =
+    document.getElementById(
+        "studentPageContent"
+    );
+
+
+content.innerHTML = `
+
+<div class="page">
+
+    <div class="panel">
+
+        <h2>
+            📅 جدول المحاضرات
+        </h2>
+
+        <div id="schedule">
+            جاري تحميل الجدول...
+        </div>
+
+    </div>
+
+</div>
+
+`;
+
+
+try {
+
+    const lectures =
+        await getCollection(
+            "lectures"
+        );
+
+
+    const filtered =
+        lectures
+            .filter(
+                lecture =>
+                    !lecture.stageId ||
+                    lecture.stageId ===
+                    student.stageId
+            );
+
+
+    const box =
+        document.getElementById(
+            "schedule"
+        );
+
+
+    if (!filtered.length) {
+
+        box.innerHTML =
+            `<p class="meta">
+                لا توجد محاضرات في الجدول حاليًا.
+            </p>`;
+
+    } else {
+
+        box.innerHTML =
+            filtered
+                .map(
+                    lecture => `
+
+                    <div class="item">
+
+                        <div class="title">
+                            ${escapeHtml(
+                                lecture.title ||
+                                lecture.name ||
+                                "محاضرة"
+                            )}
+                        </div>
+
+                        <div class="meta">
+
+                            المادة:
+                            ${escapeHtml(
+                                lecture.subjectId ||
+                                lecture.subject ||
+                                "—"
+                            )}
+
+                            <br>
+
+                            ${lecture.startAt
+                                ? "الموعد: " +
+                                  formatDateTime(
+                                      lecture.startAt
+                                  )
+                                : ""
+                            }
+
+                        </div>
+
+                    </div>
+
+                    `
+                )
+                .join("");
+
+    }
+
+} catch (error) {
+
+    document.getElementById(
+        "schedule"
+    ).innerHTML =
+        `<p class="meta">
+            ${escapeHtml(
+                studentErrorMessage(error)
+            )}
+        </p>`;
+
+}
+
+</script>
+
+</body>
+</html>
