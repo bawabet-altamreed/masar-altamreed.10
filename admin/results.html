@@ -1,0 +1,1949 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>نتائج الاختبارات | مسار التمريض</title>
+
+<link
+    rel="stylesheet"
+    href="../src/admin/admin.css"
+>
+
+<style>
+
+    .filters {
+        display: grid;
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .filter-group label {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        color: #607080;
+        margin-bottom: 7px;
+    }
+
+    .filter-group select {
+        width: 100%;
+        height: 42px;
+        border: 1px solid #dce7ed;
+        border-radius: 9px;
+        padding: 0 12px;
+        background: white;
+        color: #17324a;
+        outline: none;
+    }
+
+    .filter-group select:focus {
+        border-color: #087ea4;
+    }
+
+    .stats-row {
+        display: grid;
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .result-stat {
+        background: white;
+        border: 1px solid #e5edf3;
+        border-radius: 14px;
+        padding: 18px;
+    }
+
+    .result-stat span {
+        display: block;
+        color: #82909c;
+        font-size: 11px;
+        margin-bottom: 8px;
+    }
+
+    .result-stat strong {
+        font-size: 24px;
+    }
+
+    .results-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .results-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 900px;
+    }
+
+    .results-table th {
+        background: #f7fafc;
+        color: #657585;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 13px 10px;
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    .results-table td {
+        padding: 13px 10px;
+        border-top: 1px solid #edf1f4;
+        font-size: 12px;
+        vertical-align: middle;
+    }
+
+    .student-name {
+        font-weight: 700;
+        color: #17324a;
+    }
+
+    .student-id {
+        display: block;
+        color: #8a98a3;
+        font-size: 10px;
+        margin-top: 3px;
+        direction: ltr;
+        text-align: right;
+    }
+
+    .score-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 60px;
+        padding: 6px 9px;
+        border-radius: 8px;
+        background: #eaf7fb;
+        color: #087ea4;
+        font-weight: 700;
+    }
+
+    .percentage {
+        font-weight: 700;
+    }
+
+    .percentage.high {
+        color: #16834f;
+    }
+
+    .percentage.medium {
+        color: #b7791f;
+    }
+
+    .percentage.low {
+        color: #b42318;
+    }
+
+    .rank {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #f0f4f7;
+        color: #526474;
+        font-weight: 700;
+        font-size: 11px;
+    }
+
+    .rank.top {
+        background: #eaf7fb;
+        color: #087ea4;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        padding: 5px 9px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .status-completed {
+        background: #eaf8f0;
+        color: #16834f;
+    }
+
+    .status-not-completed {
+        background: #fff5e8;
+        color: #b7791f;
+    }
+
+    .submit-reason {
+        font-size: 10px;
+        color: #71808d;
+    }
+
+    .empty-results {
+        padding: 45px 20px;
+        text-align: center;
+        color: #8795a0;
+        line-height: 2;
+    }
+
+    .loading {
+        text-align: center;
+        padding: 40px;
+        color: #8795a0;
+    }
+
+    .error-message {
+        background: #fff1f1;
+        border: 1px solid #ffd5d5;
+        color: #b42318;
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+        font-size: 12px;
+    }
+
+    .refresh-button {
+        border: 1px solid #dce7ed;
+        background: white;
+        color: #087ea4;
+        padding: 9px 14px;
+        border-radius: 9px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 11px;
+    }
+
+    .refresh-button:hover {
+        background: #eef8fb;
+    }
+
+    @media (max-width: 900px) {
+
+        .filters {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-row {
+            grid-template-columns:
+                repeat(2, 1fr);
+        }
+
+    }
+
+    @media (max-width: 500px) {
+
+        .stats-row {
+            grid-template-columns: 1fr;
+        }
+
+    }
+
+</style>
+
+</head><body><div id="adminApp"></div><script type="module">
+
+    import {
+        protectAdminPage
+    } from "../src/admin/auth-guard.js";
+
+    import {
+        createAdminLayout
+    } from "../src/admin/layout.js";
+
+    import {
+        db
+    } from "../src/firebase/init.js";
+
+    import {
+        collection,
+        getDocs,
+        query,
+        where
+    } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+    /* =====================================================
+       State
+    ===================================================== */
+
+    let exams = [];
+
+    let results = [];
+
+    let students = [];
+
+    let selectedExamId = "";
+
+    let selectedStageId = "";
+
+
+    /* =====================================================
+       Start
+    ===================================================== */
+
+    try {
+
+        const admin =
+            await protectAdminPage();
+
+        createAdminLayout(
+            admin.data
+        );
+
+        document.getElementById(
+            "pageTitle"
+        ).textContent =
+            "نتائج الاختبارات";
+
+
+        document.getElementById(
+            "pageContent"
+        ).innerHTML = `
+
+            <div class="stats-row">
+
+                <div class="result-stat">
+                    <span>
+                        إجمالي النتائج
+                    </span>
+
+                    <strong id="totalResults">
+                        0
+                    </strong>
+                </div>
+
+
+                <div class="result-stat">
+                    <span>
+                        الطلاب الذين أدوا الاختبار
+                    </span>
+
+                    <strong id="completedCount">
+                        0
+                    </strong>
+                </div>
+
+
+                <div class="result-stat">
+                    <span>
+                        الطلاب الذين لم يؤدوا
+                    </span>
+
+                    <strong id="notCompletedCount">
+                        0
+                    </strong>
+                </div>
+
+
+                <div class="result-stat">
+                    <span>
+                        متوسط النسبة
+                    </span>
+
+                    <strong id="averagePercentage">
+                        0%
+                    </strong>
+                </div>
+
+            </div>
+
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h2>
+                        نتائج الطلاب
+                    </h2>
+
+                    <button
+                        id="refreshButton"
+                        class="refresh-button"
+                    >
+                        🔄 تحديث
+                    </button>
+
+                </div>
+
+
+                <div class="filters">
+
+                    <div class="filter-group">
+
+                        <label>
+                            الاختبار
+                        </label>
+
+                        <select
+                            id="examFilter"
+                        >
+
+                            <option value="">
+                                كل الاختبارات
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="filter-group">
+
+                        <label>
+                            المرحلة
+                        </label>
+
+                        <select
+                            id="stageFilter"
+                        >
+
+                            <option value="">
+                                كل المراحل
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="filter-group">
+
+                        <label>
+                            الحالة
+                        </label>
+
+                        <select
+                            id="statusFilter"
+                        >
+
+                            <option value="completed">
+                                الطلاب الذين أدوا
+                            </option>
+
+                            <option value="notCompleted">
+                                الطلاب الذين لم يؤدوا
+                            </option>
+
+                            <option value="all">
+                                الجميع
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="resultsContainer"
+                    class="results-table-wrapper"
+                >
+
+                    <div class="loading">
+                        جاري تحميل البيانات...
+                    </div>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        await loadData();
+
+        bindFilters();
+
+    } catch (error) {
+
+        console.error(
+            "Admin results error:",
+            error
+        );
+
+        const content =
+            document.getElementById(
+                "pageContent"
+            );
+
+        if (content) {
+
+            content.innerHTML = `
+
+                <div class="error-message">
+
+                    حدث خطأ أثناء تحميل نتائج الاختبارات.
+
+                </div>
+
+            `;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       Load Data
+    ===================================================== */
+
+    async function loadData() {
+
+        const [
+            examsSnapshot,
+            resultsSnapshot,
+            usersSnapshot
+        ] = await Promise.all([
+
+            getDocs(
+                collection(
+                    db,
+                    "exams"
+                )
+            ),
+
+            getDocs(
+                collection(
+                    db,
+                    "examResults"
+                )
+            ),
+
+            getDocs(
+                query(
+                    collection(
+                        db,
+                        "users"
+                    ),
+                    where(
+                        "role",
+                        "==",
+                        "student"
+                    )
+                )
+            )
+
+        ]);
+
+
+        exams =
+            examsSnapshot.docs.map(
+                doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                })
+            );
+
+
+        results =
+            resultsSnapshot.docs.map(
+                doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                })
+            );
+
+
+        students =
+            usersSnapshot.docs.map(
+                doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                })
+            );
+
+
+        populateExamFilter();
+
+        populateStageFilter();
+
+        renderResults();
+
+    }
+
+
+    /* =====================================================
+       Filters
+    ===================================================== */
+
+    function populateExamFilter() {
+
+        const select =
+            document.getElementById(
+                "examFilter"
+            );
+
+        const uniqueExams =
+            new Map();
+
+
+        exams.forEach(
+            exam => {
+
+                uniqueExams.set(
+                    exam.id,
+                    exam
+                );
+
+            }
+        );
+
+
+        results.forEach(
+            result => {
+
+                if (
+                    result.examId &&
+                    !uniqueExams.has(
+                        result.examId
+                    )
+                ) {
+
+                    uniqueExams.set(
+                        result.examId,
+                        {
+                            id:
+                                result.examId,
+
+                            title:
+                                result.examTitle ||
+                                "اختبار"
+                        }
+                    );
+
+                }
+
+            }
+        );
+
+
+        select.innerHTML = `
+
+            <option value="">
+                كل الاختبارات
+            </option>
+
+            ${[...uniqueExams.values()]
+                .map(
+                    exam => `
+
+                        <option
+                            value="${escapeHtml(
+                                exam.id
+                            )}"
+                        >
+                            ${escapeHtml(
+                                exam.title ||
+                                exam.name ||
+                                "اختبار"
+                            )}
+                        </option>
+
+                    `
+                )
+                .join("")
+            }
+
+        `;
+
+    }
+
+
+    function populateStageFilter() {
+
+        const select =
+            document.getElementById(
+                "stageFilter"
+            );
+
+
+        const stages =
+            new Set();
+
+
+        students.forEach(
+            student => {
+
+                if (
+                    student.stageId
+                ) {
+
+                    stages.add(
+                        String(
+                            student.stageId
+                        )
+                    );
+
+                }
+
+            }
+        );
+
+
+        results.forEach(
+            result => {
+
+                if (
+                    result.stageId
+                ) {
+
+                    stages.add(
+                        String(
+                            result.stageId
+                        )
+                    );
+
+                }
+
+            }
+        );
+
+
+        select.innerHTML = `
+
+            <option value="">
+                كل المراحل
+            </option>
+
+            ${[...stages]
+                .sort()
+                .map(
+                    stage => `
+
+                        <option
+                            value="${escapeHtml(
+                                stage
+                            )}"
+                        >
+                            ${escapeHtml(
+                                getStageName(
+                                    stage
+                                )
+                            )}
+                        </option>
+
+                    `
+                )
+                .join("")
+            }
+
+        `;
+
+    }
+
+
+    function bindFilters() {
+
+        document
+            .getElementById(
+                "examFilter"
+            )
+            .addEventListener(
+                "change",
+                event => {
+
+                    selectedExamId =
+                        event.target.value;
+
+                    renderResults();
+
+                }
+            );
+
+
+        document
+            .getElementById(
+                "stageFilter"
+            )
+            .addEventListener(
+                "change",
+                event => {
+
+                    selectedStageId =
+                        event.target.value;
+
+                    renderResults();
+
+                }
+            );
+
+
+        document
+            .getElementById(
+                "statusFilter"
+            )
+            .addEventListener(
+                "change",
+                renderResults
+            );
+
+
+        document
+            .getElementById(
+                "refreshButton"
+            )
+            .addEventListener(
+                "click",
+                async () => {
+
+                    document
+                        .getElementById(
+                            "resultsContainer"
+                        )
+                        .innerHTML = `
+
+                            <div class="loading">
+                                جاري تحديث البيانات...
+                            </div>
+
+                        `;
+
+                    await loadData();
+
+                }
+            );
+
+    }
+
+
+    /* =====================================================
+       Render
+    ===================================================== */
+
+    function renderResults() {
+
+        const status =
+            document.getElementById(
+                "statusFilter"
+            )?.value ||
+            "completed";
+
+
+        let filteredResults =
+            [...results];
+
+
+        if (selectedExamId) {
+
+            filteredResults =
+                filteredResults.filter(
+                    result =>
+                        String(
+                            result.examId
+                        ) ===
+                        String(
+                            selectedExamId
+                        )
+                );
+
+        }
+
+
+        if (selectedStageId) {
+
+            filteredResults =
+                filteredResults.filter(
+                    result =>
+                        String(
+                            result.stageId
+                        ) ===
+                        String(
+                            selectedStageId
+                        )
+                );
+
+        }
+
+
+        /*
+         * الترتيب:
+         *
+         * 1. percentage
+         * 2. score
+         */
+
+        filteredResults.sort(
+            (a, b) => {
+
+                const percentageA =
+                    Number(
+                        a.percentage || 0
+                    );
+
+                const percentageB =
+                    Number(
+                        b.percentage || 0
+                    );
+
+
+                if (
+                    percentageB !==
+                    percentageA
+                ) {
+
+                    return (
+                        percentageB -
+                        percentageA
+                    );
+
+                }
+
+
+                return (
+                    Number(
+                        b.score || 0
+                    ) -
+                    Number(
+                        a.score || 0
+                    )
+                );
+
+            }
+        );
+
+
+        const completedIds =
+            new Set(
+                filteredResults.map(
+                    result =>
+                        String(
+                            result.studentId
+                        )
+                )
+            );
+
+
+        let notCompletedStudents =
+            [];
+
+
+        /*
+         * الطلاب الذين لم يؤدوا الاختبار
+         *
+         * يظهر هذا القسم فقط عند اختيار
+         * اختبار محدد.
+         */
+
+        if (
+            selectedExamId
+        ) {
+
+            notCompletedStudents =
+                students.filter(
+                    student => {
+
+                        if (
+                            selectedStageId &&
+                            String(
+                                student.stageId
+                            ) !==
+                            String(
+                                selectedStageId
+                            )
+                        ) {
+
+                            return false;
+
+                        }
+
+
+                        return !completedIds.has(
+                            String(
+                                student.id
+                            )
+                        );
+
+                    }
+                );
+
+        }
+
+
+        updateStats(
+            filteredResults,
+            notCompletedStudents
+        );
+
+
+        const container =
+            document.getElementById(
+                "resultsContainer"
+            );
+
+
+        if (
+            status ===
+            "notCompleted"
+        ) {
+
+            renderNotCompleted(
+                container,
+                notCompletedStudents
+            );
+
+            return;
+
+        }
+
+
+        if (
+            status ===
+            "all"
+        ) {
+
+            renderAll(
+                container,
+                filteredResults,
+                notCompletedStudents
+            );
+
+            return;
+
+        }
+
+
+        renderCompleted(
+            container,
+            filteredResults
+        );
+
+    }
+
+
+    /* =====================================================
+       Completed
+    ===================================================== */
+
+    function renderCompleted(
+        container,
+        data
+    ) {
+
+        if (!data.length) {
+
+            container.innerHTML = `
+
+                <div class="empty-results">
+
+                    📭
+
+                    <br>
+
+                    لا توجد نتائج مطابقة للفلاتر الحالية.
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        container.innerHTML = `
+
+            <table class="results-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            الترتيب
+                        </th>
+
+                        <th>
+                            الطالب
+                        </th>
+
+                        <th>
+                            الاختبار
+                        </th>
+
+                        <th>
+                            المرحلة
+                        </th>
+
+                        <th>
+                            الدرجة
+                        </th>
+
+                        <th>
+                            النسبة
+                        </th>
+
+                        <th>
+                            الإجابات
+                        </th>
+
+                        <th>
+                            التسليم
+                        </th>
+
+                        <th>
+                            التاريخ
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    ${data
+                        .map(
+                            (result, index) =>
+                                resultRow(
+                                    result,
+                                    index + 1
+                                )
+                        )
+                        .join("")
+                    }
+
+                </tbody>
+
+            </table>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       Not Completed
+    ===================================================== */
+
+    function renderNotCompleted(
+        container,
+        data
+    ) {
+
+        if (!selectedExamId) {
+
+            container.innerHTML = `
+
+                <div class="empty-results">
+
+                    ⚠️
+
+                    <br>
+
+                    اختر اختبارًا أولًا لمعرفة الطلاب الذين لم يؤدوه.
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        if (!data.length) {
+
+            container.innerHTML = `
+
+                <div class="empty-results">
+
+                    🎉
+
+                    <br>
+
+                    جميع الطلاب في النطاق المحدد أدوا هذا الاختبار.
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        container.innerHTML = `
+
+            <table class="results-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            #
+                        </th>
+
+                        <th>
+                            الطالب
+                        </th>
+
+                        <th>
+                            المرحلة
+                        </th>
+
+                        <th>
+                            الحالة
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    ${data
+                        .map(
+                            (student, index) => `
+
+                                <tr>
+
+                                    <td>
+                                        ${index + 1}
+                                    </td>
+
+                                    <td>
+
+                                        <span class="student-name">
+
+                                            ${escapeHtml(
+                                                student.name ||
+                                                student.displayName ||
+                                                "طالب"
+                                            )}
+
+                                        </span>
+
+                                        <span class="student-id">
+
+                                            ${escapeHtml(
+                                                student.id
+                                            )}
+
+                                        </span>
+
+                                    </td>
+
+                                    <td>
+
+                                        ${escapeHtml(
+                                            getStageName(
+                                                student.stageId
+                                            )
+                                        )}
+
+                                    </td>
+
+                                    <td>
+
+                                        <span
+                                            class="
+                                                status-badge
+                                                status-not-completed
+                                            "
+                                        >
+                                            لم يؤدِ الاختبار
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+                            `
+                        )
+                        .join("")
+                    }
+
+                </tbody>
+
+            </table>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       All
+    ===================================================== */
+
+    function renderAll(
+        container,
+        completed,
+        notCompleted
+    ) {
+
+        if (
+            !completed.length &&
+            !notCompleted.length
+        ) {
+
+            container.innerHTML = `
+
+                <div class="empty-results">
+
+                    لا توجد بيانات.
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        container.innerHTML = `
+
+            ${
+                completed.length
+                    ? `
+
+                        <h3
+                            style="
+                                margin-bottom:12px;
+                                font-size:14px;
+                            "
+                        >
+                            ✅ الطلاب الذين أدوا الاختبار
+                        </h3>
+
+                        <table class="results-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        الترتيب
+                                    </th>
+
+                                    <th>
+                                        الطالب
+                                    </th>
+
+                                    <th>
+                                        الاختبار
+                                    </th>
+
+                                    <th>
+                                        المرحلة
+                                    </th>
+
+                                    <th>
+                                        الدرجة
+                                    </th>
+
+                                    <th>
+                                        النسبة
+                                    </th>
+
+                                    <th>
+                                        التاريخ
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                ${completed
+                                    .map(
+                                        (
+                                            result,
+                                            index
+                                        ) =>
+                                            resultRow(
+                                                result,
+                                                index + 1
+                                            )
+                                    )
+                                    .join("")
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    `
+                    : ""
+            }
+
+
+            ${
+                notCompleted.length
+                    ? `
+
+                        <div
+                            style="
+                                margin-top:30px;
+                            "
+                        >
+
+                            <h3
+                                style="
+                                    margin-bottom:12px;
+                                    font-size:14px;
+                                "
+                            >
+                                ⏳ الطلاب الذين لم يؤدوا الاختبار
+                            </h3>
+
+
+                            <table class="results-table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            #
+                                        </th>
+
+                                        <th>
+                                            الطالب
+                                        </th>
+
+                                        <th>
+                                            المرحلة
+                                        </th>
+
+                                        <th>
+                                            الحالة
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+                                    ${notCompleted
+                                        .map(
+                                            (
+                                                student,
+                                                index
+                                            ) => `
+
+                                                <tr>
+
+                                                    <td>
+                                                        ${index + 1}
+                                                    </td>
+
+                                                    <td>
+
+                                                        <span class="student-name">
+
+                                                            ${escapeHtml(
+                                                                student.name ||
+                                                                student.displayName ||
+                                                                "طالب"
+                                                            )}
+
+                                                        </span>
+
+                                                        <span class="student-id">
+
+                                                            ${escapeHtml(
+                                                                student.id
+                                                            )}
+
+                                                        </span>
+
+                                                    </td>
+
+                                                    <td>
+
+                                                        ${escapeHtml(
+                                                            getStageName(
+                                                                student.stageId
+                                                            )
+                                                        )}
+
+                                                    </td>
+
+                                                    <td>
+
+                                                        <span
+                                                            class="
+                                                                status-badge
+                                                                status-not-completed
+                                                            "
+                                                        >
+                                                            لم يؤدِ الاختبار
+                                                        </span>
+
+                                                    </td>
+
+                                                </tr>
+
+                                            `
+                                        )
+                                        .join("")
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    `
+                    : ""
+            }
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       Result Row
+    ===================================================== */
+
+    function resultRow(
+        result,
+        rank
+    ) {
+
+        const percentage =
+            Number(
+                result.percentage || 0
+            );
+
+
+        let percentageClass =
+            "low";
+
+
+        if (
+            percentage >= 80
+        ) {
+
+            percentageClass =
+                "high";
+
+        } else if (
+            percentage >= 50
+        ) {
+
+            percentageClass =
+                "medium";
+
+        }
+
+
+        const submitReason =
+            result.submitReason ===
+            "timeout"
+                ? "انتهاء الوقت"
+                : "تسليم يدوي";
+
+
+        return `
+
+            <tr>
+
+                <td>
+
+                    <span
+                        class="
+                            rank
+                            ${rank <= 3 ? "top" : ""}
+                        "
+                    >
+                        ${rank}
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                    <span class="student-name">
+
+                        ${escapeHtml(
+                            result.studentName ||
+                            "طالب"
+                        )}
+
+                    </span>
+
+                    <span class="student-id">
+
+                        ${escapeHtml(
+                            result.studentId ||
+                            ""
+                        )}
+
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                    ${escapeHtml(
+                        result.examTitle ||
+                        "اختبار"
+                    )}
+
+                    <span
+                        style="
+                            display:block;
+                            color:#8a98a3;
+                            font-size:10px;
+                            margin-top:3px;
+                        "
+                    >
+
+                        ${escapeHtml(
+                            result.subject ||
+                            "—"
+                        )}
+
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                    ${escapeHtml(
+                        getStageName(
+                            result.stageId
+                        )
+                    )}
+
+                </td>
+
+
+                <td>
+
+                    <span class="score-badge">
+
+                        ${escapeHtml(
+                            String(
+                                result.score ??
+                                0
+                            )
+                        )}
+
+                        /
+
+                        ${escapeHtml(
+                            String(
+                                result.total ??
+                                0
+                            )
+                        )}
+
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                    <span
+                        class="
+                            percentage
+                            ${percentageClass}
+                        "
+                    >
+
+                        ${percentage}%
+
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                    <span
+                        style="
+                            font-size:10px;
+                            color:#71808d;
+                        "
+                    >
+
+                        صحيحة:
+                        ${Number(
+                            result.correctAnswers ||
+                            0
+                        )}
+
+                        <br>
+
+                        خاطئة:
+                        ${Number(
+                            result.wrongAnswers ||
+                            0
+                        )}
+
+                        <br>
+
+                        بدون:
+                        ${Number(
+                            result.unanswered ||
+                            0
+                        )}
+
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                    <span
+                        class="
+                            status-badge
+                            status-completed
+                        "
+                    >
+                        تم الحل
+                    </span>
+
+                    <span class="submit-reason">
+
+                        ${submitReason}
+
+                    </span>
+
+                </td>
+
+
+                <td>
+
+                    ${formatDate(
+                        result.submittedAt
+                    )}
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       Stats
+    ===================================================== */
+
+    function updateStats(
+        filteredResults,
+        notCompleted
+    ) {
+
+        const total =
+            filteredResults.length;
+
+
+        const average =
+            total
+                ? (
+                    filteredResults.reduce(
+                        (
+                            sum,
+                            result
+                        ) =>
+                            sum +
+                            Number(
+                                result.percentage ||
+                                0
+                            ),
+                        0
+                    ) / total
+                ).toFixed(1)
+                : 0;
+
+
+        document.getElementById(
+            "totalResults"
+        ).textContent =
+            total;
+
+
+        document.getElementById(
+            "completedCount"
+        ).textContent =
+            total;
+
+
+        document.getElementById(
+            "notCompletedCount"
+        ).textContent =
+            selectedExamId
+                ? notCompleted.length
+                : "—";
+
+
+        document.getElementById(
+            "averagePercentage"
+        ).textContent =
+            `${average}%`;
+
+    }
+
+
+    /* =====================================================
+       Helpers
+    ===================================================== */
+
+    function getStageName(
+        stageId
+    ) {
+
+        if (!stageId) {
+            return "—";
+        }
+
+
+        const stage =
+            String(stageId);
+
+
+        const names = {
+
+            "1":
+                "الفرقة الأولى",
+
+            "2":
+                "الفرقة الثانية",
+
+            "3":
+                "الفرقة الثالثة",
+
+            "4":
+                "الفرقة الرابعة",
+
+            "first":
+                "الفرقة الأولى",
+
+            "second":
+                "الفرقة الثانية",
+
+            "third":
+                "الفرقة الثالثة",
+
+            "fourth":
+                "الفرقة الرابعة"
+
+        };
+
+
+        return (
+            names[stage] ||
+            stage
+        );
+
+    }
+
+
+    function formatDate(
+        value
+    ) {
+
+        if (!value) {
+            return "—";
+        }
+
+
+        try {
+
+            let date;
+
+
+            if (
+                typeof value.toDate ===
+                "function"
+            ) {
+
+                date =
+                    value.toDate();
+
+            } else {
+
+                date =
+                    new Date(value);
+
+            }
+
+
+            if (
+                Number.isNaN(
+                    date.getTime()
+                )
+            ) {
+
+                return "—";
+
+            }
+
+
+            return new Intl.DateTimeFormat(
+                "ar-EG",
+                {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                }
+            ).format(date);
+
+        } catch {
+
+            return "—";
+
+        }
+
+    }
+
+
+    function escapeHtml(
+        value
+    ) {
+
+        return String(
+            value ??
+            ""
+        )
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+</script></body></html>
