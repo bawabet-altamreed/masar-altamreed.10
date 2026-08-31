@@ -194,6 +194,32 @@
             font-size: 12px;
             margin-top: 18px;
         }
+
+        .firebase-status {
+    margin-top: 16px;
+    padding: 14px;
+    border-radius: 10px;
+    background: #f5f8fa;
+    color: #526575;
+    font-size: 13px;
+    line-height: 2;
+    text-align: center;
+}
+
+.firebase-success {
+    color: #147a3e;
+}
+
+.firebase-success strong {
+    display: block;
+    margin-top: 8px;
+}
+
+.firebase-error {
+    color: #b42318;
+    word-break: break-word;
+}
+        
     </style>
 </head>
 
@@ -272,6 +298,10 @@
                 role="alert"
             ></div>
 
+            <div id="firebaseStatus" class="firebase-status">
+    🟡 جاري الاتصال بـ Firebase...
+</div>
+            
         </form>
 
         <div class="support">
