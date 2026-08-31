@@ -119,6 +119,11 @@
             color: #16794c;
         }
 
+        .renew-button {
+            background: #f0ecff;
+            color: #6842c2;
+        }
+
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -262,6 +267,15 @@
             font-weight: bold;
         }
 
+        .renew-info {
+            background: #f7f9fb;
+            border-radius: 10px;
+            padding: 12px;
+            line-height: 1.9;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+
         @media (max-width: 600px) {
 
             .form-grid {
@@ -289,7 +303,7 @@
 
 
 <!-- =====================================================
-     Add Student Modal
+     Add / Edit Student Modal
      ===================================================== -->
 
 <div
@@ -597,10 +611,6 @@
     // =====================================================
     // Secondary Firebase App
     // =====================================================
-    //
-    // نستخدم Firebase App ثانية لإنشاء حساب الطالب
-    // بدون إخراج الـAdmin من حسابه الحالي.
-    //
 
     const studentApp =
         initializeApp(
@@ -619,6 +629,8 @@
     let students = [];
 
     let filteredStudents = [];
+
+    let editingStudent = null;
 
 
     const searchInput =
@@ -1038,6 +1050,14 @@
                                 >
                                     اشتراك
                                 </button>
+
+                                <button
+                                    class="action-button renew-button"
+                                    data-action="renew"
+                                    data-id="${student.id}"
+                                >
+                                    تجديد
+                                </button>
                               `
                             : ""
                     }
@@ -1123,6 +1143,8 @@
 
     function openAddModal() {
 
+        editingStudent = null;
+
         form.reset();
 
         formMessage.className =
@@ -1138,6 +1160,21 @@
             "إضافة طالب";
 
 
+        document.getElementById(
+            "studentPassword"
+        ).required = true;
+
+        document.getElementById(
+            "studentPassword"
+        ).placeholder =
+            "";
+
+
+        document.getElementById(
+            "subscriptionCode"
+        ).disabled = false;
+
+
         saveButton.textContent =
             "إنشاء الطالب";
 
@@ -1145,6 +1182,138 @@
         document.getElementById(
             "studentModal"
         ).classList.add("show");
+
+    }
+
+
+    // =====================================================
+    // Edit Student
+    // =====================================================
+
+    function openEditModal(student) {
+
+        editingStudent = student;
+
+
+        const subscription =
+            student.subscription;
+
+
+        document.getElementById(
+            "modalTitle"
+        ).textContent =
+            "تعديل بيانات الطالب";
+
+
+        document.getElementById(
+            "studentName"
+        ).value =
+            student.name || "";
+
+
+        document.getElementById(
+            "subscriptionCode"
+        ).value =
+            student.subscriptionCode || "";
+
+
+        document.getElementById(
+            "stageId"
+        ).value =
+            student.stageId || "";
+
+
+        document.getElementById(
+            "studentPhone"
+        ).value =
+            student.phone || "";
+
+
+        if (
+            subscription &&
+            subscription.startDate
+        ) {
+
+            document.getElementById(
+                "startDate"
+            ).value =
+                timestampToInputDate(
+                    subscription.startDate
+                );
+
+        } else {
+
+            document.getElementById(
+                "startDate"
+            ).value = "";
+
+        }
+
+
+        if (
+            subscription &&
+            subscription.endDate
+        ) {
+
+            document.getElementById(
+                "endDate"
+            ).value =
+                timestampToInputDate(
+                    subscription.endDate
+                );
+
+        } else {
+
+            document.getElementById(
+                "endDate"
+            ).value = "";
+
+        }
+
+
+        /*
+         * Password is intentionally not edited here.
+         * Firebase Authentication controls passwords.
+         */
+
+        document.getElementById(
+            "studentPassword"
+        ).required = false;
+
+        document.getElementById(
+            "studentPassword"
+        ).value = "";
+
+        document.getElementById(
+            "studentPassword"
+        ).placeholder =
+            "اتركها فارغة";
+
+
+        /*
+         * لا نسمح بتغيير الكود أثناء التعديل
+         * لأن الكود هو Document ID داخل subscriptions.
+         */
+
+        document.getElementById(
+            "subscriptionCode"
+        ).disabled = true;
+
+
+        saveButton.textContent =
+            "حفظ التعديلات";
+
+
+        formMessage.className =
+            "form-message";
+
+        formMessage.textContent =
+            "";
+
+
+        modal.classList.add(
+            "show"
+        );
 
     }
 
@@ -1158,6 +1327,12 @@
         modal.classList.remove(
             "show"
         );
+
+        editingStudent = null;
+
+        document.getElementById(
+            "subscriptionCode"
+        ).disabled = false;
 
     }
 
@@ -1183,7 +1358,7 @@
 
 
     // =====================================================
-    // Create Student
+    // Save Student
     // =====================================================
 
     form.addEventListener(
@@ -1254,10 +1429,38 @@
                     .value;
 
 
-            if (password.length < 6) {
+            const isEditing =
+                editingStudent !== null;
+
+
+            if (!name) {
 
                 showFormMessage(
-                    "كلمة المرور يجب أن تكون 6 أحرف أو أكثر.",
+                    "اكتب اسم الطالب.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            if (!stageId) {
+
+                showFormMessage(
+                    "اكتب المرحلة.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            if (!startDateValue || !endDateValue) {
+
+                showFormMessage(
+                    "حدد تاريخ البداية والنهاية.",
                     "error"
                 );
 
@@ -1273,6 +1476,164 @@
 
                 showFormMessage(
                     "تاريخ نهاية الاشتراك يجب أن يكون بعد تاريخ البداية.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            // =================================================
+            // EDIT
+            // =================================================
+
+            if (isEditing) {
+
+                try {
+
+                    saveButton.disabled =
+                        true;
+
+                    saveButton.textContent =
+                        "جاري الحفظ...";
+
+
+                    const studentRef =
+                        doc(
+                            db,
+                            "users",
+                            editingStudent.id
+                        );
+
+
+                    const subscription =
+                        editingStudent.subscription;
+
+
+                    if (!subscription) {
+
+                        showFormMessage(
+                            "لا يوجد اشتراك مرتبط بهذا الطالب.",
+                            "error"
+                        );
+
+                        return;
+
+                    }
+
+
+                    const startTimestamp =
+                        Timestamp.fromDate(
+                            new Date(
+                                `${startDateValue}T00:00:00`
+                            )
+                        );
+
+
+                    const endTimestamp =
+                        Timestamp.fromDate(
+                            new Date(
+                                `${endDateValue}T23:59:59`
+                            )
+                        );
+
+
+                    const now =
+                        Timestamp.now();
+
+
+                    // تحديث بيانات الطالب
+                    await updateDoc(
+                        studentRef,
+                        {
+                            name: name,
+                            stageId: stageId,
+                            phone: phone,
+                            updatedAt: now
+                        }
+                    );
+
+
+                    // تحديث بيانات الاشتراك
+                    await updateDoc(
+                        doc(
+                            db,
+                            "subscriptions",
+                            subscription.id
+                        ),
+                        {
+                            stageId: stageId,
+                            startDate:
+                                startTimestamp,
+                            endDate:
+                                endTimestamp,
+                            updatedAt:
+                                now
+                        }
+                    );
+
+
+                    showFormMessage(
+                        "تم حفظ تعديلات الطالب بنجاح.",
+                        "success"
+                    );
+
+
+                    setTimeout(
+                        () => {
+
+                            closeModal();
+
+                            form.reset();
+
+                            loadStudents();
+
+                        },
+                        700
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Update student error:",
+                        error
+                    );
+
+
+                    showFormMessage(
+                        "حدث خطأ أثناء حفظ التعديلات: " +
+                        error.message,
+                        "error"
+                    );
+
+                } finally {
+
+                    saveButton.disabled =
+                        false;
+
+                    saveButton.textContent =
+                        "حفظ التعديلات";
+
+                }
+
+
+                return;
+
+            }
+
+
+            // =================================================
+            // CREATE
+            // =================================================
+
+            if (
+                password.length < 6
+            ) {
+
+                showFormMessage(
+                    "كلمة المرور يجب أن تكون 6 أحرف أو أكثر.",
                     "error"
                 );
 
@@ -1316,8 +1677,7 @@
                  * Firebase Authentication requires
                  * an email for Email/Password accounts.
                  *
-                 * The student never sees this internal email.
-                 * Their public username remains the subscription code.
+                 * الطالب لا يرى هذا الإيميل.
                  */
 
                 const internalEmail =
@@ -1336,7 +1696,6 @@
                     credential.user;
 
 
-                // Store display name in Firebase Auth.
                 await updateProfile(
                     studentUser,
                     {
@@ -1394,14 +1753,22 @@
                         code
                     ),
                     {
-                        userId: studentUser.uid,
-                        code: code,
-                        stageId: stageId,
-                        status: "active",
-                        startDate: startTimestamp,
-                        endDate: endTimestamp,
-                        createdAt: now,
-                        updatedAt: now
+                        userId:
+                            studentUser.uid,
+                        code:
+                            code,
+                        stageId:
+                            stageId,
+                        status:
+                            "active",
+                        startDate:
+                            startTimestamp,
+                        endDate:
+                            endTimestamp,
+                        createdAt:
+                            now,
+                        updatedAt:
+                            now
                     }
                 );
 
@@ -1416,6 +1783,8 @@
                     () => {
 
                         closeModal();
+
+                        form.reset();
 
                         loadStudents();
 
@@ -1527,7 +1896,9 @@
         }
 
 
-        if (action === "toggle") {
+        if (
+            action === "toggle"
+        ) {
 
             await toggleStudent(
                 student
@@ -1536,7 +1907,9 @@
         }
 
 
-        if (action === "subscription") {
+        if (
+            action === "subscription"
+        ) {
 
             await toggleSubscription(
                 student
@@ -1545,10 +1918,23 @@
         }
 
 
-        if (action === "edit") {
+        if (
+            action === "renew"
+        ) {
 
-            alert(
-                "تعديل بيانات الطالب سيتم تفعيله في الخطوة التالية."
+            await renewSubscription(
+                student
+            );
+
+        }
+
+
+        if (
+            action === "edit"
+        ) {
+
+            openEditModal(
+                student
             );
 
         }
@@ -1710,6 +2096,171 @@
             );
 
         }
+
+    }
+
+
+    // =====================================================
+    // Renew Subscription
+    // =====================================================
+
+    async function renewSubscription(
+        student
+    ) {
+
+        const subscription =
+            student.subscription;
+
+
+        if (!subscription) {
+
+            alert(
+                "لا يوجد اشتراك لهذا الطالب."
+            );
+
+            return;
+
+        }
+
+
+        let currentEnd =
+            subscription.endDate?.toDate
+                ? subscription.endDate.toDate()
+                : new Date();
+
+
+        const baseDate =
+            currentEnd > new Date()
+                ? currentEnd
+                : new Date();
+
+
+        const newEnd =
+            new Date(
+                baseDate
+            );
+
+
+        // شهر إضافي
+        newEnd.setMonth(
+            newEnd.getMonth() + 1
+        );
+
+
+        const newEndText =
+            newEnd.toLocaleDateString(
+                "ar-EG"
+            );
+
+
+        const confirmation =
+            confirm(
+                `سيتم تجديد اشتراك الطالب لمدة شهر واحد حتى ${newEndText}.\n\nهل تريد المتابعة؟`
+            );
+
+
+        if (!confirmation) {
+
+            return;
+
+        }
+
+
+        try {
+
+            await updateDoc(
+                doc(
+                    db,
+                    "subscriptions",
+                    subscription.id
+                ),
+                {
+                    status:
+                        "active",
+
+                    endDate:
+                        Timestamp.fromDate(
+                            newEnd
+                        ),
+
+                    updatedAt:
+                        Timestamp.now()
+                }
+            );
+
+
+            await loadStudents();
+
+
+            alert(
+                "تم تجديد الاشتراك بنجاح."
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Renew subscription error:",
+                error
+            );
+
+
+            alert(
+                "تعذر تجديد الاشتراك: " +
+                error.message
+            );
+
+        }
+
+    }
+
+
+    // =====================================================
+    // Timestamp → Date Input
+    // =====================================================
+
+    function timestampToInputDate(
+        timestamp
+    ) {
+
+        if (
+            !timestamp ||
+            typeof timestamp.toDate !==
+            "function"
+        ) {
+
+            return "";
+
+        }
+
+
+        const date =
+            timestamp.toDate();
+
+
+        const year =
+            date.getFullYear();
+
+
+        const month =
+            String(
+                date.getMonth() + 1
+            ).padStart(
+                2,
+                "0"
+            );
+
+
+        const day =
+            String(
+                date.getDate()
+            ).padStart(
+                2,
+                "0"
+            );
+
+
+        return `${year}-${month}-${day}`;
 
     }
 
