@@ -331,7 +331,7 @@
 
 </div>
 
-  <script type="module">
+    <script type="module">
 
     // =====================================================
     // Firebase
@@ -343,7 +343,8 @@
     } from "./src/firebase/init.js";
 
     import {
-        signInWithEmailAndPassword
+        signInWithEmailAndPassword,
+        signOut
     } from
         "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
@@ -358,14 +359,17 @@
     // Elements
     // =====================================================
 
+    const loginForm =
+        document.getElementById("loginForm");
+
     const passwordInput =
         document.getElementById("password");
 
     const togglePassword =
         document.getElementById("togglePassword");
 
-    const loginForm =
-        document.getElementById("loginForm");
+    const codeInput =
+        document.getElementById("subscriptionCode");
 
     const loginButton =
         document.getElementById("loginButton");
@@ -376,28 +380,9 @@
     const firebaseStatus =
         document.getElementById("firebaseStatus");
 
-    const subscriptionCodeInput =
-        document.getElementById("subscriptionCode");
-
 
     // =====================================================
-    // Firebase Status
-    // =====================================================
-
-    firebaseStatus.innerHTML = `
-        🟢 Firebase Connected
-        <strong>
-            Firebase جاهز لتسجيل الدخول
-        </strong>
-    `;
-
-    firebaseStatus.classList.add(
-        "firebase-success"
-    );
-
-
-    // =====================================================
-    // Toggle Password
+    // Password Toggle
     // =====================================================
 
     togglePassword.addEventListener(
@@ -418,6 +403,20 @@
                     : "👁️";
 
         }
+    );
+
+
+    // =====================================================
+    // Firebase Status
+    // =====================================================
+
+    firebaseStatus.innerHTML = `
+        🟢 Firebase متصل
+        <strong>جاهز لتسجيل الدخول</strong>
+    `;
+
+    firebaseStatus.classList.add(
+        "firebase-success"
     );
 
 
@@ -450,38 +449,10 @@
 
 
     // =====================================================
-    // Normalize Subscription Code
+    // Convert Subscription Code
     // =====================================================
 
-    function normalizeCode(
-        value
-    ) {
-
-        return String(value || "")
-            .trim()
-            .toUpperCase();
-
-    }
-
-
-    // =====================================================
-    // Internal Firebase Email
-    // =====================================================
-    //
-    // الطالب يدخل:
-    //
-    // MASAR001
-    //
-    // Firebase Authentication يستخدم:
-    //
-    // masar001@students.masar-altamreed.com
-    //
-    // الطالب لا يحتاج لمعرفة البريد الداخلي.
-    //
-
-    function getInternalEmail(
-        code
-    ) {
+    function createInternalEmail(code) {
 
         return `${code.toLowerCase()}@students.masar-altamreed.com`;
 
@@ -502,18 +473,14 @@
 
 
             const code =
-                normalizeCode(
-                    subscriptionCodeInput.value
-                );
+                codeInput.value
+                    .trim()
+                    .toUpperCase();
 
 
             const password =
                 passwordInput.value;
 
-
-            // -------------------------------------------------
-            // Basic Validation
-            // -------------------------------------------------
 
             if (!code) {
 
@@ -547,7 +514,99 @@
             try {
 
                 // =================================================
-                // 1. Check Subscription Document
+                // 1. Create Firebase Authentication Email
+                // =================================================
+
+                const internalEmail =
+                    createInternalEmail(code);
+
+
+                // =================================================
+                // 2. Firebase Authentication
+                // =================================================
+
+                const credential =
+                    await signInWithEmailAndPassword(
+                        auth,
+                        internalEmail,
+                        password
+                    );
+
+
+                const user =
+                    credential.user;
+
+
+                // =================================================
+                // 3. Read users/{uid}
+                // =================================================
+
+                const userRef =
+                    doc(
+                        db,
+                        "users",
+                        user.uid
+                    );
+
+
+                const userSnapshot =
+                    await getDoc(
+                        userRef
+                    );
+
+
+                if (!userSnapshot.exists()) {
+
+                    await signOut(auth);
+
+                    throw new Error(
+                        "USER_DOCUMENT_NOT_FOUND"
+                    );
+
+                }
+
+
+                const userData =
+                    userSnapshot.data();
+
+
+                // =================================================
+                // 4. Verify Role
+                // =================================================
+
+                if (
+                    userData.role !==
+                    "student"
+                ) {
+
+                    await signOut(auth);
+
+                    throw new Error(
+                        "NOT_STUDENT_ACCOUNT"
+                    );
+
+                }
+
+
+                // =================================================
+                // 5. Verify Account Status
+                // =================================================
+
+                if (
+                    userData.isActive !== true
+                ) {
+
+                    await signOut(auth);
+
+                    throw new Error(
+                        "ACCOUNT_SUSPENDED"
+                    );
+
+                }
+
+
+                // =================================================
+                // 6. Read subscriptions/{CODE}
                 // =================================================
 
                 const subscriptionRef =
@@ -568,57 +627,50 @@
                     !subscriptionSnapshot.exists()
                 ) {
 
+                    await signOut(auth);
+
                     throw new Error(
-                        "INVALID_SUBSCRIPTION"
+                        "SUBSCRIPTION_NOT_FOUND"
                     );
 
                 }
 
 
-                const subscription =
+                const subscriptionData =
                     subscriptionSnapshot.data();
 
 
                 // =================================================
-                // 2. Check Subscription Code
+                // 7. Verify Subscription Owner
                 // =================================================
 
                 if (
-                    String(
-                        subscription.code || ""
-                    ).toUpperCase() !== code
+                    subscriptionData.userId !==
+                    user.uid
                 ) {
 
+                    await signOut(auth);
+
                     throw new Error(
-                        "INVALID_SUBSCRIPTION"
+                        "SUBSCRIPTION_OWNER_MISMATCH"
                     );
 
                 }
 
 
                 // =================================================
-                // 3. Check Subscription Status
+                // 8. Verify Subscription Status
                 // =================================================
 
                 if (
-                    subscription.status !==
+                    subscriptionData.status !==
                     "active"
                 ) {
 
-                    if (
-                        subscription.status ===
-                        "expired"
-                    ) {
-
-                        throw new Error(
-                            "SUBSCRIPTION_EXPIRED"
-                        );
-
-                    }
-
+                    await signOut(auth);
 
                     if (
-                        subscription.status ===
+                        subscriptionData.status ===
                         "suspended"
                     ) {
 
@@ -628,54 +680,39 @@
 
                     }
 
-
                     throw new Error(
-                        "SUBSCRIPTION_INACTIVE"
+                        "SUBSCRIPTION_NOT_ACTIVE"
                     );
 
                 }
 
 
                 // =================================================
-                // 4. Check Subscription Dates
+                // 9. Verify Subscription Dates
                 // =================================================
 
                 const now =
                     new Date();
 
 
-                let startDate = null;
-                let endDate = null;
+                const startDate =
+                    subscriptionData.startDate?.toDate
+                        ? subscriptionData.startDate.toDate()
+                        : null;
 
 
-                if (
-                    subscription.startDate &&
-                    typeof subscription.startDate.toDate ===
-                    "function"
-                ) {
-
-                    startDate =
-                        subscription.startDate.toDate();
-
-                }
-
-
-                if (
-                    subscription.endDate &&
-                    typeof subscription.endDate.toDate ===
-                    "function"
-                ) {
-
-                    endDate =
-                        subscription.endDate.toDate();
-
-                }
+                const endDate =
+                    subscriptionData.endDate?.toDate
+                        ? subscriptionData.endDate.toDate()
+                        : null;
 
 
                 if (
                     startDate &&
                     now < startDate
                 ) {
+
+                    await signOut(auth);
 
                     throw new Error(
                         "SUBSCRIPTION_NOT_STARTED"
@@ -689,6 +726,8 @@
                     now > endDate
                 ) {
 
+                    await signOut(auth);
+
                     throw new Error(
                         "SUBSCRIPTION_EXPIRED"
                     );
@@ -697,145 +736,7 @@
 
 
                 // =================================================
-                // 5. Get User ID
-                // =================================================
-
-                const userId =
-                    subscription.userId;
-
-
-                if (!userId) {
-
-                    throw new Error(
-                        "USER_NOT_LINKED"
-                    );
-
-                }
-
-
-                // =================================================
-                // 6. Read User Document
-                // =================================================
-
-                const userRef =
-                    doc(
-                        db,
-                        "users",
-                        userId
-                    );
-
-
-                const userSnapshot =
-                    await getDoc(
-                        userRef
-                    );
-
-
-                if (
-                    !userSnapshot.exists()
-                ) {
-
-                    throw new Error(
-                        "USER_NOT_FOUND"
-                    );
-
-                }
-
-
-                const user =
-                    userSnapshot.data();
-
-
-                // =================================================
-                // 7. Check User Role
-                // =================================================
-
-                if (
-                    user.role !==
-                    "student"
-                ) {
-
-                    throw new Error(
-                        "NOT_STUDENT"
-                    );
-
-                }
-
-
-                // =================================================
-                // 8. Check Account Status
-                // =================================================
-
-                if (
-                    user.isActive !== true
-                ) {
-
-                    throw new Error(
-                        "ACCOUNT_DISABLED"
-                    );
-
-                }
-
-
-                // =================================================
-                // 9. Check User Subscription Code
-                // =================================================
-
-                if (
-                    String(
-                        user.subscriptionCode || ""
-                    ).toUpperCase() !== code
-                ) {
-
-                    throw new Error(
-                        "USER_SUBSCRIPTION_MISMATCH"
-                    );
-
-                }
-
-
-                // =================================================
-                // 10. Firebase Authentication
-                // =================================================
-
-                const internalEmail =
-                    getInternalEmail(
-                        code
-                    );
-
-
-                const credential =
-                    await signInWithEmailAndPassword(
-                        auth,
-                        internalEmail,
-                        password
-                    );
-
-
-                const firebaseUser =
-                    credential.user;
-
-
-                // =================================================
-                // 11. Verify Firebase UID
-                // =================================================
-
-                if (
-                    firebaseUser.uid !==
-                    userId
-                ) {
-
-                    await auth.signOut();
-
-                    throw new Error(
-                        "USER_UID_MISMATCH"
-                    );
-
-                }
-
-
-                // =================================================
-                // 12. Successful Login
+                // 10. Login Success
                 // =================================================
 
                 showMessage(
@@ -844,31 +745,27 @@
                 );
 
 
-                loginButton.textContent =
-                    "تم تسجيل الدخول ✓";
-
-
-                // -------------------------------------------------
-                // Small delay for user feedback
-                // -------------------------------------------------
-
                 setTimeout(
                     () => {
 
                         window.location.href =
-                            "./student/dashboard.html";
+                            "student/dashboard.html";
 
                     },
-                    500
+                    700
                 );
 
 
             } catch (error) {
 
                 console.error(
-                    "Student Login Error:",
+                    "Student login error:",
                     error
                 );
+
+
+                let errorMessage =
+                    "حدث خطأ أثناء تسجيل الدخول.";
 
 
                 // =================================================
@@ -877,171 +774,172 @@
 
                 if (
                     error.code ===
-                    "auth/invalid-credential" ||
-                    error.code ===
-                    "auth/wrong-password" ||
+                    "auth/invalid-credential"
+                ) {
+
+                    errorMessage =
+                        "كود الاشتراك أو كلمة المرور غير صحيحة.";
+
+                }
+
+                else if (
                     error.code ===
                     "auth/user-not-found"
                 ) {
 
-                    showMessage(
-                        "كود الاشتراك أو كلمة المرور غير صحيحة."
-                    );
+                    errorMessage =
+                        "كود الاشتراك غير موجود.";
 
                 }
 
+                else if (
+                    error.code ===
+                    "auth/wrong-password"
+                ) {
+
+                    errorMessage =
+                        "كلمة المرور غير صحيحة.";
+
+                }
 
                 else if (
                     error.code ===
                     "auth/too-many-requests"
                 ) {
 
-                    showMessage(
-                        "تم إجراء محاولات كثيرة. حاول مرة أخرى بعد قليل."
-                    );
+                    errorMessage =
+                        "تم إجراء محاولات كثيرة. حاول مرة أخرى بعد قليل.";
 
                 }
 
+                else if (
+                    error.code ===
+                    "auth/network-request-failed"
+                ) {
+
+                    errorMessage =
+                        "تأكد من اتصال الإنترنت وحاول مرة أخرى.";
+
+                }
+
+                // =================================================
+                // Firestore / Account Errors
+                // =================================================
 
                 else if (
                     error.message ===
-                    "INVALID_SUBSCRIPTION"
+                    "USER_DOCUMENT_NOT_FOUND"
                 ) {
 
-                    showMessage(
-                        "كود الاشتراك غير موجود أو غير صحيح."
-                    );
+                    errorMessage =
+                        "الحساب موجود في Firebase Authentication لكن بيانات الطالب غير موجودة في users.";
 
                 }
-
 
                 else if (
                     error.message ===
-                    "SUBSCRIPTION_EXPIRED"
+                    "NOT_STUDENT_ACCOUNT"
                 ) {
 
-                    showMessage(
-                        "انتهى الاشتراك. يرجى التواصل مع إدارة مسار التمريض لتجديد الاشتراك."
-                    );
+                    errorMessage =
+                        "هذا الحساب ليس حساب طالب.";
 
                 }
 
+                else if (
+                    error.message ===
+                    "ACCOUNT_SUSPENDED"
+                ) {
+
+                    errorMessage =
+                        "تم إيقاف حساب الطالب. تواصل مع الإدارة.";
+
+                }
+
+                else if (
+                    error.message ===
+                    "SUBSCRIPTION_NOT_FOUND"
+                ) {
+
+                    errorMessage =
+                        "لم يتم العثور على اشتراك بهذا الكود.";
+
+                }
+
+                else if (
+                    error.message ===
+                    "SUBSCRIPTION_OWNER_MISMATCH"
+                ) {
+
+                    errorMessage =
+                        "بيانات الاشتراك غير مرتبطة بهذا الحساب.";
+
+                }
 
                 else if (
                     error.message ===
                     "SUBSCRIPTION_SUSPENDED"
                 ) {
 
-                    showMessage(
-                        "الاشتراك موقوف حاليًا. يرجى التواصل مع إدارة مسار التمريض."
-                    );
+                    errorMessage =
+                        "الاشتراك موقوف حاليًا. تواصل مع الإدارة.";
 
                 }
-
 
                 else if (
                     error.message ===
-                    "SUBSCRIPTION_INACTIVE"
+                    "SUBSCRIPTION_NOT_ACTIVE"
                 ) {
 
-                    showMessage(
-                        "الاشتراك غير فعال حاليًا."
-                    );
+                    errorMessage =
+                        "الاشتراك غير فعال حاليًا.";
 
                 }
 
+                else if (
+                    error.message ===
+                    "SUBSCRIPTION_EXPIRED"
+                ) {
+
+                    errorMessage =
+                        "انتهى الاشتراك. تواصل مع الإدارة لتجديد الاشتراك.";
+
+                }
 
                 else if (
                     error.message ===
                     "SUBSCRIPTION_NOT_STARTED"
                 ) {
 
-                    showMessage(
-                        "لم يبدأ الاشتراك بعد."
-                    );
+                    errorMessage =
+                        "الاشتراك لم يبدأ بعد.";
 
                 }
-
 
                 else if (
-                    error.message ===
-                    "USER_NOT_LINKED"
+                    error.code ===
+                    "permission-denied"
                 ) {
 
-                    showMessage(
-                        "حدث خطأ في ربط الاشتراك بحساب الطالب."
-                    );
+                    errorMessage =
+                        "تم رفض قراءة بيانات الطالب بواسطة Firestore Security Rules.";
 
                 }
-
 
                 else if (
-                    error.message ===
-                    "USER_NOT_FOUND"
+                    error.message
                 ) {
 
-                    showMessage(
-                        "لم يتم العثور على بيانات الطالب."
-                    );
+                    errorMessage =
+                        error.message;
 
                 }
 
 
-                else if (
-                    error.message ===
-                    "ACCOUNT_DISABLED"
-                ) {
-
-                    showMessage(
-                        "حساب الطالب موقوف حاليًا. تواصل مع إدارة مسار التمريض."
-                    );
-
-                }
-
-
-                else if (
-                    error.message ===
-                    "NOT_STUDENT"
-                ) {
-
-                    showMessage(
-                        "هذا الحساب ليس حساب طالب."
-                    );
-
-                }
-
-
-                else if (
-                    error.message ===
-                    "USER_SUBSCRIPTION_MISMATCH"
-                ) {
-
-                    showMessage(
-                        "بيانات الحساب والاشتراك غير متطابقة."
-                    );
-
-                }
-
-
-                else if (
-                    error.message ===
-                    "USER_UID_MISMATCH"
-                ) {
-
-                    showMessage(
-                        "حدث خطأ أمني أثناء التحقق من الحساب."
-                    );
-
-                }
-
-
-                else {
-
-                    showMessage(
-                        "حدث خطأ أثناء تسجيل الدخول. حاول مرة أخرى."
-                    );
-
-                }
+                showMessage(
+                    errorMessage,
+                    "error"
+                );
 
 
             } finally {
@@ -1049,22 +947,17 @@
                 loginButton.disabled =
                     false;
 
-                if (
-                    loginButton.textContent !==
-                    "تم تسجيل الدخول ✓"
-                ) {
-
-                    loginButton.textContent =
-                        "تسجيل الدخول";
-
-                }
+                loginButton.textContent =
+                    "تسجيل الدخول";
 
             }
 
         }
     );
 
-</script>
+</script>                        
+                
+    
 
 
 </body>
