@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>دخول الإدارة | مسار التمريض</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: Arial, Tahoma, sans-serif;
+            background: #f4f8fb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 430px;
+        }
+
+        .login-card {
+            background: #ffffff;
+            border: 1px solid #e3ebf1;
+            border-radius: 20px;
+            padding: 35px 30px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.06);
+        }
+
+        .logo {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 18px;
+            border-radius: 18px;
+            background: #087ea4;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+        }
+
+        .title {
+            text-align: center;
+            color: #172b4d;
+            font-size: 25px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7b8996;
+            font-size: 13px;
+            margin-bottom: 30px;
+        }
+
+        .admin-badge {
+            width: fit-content;
+            margin: 0 auto 25px;
+            background: #eef8fb;
+            color: #087ea4;
+            padding: 7px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            color: #34495e;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            height: 48px;
+            border: 1px solid #d8e2e9;
+            border-radius: 10px;
+            padding: 0 14px;
+            font-size: 14px;
+            outline: none;
+            direction: ltr;
+        }
+
+        input:focus {
+            border-color: #087ea4;
+            box-shadow: 0 0 0 3px rgba(8, 126, 164, 0.08);
+        }
+
+        .login-button {
+            width: 100%;
+            height: 50px;
+            border: none;
+            border-radius: 10px;
+            background: #087ea4;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .login-button:hover {
+            opacity: 0.94;
+        }
+
+        .login-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .message {
+            display: none;
+            margin-top: 18px;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            line-height: 1.7;
+            text-align: center;
+        }
+
+        .message.error {
+            display: block;
+            background: #fff1f1;
+            color: #b42318;
+            border: 1px solid #ffd6d6;
+        }
+
+        .message.success {
+            display: block;
+            background: #effaf3;
+            color: #16794c;
+            border: 1px solid #c9efd9;
+        }
+
+        .footer {
+            text-align: center;
+            color: #9aa6b2;
+            font-size: 11px;
+            margin-top: 22px;
+        }
+
+        @media (max-width: 480px) {
+
+            .login-card {
+                padding: 28px 20px;
+            }
+
+            .title {
+                font-size: 22px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="login-container">
+
+    <div class="login-card">
+
+        <div class="logo">
+            🩺
+        </div>
+
+        <h1 class="title">
+            مسار التمريض
+        </h1>
+
+        <p class="subtitle">
+            تسجيل دخول الإدارة
+        </p>
+
+        <div class="admin-badge">
+            🔐 لوحة الإدارة
+        </div>
+
+
+        <form id="adminLoginForm">
+
+
+            <div class="form-group">
+
+                <label for="email">
+                    البريد الإلكتروني
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="admin@example.com"
+                    autocomplete="username"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="password">
+                    كلمة المرور
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="أدخل كلمة المرور"
+                    autocomplete="current-password"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="login-button"
+                id="loginButton"
+            >
+                تسجيل دخول الإدارة
+            </button>
+
+
+            <div
+                id="message"
+                class="message"
+            ></div>
+
+
+        </form>
+
+
+        <div class="footer">
+            © 2026 مسار التمريض
+        </div>
+
+    </div>
+
+</div>
+
+
+<script type="module">
+
+    import { auth, db }
+        from "../src/firebase/init.js";
+
+    import {
+        signInWithEmailAndPassword,
+        onAuthStateChanged,
+        signOut
+    } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+    import {
+        doc,
+        getDoc
+    } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+    const form =
+        document.getElementById("adminLoginForm");
+
+    const emailInput =
+        document.getElementById("email");
+
+    const passwordInput =
+        document.getElementById("password");
+
+    const loginButton =
+        document.getElementById("loginButton");
+
+    const message =
+        document.getElementById("message");
+
+
+    function showMessage(text, type = "error") {
+
+        message.textContent = text;
+
+        message.className =
+            `message ${type}`;
+
+    }
+
+
+    function clearMessage() {
+
+        message.textContent = "";
+
+        message.className =
+            "message";
+
+    }
+
+
+    form.addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        clearMessage();
+
+        const email =
+            emailInput.value.trim();
+
+        const password =
+            passwordInput.value;
+
+
+        if (!email || !password) {
+
+            showMessage(
+                "من فضلك أدخل البريد الإلكتروني وكلمة المرور."
+            );
+
+            return;
+        }
+
+
+        loginButton.disabled = true;
+
+        loginButton.textContent =
+            "جاري تسجيل الدخول...";
+
+
+        try {
+
+            // Firebase Authentication
+            const credential =
+                await signInWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
+                );
+
+
+            const user =
+                credential.user;
+
+
+            // Get Admin document
+            const userRef =
+                doc(db, "users", user.uid);
+
+            const userSnapshot =
+                await getDoc(userRef);
+
+
+            // Document does not exist
+            if (!userSnapshot.exists()) {
+
+                await signOut(auth);
+
+                throw new Error(
+                    "admin-profile-not-found"
+                );
+            }
+
+
+            const userData =
+                userSnapshot.data();
+
+
+            // Authorization check
+            if (
+                userData.role !== "admin" ||
+                userData.isActive !== true
+            ) {
+
+                await signOut(auth);
+
+                throw new Error(
+                    "not-authorized"
+                );
+            }
+
+
+            // Admin verified
+            showMessage(
+                "تم تسجيل الدخول بنجاح. جاري فتح لوحة الإدارة...",
+                "success"
+            );
+
+
+            window.location.href =
+                "dashboard.html";
+
+
+        } catch (error) {
+
+            console.error(
+                "Admin login error:",
+                error
+            );
+
+
+            if (
+                error.message ===
+                "admin-profile-not-found"
+            ) {
+
+                showMessage(
+                    "حساب الإدارة غير مرتبط ببيانات الإدارة في Firestore."
+                );
+
+            }
+
+            else if (
+                error.message ===
+                "not-authorized"
+            ) {
+
+                showMessage(
+                    "هذا الحساب ليس لديه صلاحية دخول الإدارة."
+                );
+
+            }
+
+            else {
+
+                switch (error.code) {
+
+                    case "auth/invalid-credential":
+
+                        showMessage(
+                            "البريد الإلكتروني أو كلمة المرور غير صحيحة."
+                        );
+
+                        break;
+
+
+                    case "auth/user-disabled":
+
+                        showMessage(
+                            "تم إيقاف هذا الحساب."
+                        );
+
+                        break;
+
+
+                    case "auth/too-many-requests":
+
+                        showMessage(
+                            "تمت محاولات كثيرة. حاول مرة أخرى لاحقًا."
+                        );
+
+                        break;
+
+
+                    case "auth/invalid-email":
+
+                        showMessage(
+                            "البريد الإلكتروني غير صحيح."
+                        );
+
+                        break;
+
+
+                    default:
+
+                        showMessage(
+                            "حدث خطأ أثناء تسجيل الدخول. حاول مرة أخرى."
+                        );
+                }
+
+            }
+
+
+            loginButton.disabled = false;
+
+            loginButton.textContent =
+                "تسجيل دخول الإدارة";
+
+        }
+
+    });
+
+
+    // If already authenticated,
+    // verify whether the current user is Admin.
+    onAuthStateChanged(auth, async (user) => {
+
+        if (!user) {
+            return;
+        }
+
+
+        try {
+
+            const userRef =
+                doc(db, "users", user.uid);
+
+            const userSnapshot =
+                await getDoc(userRef);
+
+
+            if (!userSnapshot.exists()) {
+                return;
+            }
+
+
+            const userData =
+                userSnapshot.data();
+
+
+            if (
+                userData.role === "admin" &&
+                userData.isActive === true
+            ) {
+
+                window.location.href =
+                    "dashboard.html";
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Admin session check error:",
+                error
+            );
+
+        }
+
+    });
+
+</script>
+
+
+</body>
+
+</html>
