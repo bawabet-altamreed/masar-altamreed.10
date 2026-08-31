@@ -1,3 +1,0 @@
-import { start } from "./common.js"; import { db } from "../firebase/firebase.js"; import { collection,query,where,getDocs,orderBy } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"; import { esc,fmtDate } from "../core/ui.js";
-start("جدول المحاضرات",u=>`<div class="card"><h2>جدول ${esc(u.stage||"")}</h2><div id="list">جارٍ التحميل...</div></div>`);
-window.addEventListener("masar-ready",async e=>{const q=query(collection(db,"lectures"),where("targetStage","==",e.detail.stage),orderBy("startsAt","asc"));const s=await getDocs(q);document.querySelector("#list").innerHTML=s.docs.map(d=>`<p><b>${esc(d.data().title)}</b> — ${fmtDate(d.data().startsAt)}</p>`).join("")||"لا توجد محاضرات مجدولة.";});
