@@ -3,28 +3,60 @@
 
 import { app, auth, db } from "./init.js";
 
-console.log("=================================");
-console.log("Masar Al-Tamreed");
-console.log("Firebase Connection Test");
-console.log("=================================");
+const statusBox = document.getElementById("firebaseStatus");
 
-try {
-    if (app) {
-        console.log("✅ Firebase App: Connected");
+if (!statusBox) {
+    console.error("Firebase status box not found.");
+} else {
+
+    statusBox.innerHTML = `
+        <div>🟡 جاري اختبار Firebase...</div>
+    `;
+
+    try {
+
+        if (!app) {
+            throw new Error("Firebase App لم يتم تهيئته.");
+        }
+
+        if (!auth) {
+            throw new Error("Firebase Authentication لم يتم تهيئته.");
+        }
+
+        if (!db) {
+            throw new Error("Cloud Firestore لم يتم تهيئته.");
+        }
+
+        statusBox.innerHTML = `
+            <div class="firebase-success">
+
+                <div>🟢 Firebase App: Connected</div>
+
+                <div>🟢 Authentication: Initialized</div>
+
+                <div>🟢 Firestore: Initialized</div>
+
+                <strong>
+                    Firebase is ready ✅
+                </strong>
+
+            </div>
+        `;
+
+    } catch (error) {
+
+        statusBox.innerHTML = `
+            <div class="firebase-error">
+
+                🔴 Firebase Error
+
+                <br><br>
+
+                ${error.message}
+
+            </div>
+        `;
+
     }
 
-    if (auth) {
-        console.log("✅ Firebase Authentication: Initialized");
-    }
-
-    if (db) {
-        console.log("✅ Cloud Firestore: Initialized");
-    }
-
-    console.log("=================================");
-    console.log("✅ Firebase is ready.");
-    console.log("=================================");
-
-} catch (error) {
-    console.error("❌ Firebase initialization error:", error);
 }
