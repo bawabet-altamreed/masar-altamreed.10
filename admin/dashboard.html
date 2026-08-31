@@ -10,7 +10,9 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>لوحة الإدارة | مسار التمريض</title>
+    <title>
+        لوحة الإدارة | مسار التمريض
+    </title>
 
     <link
         rel="stylesheet"
@@ -26,45 +28,117 @@
 
 <script type="module">
 
-    import { protectAdminPage }
-        from "../src/admin/auth-guard.js";
+    import {
+        protectAdminPage
+    } from "../src/admin/auth-guard.js";
 
-    import { createAdminLayout }
-        from "../src/admin/layout.js";
+    import {
+        createAdminLayout
+    } from "../src/admin/layout.js";
 
-    const admin = await protectAdminPage();
+    import {
+        db
+    } from "../src/firebase/init.js";
+
+    import {
+        collection,
+        getDocs
+    } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+    // =====================================================
+    // Protect Admin Page
+    // =====================================================
+
+    const admin =
+        await protectAdminPage();
+
+
+    // =====================================================
+    // Create Admin Layout
+    // =====================================================
 
     createAdminLayout(admin.data);
 
+
     document.getElementById("pageTitle").textContent =
         "لوحة التحكم";
+
+
+    // =====================================================
+    // Page Content
+    // =====================================================
 
     document.getElementById("pageContent").innerHTML = `
 
         <div class="stats-grid">
 
             <div class="stat-card">
-                <div class="icon">👨‍🎓</div>
-                <h3>الطلاب</h3>
-                <strong>—</strong>
+
+                <div class="icon">
+                    👨‍🎓
+                </div>
+
+                <h3>
+                    إجمالي المستخدمين
+                </h3>
+
+                <strong id="usersCount">
+                    ...
+                </strong>
+
             </div>
 
-            <div class="stat-card">
-                <div class="icon">👨‍🏫</div>
-                <h3>المدرسون</h3>
-                <strong>—</strong>
-            </div>
 
             <div class="stat-card">
-                <div class="icon">🎥</div>
-                <h3>المحاضرات</h3>
-                <strong>—</strong>
+
+                <div class="icon">
+                    🎫
+                </div>
+
+                <h3>
+                    إجمالي الاشتراكات
+                </h3>
+
+                <strong id="subscriptionsCount">
+                    ...
+                </strong>
+
             </div>
 
+
             <div class="stat-card">
-                <div class="icon">📝</div>
-                <h3>الاختبارات</h3>
-                <strong>—</strong>
+
+                <div class="icon">
+                    🟢
+                </div>
+
+                <h3>
+                    الاشتراكات النشطة
+                </h3>
+
+                <strong id="activeSubscriptionsCount">
+                    ...
+                </strong>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="icon">
+                    ⛔
+                </div>
+
+                <h3>
+                    الاشتراكات الموقوفة
+                </h3>
+
+                <strong id="suspendedSubscriptionsCount">
+                    ...
+                </strong>
+
             </div>
 
         </div>
@@ -75,25 +149,559 @@
             <div class="panel-header">
 
                 <h2>
-                    نظرة عامة
+                    حالة اتصال Firestore
                 </h2>
 
             </div>
 
-            <div class="empty-state">
 
-                لوحة تحكم مسار التمريض جاهزة.
+            <div id="firestoreStatus"
+                 class="empty-state">
 
-                <br>
+                جاري قراءة البيانات...
 
-                سيتم ربط الإحصائيات ببيانات Firestore
-                في الخطوات القادمة.
+            </div>
+
+        </div>
+
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <h2>
+                    آخر المستخدمين
+                </h2>
+
+            </div>
+
+
+            <div id="usersPreview"
+                 class="empty-state">
+
+                جاري تحميل المستخدمين...
+
+            </div>
+
+        </div>
+
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <h2>
+                    الاشتراكات
+                </h2>
+
+            </div>
+
+
+            <div id="subscriptionsPreview"
+                 class="empty-state">
+
+                جاري تحميل الاشتراكات...
 
             </div>
 
         </div>
 
     `;
+
+
+    // =====================================================
+    // Elements
+    // =====================================================
+
+    const usersCount =
+        document.getElementById(
+            "usersCount"
+        );
+
+    const subscriptionsCount =
+        document.getElementById(
+            "subscriptionsCount"
+        );
+
+    const activeSubscriptionsCount =
+        document.getElementById(
+            "activeSubscriptionsCount"
+        );
+
+    const suspendedSubscriptionsCount =
+        document.getElementById(
+            "suspendedSubscriptionsCount"
+        );
+
+    const firestoreStatus =
+        document.getElementById(
+            "firestoreStatus"
+        );
+
+    const usersPreview =
+        document.getElementById(
+            "usersPreview"
+        );
+
+    const subscriptionsPreview =
+        document.getElementById(
+            "subscriptionsPreview"
+        );
+
+
+    // =====================================================
+    // Load Users
+    // =====================================================
+
+    async function loadUsers() {
+
+        const usersSnapshot =
+            await getDocs(
+                collection(db, "users")
+            );
+
+        const users =
+            usersSnapshot.docs.map(
+                document => ({
+                    id: document.id,
+                    ...document.data()
+                })
+            );
+
+
+        usersCount.textContent =
+            users.length;
+
+
+        if (users.length === 0) {
+
+            usersPreview.innerHTML =
+                "لا يوجد مستخدمون حاليًا.";
+
+            return users;
+
+        }
+
+
+        const preview =
+            users.slice(0, 10);
+
+
+        usersPreview.innerHTML = `
+
+            <div style="
+                overflow-x:auto;
+            ">
+
+                <table style="
+                    width:100%;
+                    border-collapse:collapse;
+                    text-align:right;
+                ">
+
+                    <thead>
+
+                        <tr>
+
+                            <th style="
+                                padding:12px;
+                                border-bottom:1px solid #e5edf3;
+                            ">
+                                الاسم
+                            </th>
+
+                            <th style="
+                                padding:12px;
+                                border-bottom:1px solid #e5edf3;
+                            ">
+                                Username
+                            </th>
+
+                            <th style="
+                                padding:12px;
+                                border-bottom:1px solid #e5edf3;
+                            ">
+                                الدور
+                            </th>
+
+                            <th style="
+                                padding:12px;
+                                border-bottom:1px solid #e5edf3;
+                            ">
+                                الحالة
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        ${preview.map(user => `
+
+                            <tr>
+
+                                <td style="
+                                    padding:12px;
+                                    border-bottom:1px solid #edf1f4;
+                                ">
+                                    ${escapeHtml(
+                                        user.name || "—"
+                                    )}
+                                </td>
+
+                                <td style="
+                                    padding:12px;
+                                    border-bottom:1px solid #edf1f4;
+                                    direction:ltr;
+                                    text-align:right;
+                                ">
+                                    ${escapeHtml(
+                                        user.username || "—"
+                                    )}
+                                </td>
+
+                                <td style="
+                                    padding:12px;
+                                    border-bottom:1px solid #edf1f4;
+                                ">
+                                    ${escapeHtml(
+                                        user.role || "—"
+                                    )}
+                                </td>
+
+                                <td style="
+                                    padding:12px;
+                                    border-bottom:1px solid #edf1f4;
+                                ">
+                                    ${
+                                        user.isActive === true
+                                        ? "🟢 نشط"
+                                        : "🔴 متوقف"
+                                    }
+                                </td>
+
+                            </tr>
+
+                        `).join("")}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        `;
+
+
+        return users;
+    }
+
+
+    // =====================================================
+    // Load Subscriptions
+    // =====================================================
+
+    async function loadSubscriptions() {
+
+        const subscriptionsSnapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "subscriptions"
+                )
+            );
+
+
+        const subscriptions =
+            subscriptionsSnapshot.docs.map(
+                document => ({
+                    id: document.id,
+                    ...document.data()
+                })
+            );
+
+
+        subscriptionsCount.textContent =
+            subscriptions.length;
+
+
+        const active =
+            subscriptions.filter(
+                subscription =>
+                    subscription.status === "active"
+            ).length;
+
+
+        const suspended =
+            subscriptions.filter(
+                subscription =>
+                    subscription.status === "suspended"
+            ).length;
+
+
+        activeSubscriptionsCount.textContent =
+            active;
+
+
+        suspendedSubscriptionsCount.textContent =
+            suspended;
+
+
+        if (subscriptions.length === 0) {
+
+            subscriptionsPreview.innerHTML =
+                "لا توجد اشتراكات حاليًا.";
+
+            return subscriptions;
+
+        }
+
+
+        const preview =
+            subscriptions.slice(0, 10);
+
+
+        subscriptionsPreview.innerHTML = `
+
+            <div style="
+                overflow-x:auto;
+            ">
+
+                <table style="
+                    width:100%;
+                    border-collapse:collapse;
+                    text-align:right;
+                ">
+
+                    <thead>
+
+                        <tr>
+
+                            <th style="
+                                padding:12px;
+                                border-bottom:1px solid #e5edf3;
+                            ">
+                                كود الاشتراك
+                            </th>
+
+                            <th style="
+                                padding:12px;
+                                border-bottom:1px solid #e5edf3;
+                            ">
+                                User ID
+                            </th>
+
+                            <th style="
+                                padding:12px;
+                                border-bottom:1px solid #e5edf3;
+                            ">
+                                المرحلة
+                            </th>
+
+                            <th style="
+                                padding:12px;
+                                border-bottom:1px solid #e5edf3;
+                            ">
+                                الحالة
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        ${preview.map(subscription => `
+
+                            <tr>
+
+                                <td style="
+                                    padding:12px;
+                                    border-bottom:1px solid #edf1f4;
+                                    direction:ltr;
+                                    text-align:right;
+                                    font-weight:bold;
+                                ">
+                                    ${escapeHtml(
+                                        subscription.id
+                                    )}
+                                </td>
+
+                                <td style="
+                                    padding:12px;
+                                    border-bottom:1px solid #edf1f4;
+                                    direction:ltr;
+                                    text-align:right;
+                                ">
+                                    ${escapeHtml(
+                                        subscription.userId || "—"
+                                    )}
+                                </td>
+
+                                <td style="
+                                    padding:12px;
+                                    border-bottom:1px solid #edf1f4;
+                                ">
+                                    ${escapeHtml(
+                                        subscription.stageId || "—"
+                                    )}
+                                </td>
+
+                                <td style="
+                                    padding:12px;
+                                    border-bottom:1px solid #edf1f4;
+                                ">
+                                    ${getStatusLabel(
+                                        subscription.status
+                                    )}
+                                </td>
+
+                            </tr>
+
+                        `).join("")}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        `;
+
+
+        return subscriptions;
+    }
+
+
+    // =====================================================
+    // Helpers
+    // =====================================================
+
+    function escapeHtml(value) {
+
+        return String(value)
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+
+    function getStatusLabel(status) {
+
+        switch (status) {
+
+            case "active":
+                return "🟢 نشط";
+
+            case "expired":
+                return "🟠 منتهي";
+
+            case "suspended":
+                return "🔴 موقوف";
+
+            default:
+                return "⚪ غير معروف";
+
+        }
+
+    }
+
+
+    // =====================================================
+    // Run Firestore Test
+    // =====================================================
+
+    async function initializeDashboard() {
+
+        try {
+
+            const [
+                users,
+                subscriptions
+            ] = await Promise.all([
+
+                loadUsers(),
+
+                loadSubscriptions()
+
+            ]);
+
+
+            firestoreStatus.innerHTML = `
+
+                <div style="
+                    color:#16794c;
+                    font-weight:bold;
+                    line-height:2;
+                ">
+
+                    🟢 Firestore Connected
+
+                    <br>
+
+                    تم قراءة Collection:
+                    <strong>users</strong>
+
+                    <br>
+
+                    تم قراءة Collection:
+                    <strong>subscriptions</strong>
+
+                    <br>
+
+                    إجمالي المستخدمين:
+                    ${users.length}
+
+                    <br>
+
+                    إجمالي الاشتراكات:
+                    ${subscriptions.length}
+
+                </div>
+
+            `;
+
+        } catch (error) {
+
+            console.error(
+                "Firestore Dashboard Error:",
+                error
+            );
+
+
+            firestoreStatus.innerHTML = `
+
+                <div style="
+                    color:#b42318;
+                    font-weight:bold;
+                    line-height:2;
+                ">
+
+                    🔴 فشل اختبار Firestore
+
+                    <br>
+
+                    ${
+                        escapeHtml(
+                            error.message
+                        )
+                    }
+
+                </div>
+
+            `;
+
+        }
+
+    }
+
+
+    initializeDashboard();
 
 </script>
 
