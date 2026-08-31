@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        لوحة الطالب | مسار التمريض
+    </title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Tahoma, sans-serif;
+            background: #f3f8fb;
+            color: #17324a;
+        }
+
+        .student-app {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .student-sidebar {
+            width: 250px;
+            background: #ffffff;
+            border-left: 1px solid #e3edf2;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            right: 0;
+            top: 0;
+            bottom: 0;
+        }
+
+        .student-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px;
+            margin-bottom: 25px;
+        }
+
+        .student-brand-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 13px;
+            background: #087ea4;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 23px;
+        }
+
+        .student-brand strong {
+            display: block;
+            font-size: 15px;
+        }
+
+        .student-brand small {
+            display: block;
+            color: #82919d;
+            margin-top: 3px;
+            font-size: 10px;
+            direction: ltr;
+        }
+
+        .student-user {
+            background: #f4f9fb;
+            border-radius: 14px;
+            padding: 12px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .student-avatar,
+        .header-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #087ea4;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .student-user strong {
+            display: block;
+            font-size: 12px;
+        }
+
+        .student-user small {
+            display: block;
+            color: #82919d;
+            margin-top: 4px;
+            font-size: 10px;
+        }
+
+        .student-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .student-nav a {
+            text-decoration: none;
+            color: #60717f;
+            padding: 12px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .student-nav a:hover,
+        .student-nav a.active {
+            background: #eaf7fb;
+            color: #087ea4;
+        }
+
+        .student-logout {
+            margin-top: auto;
+            height: 42px;
+            border: none;
+            border-radius: 10px;
+            background: #fff1f1;
+            color: #b42318;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .student-main {
+            flex: 1;
+            margin-right: 250px;
+        }
+
+        .student-header {
+            min-height: 82px;
+            background: #ffffff;
+            border-bottom: 1px solid #e3edf2;
+            padding: 18px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .student-header h1 {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        .student-header p {
+            color: #81909c;
+            font-size: 12px;
+        }
+
+        .student-header-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .student-content {
+            padding: 25px;
+        }
+
+        .welcome {
+            background: linear-gradient(135deg, #087ea4, #075f7c);
+            color: white;
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .welcome h2 {
+            margin-bottom: 8px;
+        }
+
+        .welcome p {
+            opacity: .9;
+            font-size: 13px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e4edf2;
+            border-radius: 15px;
+            padding: 18px;
+        }
+
+        .card-title {
+            color: #82919d;
+            font-size: 11px;
+            margin-bottom: 9px;
+        }
+
+        .card-value {
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        .status-active {
+            color: #16834f;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid #e4edf2;
+            border-radius: 15px;
+            padding: 20px;
+        }
+
+        .panel h3 {
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .empty {
+            padding: 25px;
+            text-align: center;
+            color: #8795a0;
+            font-size: 13px;
+        }
+
+        .lecture-item,
+        .exam-item,
+        .notification-item {
+            border-bottom: 1px solid #edf1f4;
+            padding: 12px 0;
+        }
+
+        .lecture-item:last-child,
+        .exam-item:last-child,
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-title {
+            font-weight: bold;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .item-meta {
+            color: #82919d;
+            font-size: 11px;
+        }
+
+        @media (max-width: 900px) {
+
+            .student-sidebar {
+                width: 210px;
+            }
+
+            .student-main {
+                margin-right: 210px;
+            }
+
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 650px) {
+
+            .student-sidebar {
+                position: static;
+                width: 100%;
+                min-height: auto;
+            }
+
+            .student-app {
+                display: block;
+            }
+
+            .student-main {
+                margin-right: 0;
+            }
+
+            .student-nav {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .student-logout {
+                margin-top: 15px;
+            }
+
+            .student-header {
+                padding: 15px;
+            }
+
+            .student-content {
+                padding: 15px;
+            }
+
+            .cards,
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div
+    id="studentApp"
+    class="student-app"
+>
+    جاري تحميل المنصة...
+</div>
+
+
+<script type="module">
+
+    import {
+        protectStudentPage,
+        createStudentLayout,
+        getCollection,
+        escapeHtml,
+        formatDate,
+        formatDateTime,
+        studentErrorMessage
+    } from "../src/student/student.js";
+
+
+    try {
+
+        const {
+            student,
+            subscription
+        } =
+            await protectStudentPage();
+
+
+        createStudentLayout(
+            student,
+            "dashboard"
+        );
+
+
+        document.getElementById(
+            "studentPageTitle"
+        ).textContent =
+            "لوحة الطالب";
+
+
+        const content =
+            document.getElementById(
+                "studentPageContent"
+            );
+
+
+        content.innerHTML = `
+
+            <div class="welcome">
+
+                <h2>
+                    أهلًا بك،
+                    ${escapeHtml(
+                        student.name ||
+                        "طالب مسار التمريض"
+                    )} 👋
+                </h2>
+
+                <p>
+                    نتمنى لك رحلة تعليمية ناجحة ومميزة.
+                </p>
+
+            </div>
+
+
+            <div class="cards">
+
+                <div class="card">
+
+                    <div class="card-title">
+                        المرحلة
+                    </div>
+
+                    <div class="card-value">
+                        ${escapeHtml(
+                            student.stageId ||
+                            "—"
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="card-title">
+                        حالة الاشتراك
+                    </div>
+
+                    <div class="card-value status-active">
+                        نشط
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="card-title">
+                        ينتهي في
+                    </div>
+
+                    <div class="card-value">
+                        ${formatDate(
+                            subscription.endDate
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div class="card-title">
+                        كود الاشتراك
+                    </div>
+
+                    <div
+                        class="card-value"
+                        dir="ltr"
+                    >
+                        ${escapeHtml(
+                            student.subscriptionCode ||
+                            student.username ||
+                            "—"
+                        )}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-grid">
+
+                <div class="panel">
+
+                    <h3>
+                        🎥 المحاضرات القادمة
+                    </h3>
+
+                    <div id="upcomingLectures">
+                        جاري التحميل...
+                    </div>
+
+                </div>
+
+
+                <div class="panel">
+
+                    <h3>
+                        📝 الاختبارات المتاحة
+                    </h3>
+
+                    <div id="availableExams">
+                        جاري التحميل...
+                    </div>
+
+                </div>
+
+
+                <div class="panel">
+
+                    <h3>
+                        🔔 آخر التنبيهات
+                    </h3>
+
+                    <div id="notifications">
+                        جاري التحميل...
+                    </div>
+
+                </div>
+
+
+                <div class="panel">
+
+                    <h3>
+                        📊 التقدم الدراسي
+                    </h3>
+
+                    <div class="empty">
+                        سيتم احتساب تقدمك تلقائيًا
+                        مع إضافة المحاضرات والاختبارات.
+                    </div>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        // =================================================
+        // Lectures
+        // =================================================
+
+        try {
+
+            const lectures =
+                await getCollection(
+                    "lectures"
+                );
+
+
+            const stageLectures =
+                lectures
+                    .filter(
+                        lecture =>
+                            !lecture.stageId ||
+                            lecture.stageId ===
+                            student.stageId
+                    )
+                    .sort(
+                        (a, b) => {
+
+                            const da =
+                                a.startAt ||
+                                a.date;
+
+                            const db =
+                                b.startAt ||
+                                b.date;
+
+                            return (
+                                String(da || "")
+                                    .localeCompare(
+                                        String(db || "")
+                                    )
+                            );
+
+                        }
+                    )
+                    .slice(0, 5);
+
+
+            const box =
+                document.getElementById(
+                    "upcomingLectures"
+                );
+
+
+            if (!stageLectures.length) {
+
+                box.innerHTML =
+                    `<div class="empty">
+                        لا توجد محاضرات قادمة حاليًا.
+                    </div>`;
+
+            } else {
+
+                box.innerHTML =
+                    stageLectures
+                        .map(
+                            lecture => `
+
+                                <div class="lecture-item">
+
+                                    <div class="item-title">
+                                        ${escapeHtml(
+                                            lecture.title ||
+                                            lecture.name ||
+                                            "محاضرة"
+                                        )}
+                                    </div>
+
+                                    <div class="item-meta">
+                                        ${escapeHtml(
+                                            lecture.subjectId ||
+                                            lecture.subject ||
+                                            ""
+                                        )}
+                                        ${lecture.startAt
+                                            ? " • " +
+                                              formatDateTime(
+                                                  lecture.startAt
+                                              )
+                                            : ""
+                                        }
+                                    </div>
+
+                                </div>
+
+                            `
+                        )
+                        .join("");
+
+            }
+
+        } catch (error) {
+
+            document.getElementById(
+                "upcomingLectures"
+            ).innerHTML =
+                `<div class="empty">
+                    ${escapeHtml(
+                        studentErrorMessage(error)
+                    )}
+                </div>`;
+
+        }
+
+
+        // =================================================
+        // Exams
+        // =================================================
+
+        try {
+
+            const exams =
+                await getCollection(
+                    "exams"
+                );
+
+
+            const available =
+                exams
+                    .filter(
+                        exam =>
+                            !exam.stageId ||
+                            exam.stageId ===
+                            student.stageId
+                    )
+                    .slice(0, 5);
+
+
+            const box =
+                document.getElementById(
+                    "availableExams"
+                );
+
+
+            if (!available.length) {
+
+                box.innerHTML =
+                    `<div class="empty">
+                        لا توجد اختبارات متاحة حاليًا.
+                    </div>`;
+
+            } else {
+
+                box.innerHTML =
+                    available
+                        .map(
+                            exam => `
+
+                                <div class="exam-item">
+
+                                    <div class="item-title">
+                                        ${escapeHtml(
+                                            exam.title ||
+                                            exam.name ||
+                                            "اختبار"
+                                        )}
+                                    </div>
+
+                                    <div class="item-meta">
+                                        ${escapeHtml(
+                                            exam.subjectId ||
+                                            exam.subject ||
+                                            ""
+                                        )}
+                                    </div>
+
+                                </div>
+
+                            `
+                        )
+                        .join("");
+
+            }
+
+        } catch (error) {
+
+            document.getElementById(
+                "availableExams"
+            ).innerHTML =
+                `<div class="empty">
+                    ${escapeHtml(
+                        studentErrorMessage(error)
+                    )}
+                </div>`;
+
+        }
+
+
+        // =================================================
+        // Notifications
+        // =================================================
+
+        try {
+
+            const notifications =
+                await getCollection(
+                    "notifications"
+                );
+
+
+            const studentNotifications =
+                notifications
+                    .filter(
+                        notification => {
+
+                            if (
+                                notification.userId
+                            ) {
+
+                                return (
+                                    notification.userId ===
+                                    student.id
+                                );
+
+                            }
+
+                            if (
+                                notification.stageId
+                            ) {
+
+                                return (
+                                    notification.stageId ===
+                                    student.stageId
+                                );
+
+                            }
+
+                            return true;
+
+                        }
+                    )
+                    .slice(0, 5);
+
+
+            const box =
+                document.getElementById(
+                    "notifications"
+                );
+
+
+            if (
+                !studentNotifications.length
+            ) {
+
+                box.innerHTML =
+                    `<div class="empty">
+                        لا توجد تنبيهات حاليًا.
+                    </div>`;
+
+            } else {
+
+                box.innerHTML =
+                    studentNotifications
+                        .map(
+                            notification => `
+
+                                <div class="notification-item">
+
+                                    <div class="item-title">
+                                        ${escapeHtml(
+                                            notification.title ||
+                                            "تنبيه"
+                                        )}
+                                    </div>
+
+                                    <div class="item-meta">
+                                        ${escapeHtml(
+                                            notification.message ||
+                                            notification.body ||
+                                            ""
+                                        )}
+                                    </div>
+
+                                </div>
+
+                            `
+                        )
+                        .join("");
+
+            }
+
+        } catch (error) {
+
+            document.getElementById(
+                "notifications"
+            ).innerHTML =
+                `<div class="empty">
+                    ${escapeHtml(
+                        studentErrorMessage(error)
+                    )}
+                </div>`;
+
+        }
+
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+</script>
+
+</body>
+</html>
