@@ -332,7 +332,7 @@
 </div>
 
     <script type="module">
-    import "../src/firebase/test.js";
+    import "./src/firebase/test.js";
 
     const passwordInput = document.getElementById("password");
     const togglePassword = document.getElementById("togglePassword");
@@ -346,14 +346,11 @@
         togglePassword.textContent = isPassword ? "🙈" : "👁️";
     });
 
-
     const loginForm = document.getElementById("loginForm");
 
     loginForm.addEventListener("submit", (event) => {
 
         event.preventDefault();
-
-        console.log("Login form is ready.");
 
     });
 </script>
