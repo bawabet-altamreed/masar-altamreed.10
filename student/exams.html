@@ -11,8 +11,9 @@
     >
 
     <title>
-        الاختبارات | مسار التمريض
+        الاختبار | مسار التمريض
     </title>
+
 
     <style>
 
@@ -22,451 +23,654 @@
             padding: 0;
         }
 
+
         body {
-            font-family: Arial, Tahoma, sans-serif;
+            font-family:
+                Arial,
+                Tahoma,
+                sans-serif;
+
             background: #f3f8fb;
+
             color: #17324a;
         }
+
 
         .student-app {
             min-height: 100vh;
             display: flex;
         }
 
-        .student-sidebar {
-            width: 250px;
-            background: #ffffff;
-            border-left: 1px solid #e3edf2;
-            padding: 20px 15px;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            right: 0;
-            top: 0;
-            bottom: 0;
-        }
-
-        .student-brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 5px;
-            margin-bottom: 25px;
-        }
-
-        .student-brand-icon {
-            width: 45px;
-            height: 45px;
-            border-radius: 13px;
-            background: #087ea4;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 23px;
-        }
-
-        .student-brand strong {
-            display: block;
-            font-size: 15px;
-        }
-
-        .student-brand small {
-            display: block;
-            color: #82919d;
-            margin-top: 3px;
-            font-size: 10px;
-            direction: ltr;
-        }
-
-        .student-user {
-            background: #f4f9fb;
-            border-radius: 14px;
-            padding: 12px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .student-avatar,
-        .header-avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background: #087ea4;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .student-user strong {
-            display: block;
-            font-size: 12px;
-        }
-
-        .student-user small {
-            display: block;
-            color: #82919d;
-            margin-top: 4px;
-            font-size: 10px;
-        }
-
-        .student-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .student-nav a {
-            text-decoration: none;
-            color: #60717f;
-            padding: 12px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 13px;
-            font-weight: bold;
-        }
-
-        .student-nav a:hover,
-        .student-nav a.active {
-            background: #eaf7fb;
-            color: #087ea4;
-        }
-
-        .student-logout {
-            margin-top: auto;
-            height: 42px;
-            border: none;
-            border-radius: 10px;
-            background: #fff1f1;
-            color: #b42318;
-            cursor: pointer;
-            font-weight: bold;
-        }
 
         .student-main {
             flex: 1;
-            margin-right: 250px;
         }
 
-        .student-header {
-            min-height: 82px;
-            background: #ffffff;
-            border-bottom: 1px solid #e3edf2;
-            padding: 18px 30px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .student-header h1 {
-            font-size: 22px;
-            margin-bottom: 5px;
-        }
-
-        .student-header p {
-            color: #81909c;
-            font-size: 12px;
-        }
-
-        .student-header-user {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: bold;
-            font-size: 12px;
-        }
 
         .student-content {
             padding: 25px;
         }
 
-        .page-intro {
-            background: linear-gradient(
-                135deg,
-                #087ea4,
-                #075f7c
-            );
+
+        /* ================================
+           Exam Header
+        ================================= */
+
+        .exam-header {
+            background:
+                linear-gradient(
+                    135deg,
+                    #087ea4,
+                    #075f7c
+                );
+
             color: white;
+
             border-radius: 18px;
+
             padding: 25px;
+
             margin-bottom: 20px;
         }
 
-        .page-intro h2 {
-            font-size: 20px;
+
+        .exam-header h2 {
+            font-size: 21px;
             margin-bottom: 8px;
+            line-height: 1.6;
         }
 
-        .page-intro p {
+
+        .exam-header p {
             font-size: 13px;
             opacity: .9;
             line-height: 1.8;
         }
 
-        .filters {
-            background: #ffffff;
-            border: 1px solid #e4edf2;
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 20px;
+
+        .exam-meta {
             display: flex;
-            gap: 10px;
             flex-wrap: wrap;
+            gap: 10px;
+
+            margin-top: 18px;
         }
 
-        .filter-input,
-        .filter-select {
-            height: 43px;
-            border: 1px solid #d7e3eb;
-            border-radius: 9px;
-            padding: 0 12px;
-            outline: none;
-            font-size: 13px;
-            background: #ffffff;
+
+        .exam-meta span {
+            background: rgba(255,255,255,.14);
+
+            border: 1px solid
+                rgba(255,255,255,.15);
+
+            padding: 7px 11px;
+
+            border-radius: 20px;
+
+            font-size: 11px;
         }
 
-        .filter-input {
-            flex: 1;
-            min-width: 220px;
+
+        /* ================================
+           Timer
+        ================================= */
+
+        .timer-box {
+            position: sticky;
+
+            top: 15px;
+
+            z-index: 20;
+
+            background: white;
+
+            border: 1px solid #e4edf2;
+
+            border-radius: 15px;
+
+            padding: 14px 18px;
+
+            margin-bottom: 18px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            box-shadow:
+                0 5px 20px
+                rgba(0,0,0,.04);
         }
 
-        .filter-select {
-            min-width: 170px;
+
+        .timer-title {
+            font-size: 12px;
+            color: #687783;
+            font-weight: bold;
         }
 
-        .filter-input:focus,
-        .filter-select:focus {
+
+        .timer {
+            font-size: 22px;
+            font-weight: bold;
+            color: #087ea4;
+
+            direction: ltr;
+        }
+
+
+        .timer.warning {
+            color: #b7791f;
+        }
+
+
+        .timer.danger {
+            color: #b42318;
+        }
+
+
+        /* ================================
+           Progress
+        ================================= */
+
+        .progress-box {
+            background: white;
+
+            border: 1px solid #e4edf2;
+
+            border-radius: 15px;
+
+            padding: 16px;
+
+            margin-bottom: 18px;
+        }
+
+
+        .progress-top {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 10px;
+        }
+
+
+        .progress-top span {
+            font-size: 11px;
+            color: #71808d;
+        }
+
+
+        .progress-bar {
+            height: 8px;
+
+            background: #edf2f5;
+
+            border-radius: 20px;
+
+            overflow: hidden;
+        }
+
+
+        .progress-fill {
+            height: 100%;
+
+            width: 0%;
+
+            background: #087ea4;
+
+            border-radius: 20px;
+
+            transition: width .2s ease;
+        }
+
+
+        /* ================================
+           Question
+        ================================= */
+
+        .question-card {
+            background: white;
+
+            border: 1px solid #e4edf2;
+
+            border-radius: 17px;
+
+            padding: 22px;
+
+            margin-bottom: 18px;
+        }
+
+
+        .question-number {
+            color: #087ea4;
+
+            font-size: 12px;
+
+            font-weight: bold;
+
+            margin-bottom: 12px;
+        }
+
+
+        .question-text {
+            font-size: 17px;
+
+            font-weight: bold;
+
+            line-height: 1.9;
+
+            margin-bottom: 20px;
+        }
+
+
+        .options {
+            display: grid;
+
+            gap: 10px;
+        }
+
+
+        .option {
+            position: relative;
+
+            border: 1px solid #dce7ed;
+
+            border-radius: 12px;
+
+            padding: 14px;
+
+            cursor: pointer;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            transition:
+                .15s ease;
+
+            background: #fff;
+        }
+
+
+        .option:hover {
+            border-color: #087ea4;
+
+            background: #f7fcfd;
+        }
+
+
+        .option.selected {
+            border-color: #087ea4;
+
+            background: #eaf7fb;
+        }
+
+
+        .option input {
+            position: absolute;
+
+            opacity: 0;
+
+            pointer-events: none;
+        }
+
+
+        .option-circle {
+            width: 22px;
+
+            height: 22px;
+
+            border: 2px solid #cbd8df;
+
+            border-radius: 50%;
+
+            flex-shrink: 0;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+        }
+
+
+        .option.selected
+        .option-circle {
             border-color: #087ea4;
         }
 
-        .exams-grid {
-            display: grid;
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
-            gap: 18px;
-        }
 
-        .exam-card {
-            background: #ffffff;
-            border: 1px solid #e4edf2;
-            border-radius: 16px;
-            padding: 20px;
-        }
+        .option.selected
+        .option-circle::after {
+            content: "";
 
-        .exam-top {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            margin-bottom: 15px;
-        }
+            width: 10px;
 
-        .exam-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 13px;
-            background: #eaf7fb;
-            color: #087ea4;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 23px;
-            flex-shrink: 0;
-        }
+            height: 10px;
 
-        .exam-title {
-            flex: 1;
-        }
-
-        .exam-title h3 {
-            font-size: 16px;
-            line-height: 1.6;
-            margin-bottom: 5px;
-        }
-
-        .exam-title p {
-            color: #087ea4;
-            font-size: 11px;
-            font-weight: bold;
-        }
-
-        .exam-status {
-            display: inline-block;
-            padding: 5px 9px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: bold;
-            white-space: nowrap;
-        }
-
-        .status-available {
-            background: #eaf8f0;
-            color: #16834f;
-        }
-
-        .status-upcoming {
-            background: #eef8fb;
-            color: #087ea4;
-        }
-
-        .status-ended {
-            background: #f1f3f5;
-            color: #687783;
-        }
-
-        .status-cancelled {
-            background: #fff1f1;
-            color: #b42318;
-        }
-
-        .exam-details {
-            border-top: 1px solid #edf1f4;
-            padding-top: 14px;
-        }
-
-        .detail-row {
-            display: flex;
-            align-items: center;
-            gap: 9px;
-            margin-bottom: 10px;
-            color: #617381;
-            font-size: 12px;
-        }
-
-        .detail-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .detail-icon {
-            width: 24px;
-            text-align: center;
-        }
-
-        .detail-row strong {
-            color: #34495e;
-        }
-
-        .exam-actions {
-            margin-top: 16px;
-        }
-
-        .exam-button {
-            width: 100%;
-            height: 42px;
-            border: none;
-            border-radius: 9px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .open-button {
             background: #087ea4;
-            color: white;
+
+            border-radius: 50%;
         }
 
-        .open-button:hover {
-            background: #075f7c;
+
+        .option-label {
+            font-size: 13px;
+
+            line-height: 1.7;
         }
 
-        .disabled-button {
+
+        /* ================================
+           Navigation
+        ================================= */
+
+        .question-navigation {
+            display: flex;
+
+            justify-content: space-between;
+
+            gap: 10px;
+
+            margin-top: 20px;
+        }
+
+
+        .nav-button,
+        .submit-button {
+            min-height: 43px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            padding: 0 18px;
+
+            font-size: 12px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+
+        .nav-button {
+            background: #eef8fb;
+
+            color: #087ea4;
+        }
+
+
+        .nav-button:disabled {
             background: #edf1f4;
-            color: #8795a0;
+
+            color: #9aa5ac;
+
             cursor: not-allowed;
         }
 
-        .empty,
-        .loading,
-        .error-box {
+
+        .submit-button {
+            background: #087ea4;
+
+            color: white;
+        }
+
+
+        .submit-button:hover {
+            background: #075f7c;
+        }
+
+
+        /* ================================
+           Question Navigator
+        ================================= */
+
+        .question-list {
             background: white;
+
             border: 1px solid #e4edf2;
+
             border-radius: 15px;
-            padding: 45px 20px;
-            text-align: center;
+
+            padding: 16px;
+
+            margin-bottom: 18px;
+        }
+
+
+        .question-list-title {
             font-size: 13px;
-            line-height: 2;
-            grid-column: 1 / -1;
+
+            font-weight: bold;
+
+            margin-bottom: 12px;
         }
 
-        .empty {
+
+        .question-numbers {
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 7px;
+        }
+
+
+        .question-number-button {
+            width: 36px;
+
+            height: 36px;
+
+            border: 1px solid #dce7ed;
+
+            background: white;
+
+            color: #617381;
+
+            border-radius: 9px;
+
+            cursor: pointer;
+
+            font-size: 11px;
+
+            font-weight: bold;
+        }
+
+
+        .question-number-button.current {
+            background: #087ea4;
+
+            color: white;
+
+            border-color: #087ea4;
+        }
+
+
+        .question-number-button.answered {
+            background: #eaf8f0;
+
+            color: #16834f;
+
+            border-color: #ccebdc;
+        }
+
+
+        .question-number-button.current.answered {
+            background: #087ea4;
+
+            color: white;
+
+            border-color: #087ea4;
+        }
+
+
+        /* ================================
+           Loading / Error
+        ================================= */
+
+        .state-box {
+            background: white;
+
+            border: 1px solid #e4edf2;
+
+            border-radius: 15px;
+
+            padding: 45px 20px;
+
+            text-align: center;
+
             color: #8795a0;
+
+            font-size: 13px;
+
+            line-height: 2;
         }
 
-        .loading {
-            color: #087ea4;
-        }
 
         .error-box {
             background: #fff1f1;
+
             border-color: #ffd5d5;
+
             color: #b42318;
         }
 
-        @media (max-width: 900px) {
 
-            .student-sidebar {
-                width: 210px;
-            }
+        /* ================================
+           Result
+        ================================= */
 
-            .student-main {
-                margin-right: 210px;
-            }
+        .result-card {
+            background: white;
 
-            .exams-grid {
-                grid-template-columns: 1fr;
-            }
+            border: 1px solid #e4edf2;
 
+            border-radius: 18px;
+
+            padding: 30px 20px;
+
+            text-align: center;
         }
 
+
+        .result-icon {
+            font-size: 45px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .result-card h2 {
+            font-size: 22px;
+
+            margin-bottom: 10px;
+        }
+
+
+        .result-score {
+            font-size: 38px;
+
+            font-weight: bold;
+
+            color: #087ea4;
+
+            margin: 15px 0;
+        }
+
+
+        .result-details {
+            color: #71808d;
+
+            font-size: 12px;
+
+            line-height: 2;
+        }
+
+
+        .result-actions {
+            margin-top: 20px;
+
+            display: flex;
+
+            justify-content: center;
+
+            gap: 10px;
+        }
+
+
+        .result-button {
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            min-height: 42px;
+
+            padding: 0 18px;
+
+            border-radius: 9px;
+
+            text-decoration: none;
+
+            font-size: 12px;
+
+            font-weight: bold;
+
+            background: #087ea4;
+
+            color: white;
+        }
+
+
+        /* ================================
+           Responsive
+        ================================= */
+
         @media (max-width: 650px) {
-
-            .student-sidebar {
-                position: static;
-                width: 100%;
-                min-height: auto;
-            }
-
-            .student-app {
-                display: block;
-            }
-
-            .student-main {
-                margin-right: 0;
-            }
-
-            .student-nav {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .student-logout {
-                margin-top: 15px;
-            }
-
-            .student-header {
-                padding: 15px;
-            }
 
             .student-content {
                 padding: 15px;
             }
 
-            .filters {
+
+            .exam-header {
+                padding: 20px;
+            }
+
+
+            .question-card {
+                padding: 17px;
+            }
+
+
+            .question-text {
+                font-size: 15px;
+            }
+
+
+            .timer-box {
+                top: 8px;
+            }
+
+
+            .question-navigation {
                 flex-direction: column;
             }
 
-            .filter-input,
-            .filter-select {
+
+            .nav-button,
+            .submit-button {
                 width: 100%;
-                min-width: 0;
             }
 
         }
@@ -475,528 +679,1823 @@
 
 </head>
 
+
 <body>
 
 <div
     id="studentApp"
     class="student-app"
 >
-    جاري تحميل المنصة...
+    جاري تحميل الاختبار...
 </div>
 
 
 <script type="module">
 
-import {
-    protectStudentPage,
-    createStudentLayout,
-    escapeHtml,
-    formatDateTime,
-    studentErrorMessage
-} from "../src/student/student.js";
+    import {
+        protectStudentPage,
+        createStudentLayout,
+        escapeHtml,
+        formatDateTime,
+        studentErrorMessage
+    } from "../src/student/student.js";
 
 
-import {
-    db
-} from "../src/firebase/init.js";
+    import {
+        db
+    } from "../src/firebase/init.js";
 
 
-import {
-    collection,
-    query,
-    where,
-    getDocs
-} from
-    "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+    import {
+        doc,
+        getDoc,
+        collection,
+        query,
+        where,
+        getDocs,
+        addDoc
+    } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-try {
+    /* =====================================================
+       Global State
+    ===================================================== */
 
-    const {
-        student
-    } =
-        await protectStudentPage();
+    let student = null;
+
+    let exam = null;
+
+    let questions = [];
+
+    let currentQuestion = 0;
+
+    let answers = {};
+
+    let remainingSeconds = 0;
+
+    let timerInterval = null;
+
+    let submitting = false;
+
+    let alreadySubmitted = false;
 
 
-    createStudentLayout(
-        student,
-        "exams"
-    );
+    /* =====================================================
+       Start
+    ===================================================== */
+
+    try {
+
+        const result =
+            await protectStudentPage();
 
 
-    document.getElementById(
-        "studentPageTitle"
-    ).textContent =
-        "الاختبارات";
+        student =
+            result.student;
 
 
-    const content =
-        document.getElementById(
-            "studentPageContent"
+        createStudentLayout(
+            student,
+            "exams"
         );
 
 
-    content.innerHTML = `
-
-        <div class="page-intro">
-
-            <h2>
-                📝 الاختبارات
-            </h2>
-
-            <p>
-                تابع الاختبارات المتاحة لمرحلتك
-                الدراسية، واعرف مواعيدها ومدتها
-                وحالتها قبل بدء الاختبار.
-            </p>
-
-        </div>
+        document.getElementById(
+            "studentPageTitle"
+        ).textContent =
+            "الاختبار";
 
 
-        <div class="filters">
+        const content =
+            document.getElementById(
+                "studentPageContent"
+            );
 
-            <input
-                type="search"
-                id="examSearch"
-                class="filter-input"
-                placeholder="ابحث عن اختبار أو مادة..."
+
+        /*
+         * examId يأتي من:
+         *
+         * student/exam.html?examId=XXXX
+         */
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+
+        const examId =
+            params.get(
+                "examId"
+            );
+
+
+        if (!examId) {
+
+            showError(
+                "لم يتم تحديد الاختبار."
+            );
+
+            throw new Error(
+                "Missing examId"
+            );
+
+        }
+
+
+        content.innerHTML = `
+
+            <div
+                id="examRoot"
+                class="state-box"
             >
-
-
-            <select
-                id="statusFilter"
-                class="filter-select"
-            >
-
-                <option value="all">
-                    كل الاختبارات
-                </option>
-
-                <option value="available">
-                    المتاحة الآن
-                </option>
-
-                <option value="upcoming">
-                    القادمة
-                </option>
-
-                <option value="ended">
-                    انتهت
-                </option>
-
-                <option value="cancelled">
-                    ملغاة
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <div
-            id="examsContainer"
-            class="exams-grid"
-        >
-
-            <div class="loading">
-                ⏳ جاري تحميل الاختبارات...
+                ⏳ جاري تحميل الاختبار...
             </div>
 
-        </div>
-
-    `;
+        `;
 
 
-    const container =
-        document.getElementById(
-            "examsContainer"
+        await loadExam(
+            examId
         );
 
 
-    const searchInput =
-        document.getElementById(
-            "examSearch"
+    } catch (error) {
+
+        console.error(
+            "Student exam error:",
+            error
         );
 
-
-    const statusFilter =
-        document.getElementById(
-            "statusFilter"
-        );
+    }
 
 
-    // =================================================
-    // Secure Student Query
-    // =================================================
+    /* =====================================================
+       Load Exam
+    ===================================================== */
 
-    const examsQuery =
-        query(
+    async function loadExam(
+        examId
+    ) {
 
-            collection(
+        /*
+         * جلب نفس Document الموجود
+         * في exams
+         */
+
+        const examRef =
+            doc(
                 db,
-                "exams"
-            ),
-
-            where(
-                "stageId",
-                "==",
-                student.stageId
-            ),
-
-            where(
-                "isPublished",
-                "==",
-                true
-            )
-
-        );
-
-
-    const snapshot =
-        await getDocs(
-            examsQuery
-        );
-
-
-    const exams =
-        snapshot.docs
-            .map(
-                item => ({
-                    id: item.id,
-                    ...item.data()
-                })
-            )
-            .sort(
-                (a, b) =>
-                    getTime(
-                        a.startAt
-                    ) -
-                    getTime(
-                        b.startAt
-                    )
+                "exams",
+                examId
             );
 
 
-    render();
-
-
-    searchInput.addEventListener(
-        "input",
-        render
-    );
-
-
-    statusFilter.addEventListener(
-        "change",
-        render
-    );
-
-
-    function render() {
-
-        const search =
-            searchInput.value
-                .trim()
-                .toLowerCase();
-
-
-        const selectedStatus =
-            statusFilter.value;
-
-
-        const filtered =
-            exams.filter(
-                exam => {
-
-                    const title =
-                        String(
-                            exam.title ||
-                            exam.name ||
-                            ""
-                        ).toLowerCase();
-
-
-                    const subject =
-                        String(
-                            exam.subject ||
-                            exam.subjectId ||
-                            ""
-                        ).toLowerCase();
-
-
-                    const matchesSearch =
-                        !search ||
-                        title.includes(search) ||
-                        subject.includes(search);
-
-
-                    const status =
-                        getStatus(
-                            exam
-                        );
-
-
-                    const matchesStatus =
-                        selectedStatus === "all" ||
-                        selectedStatus === status;
-
-
-                    return (
-                        matchesSearch &&
-                        matchesStatus
-                    );
-
-                }
+        const examSnapshot =
+            await getDoc(
+                examRef
             );
 
 
-        if (!filtered.length) {
+        if (!examSnapshot.exists()) {
 
-            container.innerHTML = `
-
-                <div class="empty">
-
-                    📝
-
-                    <br>
-
-                    لا توجد اختبارات مطابقة حاليًا.
-
-                </div>
-
-            `;
+            showError(
+                "هذا الاختبار غير موجود."
+            );
 
             return;
 
         }
 
 
-        container.innerHTML =
-            filtered
-                .map(
-                    exam =>
-                        createExamCard(
-                            exam
-                        )
-                )
-                .join("");
+        exam = {
+            id: examSnapshot.id,
+            ...examSnapshot.data()
+        };
+
+
+        /*
+         * حماية إضافية من ناحية الواجهة.
+         *
+         * الحماية الحقيقية يجب أن تكون
+         * موجودة أيضًا في Firestore Rules.
+         */
+
+        if (
+            exam.isPublished === false
+        ) {
+
+            showError(
+                "هذا الاختبار غير متاح حاليًا."
+            );
+
+            return;
+
+        }
+
+
+        if (
+            exam.stageId &&
+            exam.stageId !==
+            student.stageId
+        ) {
+
+            showError(
+                "هذا الاختبار غير متاح لمرحلتك الدراسية."
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * تجهيز الأسئلة
+         */
+
+        questions =
+            normalizeQuestions(
+                exam.questions
+            );
+
+
+        if (!questions.length) {
+
+            showError(
+                "هذا الاختبار لا يحتوي على أسئلة حاليًا."
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * مدة الاختبار
+         */
+
+        const duration =
+            Number(
+                exam.duration ||
+                exam.durationMinutes ||
+                0
+            );
+
+
+        if (duration > 0) {
+
+            remainingSeconds =
+                duration * 60;
+
+        } else {
+
+            /*
+             * في حالة عدم وجود مدة:
+             * لا يوجد مؤقت.
+             */
+
+            remainingSeconds = 0;
+
+        }
+
+
+        /*
+         * التأكد هل الطالب سلّم الاختبار من قبل
+         */
+
+        const submitted =
+            await hasPreviousSubmission(
+                exam.id
+            );
+
+
+        if (submitted) {
+
+            alreadySubmitted = true;
+
+            renderAlreadySubmitted();
+
+            return;
+
+        }
+
+
+        renderExam();
+
+
+        if (
+            remainingSeconds > 0
+        ) {
+
+            startTimer();
+
+        }
 
     }
 
 
-    function createExamCard(
-        exam
+    /* =====================================================
+       Normalize Questions
+    ===================================================== */
+
+    function normalizeQuestions(
+        rawQuestions
     ) {
 
-        const status =
-            getStatus(
-                exam
+        if (
+            !Array.isArray(
+                rawQuestions
+            )
+        ) {
+
+            return [];
+
+        }
+
+
+        return rawQuestions
+            .map(
+                (question, index) => {
+
+                    const q = {
+                        ...question
+                    };
+
+
+                    q.id =
+                        String(
+                            q.id ||
+                            q.questionId ||
+                            index + 1
+                        );
+
+
+                    q.text =
+                        q.text ||
+                        q.question ||
+                        q.title ||
+                        "";
+
+
+                    /*
+                     * دعم:
+                     *
+                     * options: ["A","B","C"]
+                     *
+                     * أو:
+                     *
+                     * options: [
+                     *   {id:"a",text:"..."},
+                     *   ...
+                     * ]
+                     */
+
+                    q.options =
+                        normalizeOptions(
+                            q.options ||
+                            q.choices ||
+                            []
+                        );
+
+
+                    return q;
+
+                }
+            )
+            .filter(
+                question =>
+                    question.text
+            );
+
+    }
+
+
+    function normalizeOptions(
+        options
+    ) {
+
+        if (
+            !Array.isArray(
+                options
+            )
+        ) {
+
+            return [];
+
+        }
+
+
+        return options.map(
+            (option, index) => {
+
+                if (
+                    typeof option ===
+                    "object"
+                ) {
+
+                    return {
+
+                        id:
+                            String(
+                                option.id ||
+                                option.value ||
+                                option.key ||
+                                index
+                            ),
+
+                        text:
+                            option.text ||
+                            option.label ||
+                            option.value ||
+                            ""
+
+                    };
+
+                }
+
+
+                return {
+
+                    id:
+                        String(index),
+
+                    text:
+                        String(option)
+
+                };
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       Render Exam
+    ===================================================== */
+
+    function renderExam() {
+
+        const content =
+            document.getElementById(
+                "studentPageContent"
             );
 
 
-        const statusInfo =
-            getStatusInfo(
-                status
-            );
+        content.innerHTML = `
+
+            <div class="exam-header">
+
+                <h2>
+                    📝
+                    ${escapeHtml(
+                        exam.title ||
+                        exam.name ||
+                        "الاختبار"
+                    )}
+                </h2>
 
 
-        const title =
-            exam.title ||
-            exam.name ||
-            "اختبار";
+                ${
+                    exam.description
+                        ? `
+                            <p>
+                                ${escapeHtml(
+                                    exam.description
+                                )}
+                            </p>
+                          `
+                        : `
+                            <p>
+                                أجب عن جميع الأسئلة ثم قم بتسليم الاختبار.
+                            </p>
+                          `
+                }
 
 
-        const subject =
-            exam.subject ||
-            exam.subjectId ||
-            "غير محدد";
+                <div class="exam-meta">
+
+                    ${
+                        exam.subject ||
+                        exam.subjectId
+                            ? `
+                                <span>
+                                    📚
+                                    ${escapeHtml(
+                                        exam.subject ||
+                                        exam.subjectId
+                                    )}
+                                </span>
+                              `
+                            : ""
+                    }
 
 
-        const duration =
-            exam.duration ||
-            "غير محددة";
+                    ${
+                        exam.duration ||
+                        exam.durationMinutes
+                            ? `
+                                <span>
+                                    ⏱️
+                                    ${escapeHtml(
+                                        String(
+                                            exam.duration ||
+                                            exam.durationMinutes
+                                        )
+                                    )}
+                                    دقيقة
+                                </span>
+                              `
+                            : ""
+                    }
 
 
-        const startAt =
-            exam.startAt ||
-            null;
+                    <span>
+                        📋
+                        ${questions.length}
+                        سؤال
+                    </span>
+
+                </div>
+
+            </div>
 
 
-        const endAt =
-            exam.endAt ||
-            null;
+            ${
+                remainingSeconds > 0
+                    ? `
+                        <div class="timer-box">
+
+                            <div class="timer-title">
+                                ⏱️ الوقت المتبقي
+                            </div>
+
+                            <div
+                                id="timer"
+                                class="timer"
+                            >
+                                ${formatTimer(
+                                    remainingSeconds
+                                )}
+                            </div>
+
+                        </div>
+                      `
+                    : ""
+            }
 
 
-        const canOpen =
-            status === "available";
+            <div class="progress-box">
 
+                <div class="progress-top">
 
-        return `
-
-            <div class="exam-card">
-
-                <div class="exam-top">
-
-                    <div class="exam-icon">
-                        📝
-                    </div>
-
-
-                    <div class="exam-title">
-
-                        <h3>
-                            ${escapeHtml(title)}
-                        </h3>
-
-                        <p>
-                            📚
-                            ${escapeHtml(subject)}
-                        </p>
-
-                    </div>
-
+                    <span>
+                        التقدم في الاختبار
+                    </span>
 
                     <span
-                        class="
-                            exam-status
-                            ${statusInfo.className}
-                        "
+                        id="progressText"
                     >
-                        ${statusInfo.label}
+                        1 / ${questions.length}
                     </span>
 
                 </div>
 
 
-                <div class="exam-details">
+                <div class="progress-bar">
 
-                    <div class="detail-row">
+                    <div
+                        id="progressFill"
+                        class="progress-fill"
+                    ></div>
 
-                        <span class="detail-icon">
-                            📚
-                        </span>
+                </div>
 
-                        <span>
-                            المادة:
-                            <strong>
-                                ${escapeHtml(subject)}
-                            </strong>
-                        </span>
-
-                    </div>
+            </div>
 
 
-                    <div class="detail-row">
+            <div class="question-list">
 
-                        <span class="detail-icon">
-                            ⏱️
-                        </span>
+                <div class="question-list-title">
+                    الانتقال إلى سؤال
+                </div>
 
-                        <span>
-                            المدة:
-                            <strong>
-                                ${escapeHtml(
-                                    String(duration)
-                                )}
-                            </strong>
-                        </span>
 
-                    </div>
+                <div
+                    id="questionNumbers"
+                    class="question-numbers"
+                ></div>
 
+            </div>
+
+
+            <div
+                id="questionContainer"
+            ></div>
+
+        `;
+
+
+        renderQuestionNumbers();
+
+        renderCurrentQuestion();
+
+    }
+
+
+    /* =====================================================
+       Render Question
+    ===================================================== */
+
+    function renderCurrentQuestion() {
+
+        const question =
+            questions[
+                currentQuestion
+            ];
+
+
+        if (!question) {
+            return;
+        }
+
+
+        const selected =
+            answers[
+                question.id
+            ];
+
+
+        const container =
+            document.getElementById(
+                "questionContainer"
+            );
+
+
+        container.innerHTML = `
+
+            <div class="question-card">
+
+                <div class="question-number">
+
+                    السؤال
+                    ${currentQuestion + 1}
+                    من
+                    ${questions.length}
+
+                </div>
+
+
+                <div class="question-text">
+
+                    ${escapeHtml(
+                        question.text
+                    )}
+
+                </div>
+
+
+                <div class="options">
 
                     ${
-                        startAt
-                            ? `
+                        question.options
+                            .map(
+                                (option, index) => `
 
-                                <div class="detail-row">
-
-                                    <span class="detail-icon">
-                                        🕒
-                                    </span>
-
-                                    <span>
-                                        يبدأ:
-                                        <strong>
-                                            ${escapeHtml(
-                                                formatDateTime(
-                                                    startAt
+                                    <label
+                                        class="
+                                            option
+                                            ${
+                                                String(
+                                                    selected
+                                                ) ===
+                                                String(
+                                                    option.id
                                                 )
-                                            )}
-                                        </strong>
-                                    </span>
+                                                    ? "selected"
+                                                    : ""
+                                            }
+                                        "
+                                        data-option-id="${escapeHtml(
+                                            option.id
+                                        )}"
+                                    >
 
-                                </div>
-
-                            `
-                            : ""
-                    }
-
-
-                    ${
-                        endAt
-                            ? `
-
-                                <div class="detail-row">
-
-                                    <span class="detail-icon">
-                                        ⏰
-                                    </span>
-
-                                    <span>
-                                        ينتهي:
-                                        <strong>
-                                            ${escapeHtml(
-                                                formatDateTime(
-                                                    endAt
+                                        <input
+                                            type="radio"
+                                            name="question"
+                                            value="${escapeHtml(
+                                                option.id
+                                            )}"
+                                            ${
+                                                String(
+                                                    selected
+                                                ) ===
+                                                String(
+                                                    option.id
                                                 )
+                                                    ? "checked"
+                                                    : ""
+                                            }
+                                        >
+
+                                        <span
+                                            class="option-circle"
+                                        ></span>
+
+                                        <span
+                                            class="option-label"
+                                        >
+                                            ${
+                                                String.fromCharCode(
+                                                    65 + index
+                                                )
+                                            }.
+
+                                            ${escapeHtml(
+                                                option.text
                                             )}
-                                        </strong>
-                                    </span>
+                                        </span>
 
-                                </div>
+                                    </label>
 
-                            `
-                            : ""
+                                `
+                            )
+                            .join("")
                     }
 
                 </div>
 
 
-                <div class="exam-actions">
+                <div class="question-navigation">
+
+                    <button
+                        id="previousButton"
+                        class="nav-button"
+                        ${
+                            currentQuestion === 0
+                                ? "disabled"
+                                : ""
+                        }
+                    >
+                        ← السؤال السابق
+                    </button>
+
 
                     ${
-                        canOpen
+                        currentQuestion ===
+                        questions.length - 1
 
                             ? `
 
                                 <button
-                                    class="exam-button open-button"
-                                    data-exam-id="${escapeHtml(
-                                        exam.id
-                                    )}"
+                                    id="submitButton"
+                                    class="submit-button"
                                 >
-                                    📝 فتح الاختبار
+                                    📝 تسليم الاختبار
                                 </button>
 
-                            `
+                              `
 
                             : `
 
                                 <button
-                                    class="exam-button disabled-button"
-                                    disabled
+                                    id="nextButton"
+                                    class="submit-button"
                                 >
-                                    ${
-                                        status === "cancelled"
-                                            ? "الاختبار ملغى"
-                                            : status === "ended"
-                                                ? "انتهى الاختبار"
-                                                : "الاختبار لم يبدأ بعد"
-                                    }
+                                    السؤال التالي →
                                 </button>
 
-                            `
+                              `
                     }
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        bindQuestionEvents();
+
+        updateProgress();
+
+        updateQuestionNumbers();
+
+    }
+
+
+    /* =====================================================
+       Question Events
+    ===================================================== */
+
+    function bindQuestionEvents() {
+
+        const options =
+            document.querySelectorAll(
+                ".option"
+            );
+
+
+        options.forEach(
+            option => {
+
+                option.addEventListener(
+                    "click",
+                    () => {
+
+                        const value =
+                            option.dataset
+                                .optionId;
+
+
+                        const question =
+                            questions[
+                                currentQuestion
+                            ];
+
+
+                        answers[
+                            question.id
+                        ] = value;
+
+
+                        document
+                            .querySelectorAll(
+                                ".option"
+                            )
+                            .forEach(
+                                item =>
+                                    item.classList
+                                        .remove(
+                                            "selected"
+                                        )
+                            );
+
+
+                        option.classList.add(
+                            "selected"
+                        );
+
+
+                        const radio =
+                            option.querySelector(
+                                "input"
+                            );
+
+
+                        if (radio) {
+
+                            radio.checked =
+                                true;
+
+                        }
+
+
+                        updateQuestionNumbers();
+
+                    }
+                );
+
+            }
+        );
+
+
+        const previousButton =
+            document.getElementById(
+                "previousButton"
+            );
+
+
+        if (previousButton) {
+
+            previousButton.addEventListener(
+                "click",
+                () => {
+
+                    if (
+                        currentQuestion >
+                        0
+                    ) {
+
+                        currentQuestion--;
+
+                        renderCurrentQuestion();
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        const nextButton =
+            document.getElementById(
+                "nextButton"
+            );
+
+
+        if (nextButton) {
+
+            nextButton.addEventListener(
+                "click",
+                () => {
+
+                    if (
+                        currentQuestion <
+                        questions.length - 1
+                    ) {
+
+                        currentQuestion++;
+
+                        renderCurrentQuestion();
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        const submitButton =
+            document.getElementById(
+                "submitButton"
+            );
+
+
+        if (submitButton) {
+
+            submitButton.addEventListener(
+                "click",
+                submitExam
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       Question Numbers
+    ===================================================== */
+
+    function renderQuestionNumbers() {
+
+        const container =
+            document.getElementById(
+                "questionNumbers"
+            );
+
+
+        if (!container) {
+            return;
+        }
+
+
+        container.innerHTML =
+            questions
+                .map(
+                    (question, index) => `
+
+                        <button
+                            type="button"
+                            class="
+                                question-number-button
+                                ${
+                                    index ===
+                                    currentQuestion
+                                        ? "current"
+                                        : ""
+                                }
+                                ${
+                                    answers[
+                                        question.id
+                                    ] !== undefined
+                                        ? "answered"
+                                        : ""
+                                }
+                            "
+                            data-question-index="${index}"
+                        >
+                            ${index + 1}
+                        </button>
+
+                    `
+                )
+                .join("");
+
+
+        container
+            .querySelectorAll(
+                "[data-question-index]"
+            )
+            .forEach(
+                button => {
+
+                    button.addEventListener(
+                        "click",
+                        () => {
+
+                            currentQuestion =
+                                Number(
+                                    button.dataset
+                                        .questionIndex
+                                );
+
+
+                            renderCurrentQuestion();
+
+                        }
+                    );
+
+                }
+            );
+
+    }
+
+
+    function updateQuestionNumbers() {
+
+        const buttons =
+            document.querySelectorAll(
+                ".question-number-button"
+            );
+
+
+        buttons.forEach(
+            (button, index) => {
+
+                button.classList.toggle(
+                    "current",
+                    index ===
+                    currentQuestion
+                );
+
+
+                button.classList.toggle(
+                    "answered",
+                    answers[
+                        questions[
+                            index
+                        ].id
+                    ] !== undefined
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       Progress
+    ===================================================== */
+
+    function updateProgress() {
+
+        const text =
+            document.getElementById(
+                "progressText"
+            );
+
+
+        const fill =
+            document.getElementById(
+                "progressFill"
+            );
+
+
+        if (text) {
+
+            text.textContent =
+                `${currentQuestion + 1} / ${questions.length}`;
+
+        }
+
+
+        if (fill) {
+
+            const percentage =
+                (
+                    (
+                        currentQuestion + 1
+                    ) /
+                    questions.length
+                ) * 100;
+
+
+            fill.style.width =
+                `${percentage}%`;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       Timer
+    ===================================================== */
+
+    function startTimer() {
+
+        updateTimer();
+
+
+        timerInterval =
+            setInterval(
+                () => {
+
+                    remainingSeconds--;
+
+
+                    updateTimer();
+
+
+                    if (
+                        remainingSeconds <=
+                        0
+                    ) {
+
+                        clearInterval(
+                            timerInterval
+                        );
+
+
+                        autoSubmit();
+
+                    }
+
+                },
+                1000
+            );
+
+    }
+
+
+    function updateTimer() {
+
+        const timer =
+            document.getElementById(
+                "timer"
+            );
+
+
+        if (!timer) {
+            return;
+        }
+
+
+        timer.textContent =
+            formatTimer(
+                remainingSeconds
+            );
+
+
+        timer.classList.toggle(
+            "warning",
+            remainingSeconds <=
+            5 * 60 &&
+            remainingSeconds > 60
+        );
+
+
+        timer.classList.toggle(
+            "danger",
+            remainingSeconds <= 60
+        );
+
+    }
+
+
+    function formatTimer(
+        seconds
+    ) {
+
+        const safeSeconds =
+            Math.max(
+                0,
+                Number(seconds) || 0
+            );
+
+
+        const minutes =
+            Math.floor(
+                safeSeconds / 60
+            );
+
+
+        const remaining =
+            safeSeconds % 60;
+
+
+        return (
+            String(minutes)
+                .padStart(2, "0") +
+            ":" +
+            String(remaining)
+                .padStart(2, "0")
+        );
+
+    }
+
+
+    /* =====================================================
+       Submit
+    ===================================================== */
+
+    async function submitExam() {
+
+        if (submitting) {
+            return;
+        }
+
+
+        const answeredCount =
+            Object.keys(
+                answers
+            ).length;
+
+
+        const unanswered =
+            questions.length -
+            answeredCount;
+
+
+        const message =
+            unanswered > 0
+
+                ? `
+                    لديك
+                    ${unanswered}
+                    سؤال بدون إجابة.
+
+                    هل تريد تسليم الاختبار؟
+                  `
+
+                : `
+                    هل أنت متأكد من تسليم الاختبار؟
+                  `;
+
+
+        if (
+            !window.confirm(
+                message
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        await finishExam(
+            "manual"
+        );
+
+    }
+
+
+    async function autoSubmit() {
+
+        if (submitting) {
+            return;
+        }
+
+
+        alert(
+            "انتهى وقت الاختبار، سيتم تسليم إجاباتك تلقائيًا."
+        );
+
+
+        await finishExam(
+            "timeout"
+        );
+
+    }
+
+
+    /* =====================================================
+       Finish Exam
+    ===================================================== */
+
+    async function finishExam(
+        submitReason
+    ) {
+
+        if (submitting) {
+            return;
+        }
+
+
+        submitting = true;
+
+
+        if (timerInterval) {
+
+            clearInterval(
+                timerInterval
+            );
+
+        }
+
+
+        const content =
+            document.getElementById(
+                "studentPageContent"
+            );
+
+
+        content.innerHTML = `
+
+            <div class="state-box">
+
+                ⏳
+
+                <br>
+
+                جاري تصحيح الاختبار
+                وحفظ النتيجة...
+
+            </div>
+
+        `;
+
+
+        try {
+
+            const result =
+                calculateResult();
+
+
+            /*
+             * تسجيل النتيجة.
+             *
+             * collection:
+             * examResults
+             */
+
+            const resultData = {
+
+                examId:
+                    exam.id,
+
+                studentId:
+                    student.id,
+
+                studentName:
+                    student.name ||
+                    "",
+
+                stageId:
+                    student.stageId ||
+                    "",
+
+                examTitle:
+                    exam.title ||
+                    exam.name ||
+                    "",
+
+                subject:
+                    exam.subject ||
+                    exam.subjectId ||
+                    "",
+
+                score:
+                    result.score,
+
+                total:
+                    result.total,
+
+                percentage:
+                    result.percentage,
+
+                correctAnswers:
+                    result.correctAnswers,
+
+                wrongAnswers:
+                    result.wrongAnswers,
+
+                unanswered:
+                    result.unanswered,
+
+                submitReason:
+                    submitReason,
+
+                submittedAt:
+                    new Date(),
+
+                /*
+                 * لا نحفظ الإجابات الصحيحة
+                 * داخل النتيجة.
+                 */
+
+                answers:
+                    answers
+
+            };
+
+
+            /*
+             * منع التكرار قبل الإضافة.
+             */
+
+            const existing =
+                await hasPreviousSubmission(
+                    exam.id
+                );
+
+
+            if (existing) {
+
+                alreadySubmitted = true;
+
+                renderAlreadySubmitted();
+
+                return;
+
+            }
+
+
+            await addDoc(
+                collection(
+                    db,
+                    "examResults"
+                ),
+                resultData
+            );
+
+
+            renderResult(
+                result
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Submit exam error:",
+                error
+            );
+
+
+            content.innerHTML = `
+
+                <div
+                    class="
+                        state-box
+                        error-box
+                    "
+                >
+
+                    ⚠️
+
+                    <br>
+
+                    حدث خطأ أثناء حفظ النتيجة.
+
+                    <br><br>
+
+                    ${escapeHtml(
+                        studentErrorMessage(
+                            error
+                        )
+                    )}
+
+                    <br><br>
+
+                    <button
+                        class="submit-button"
+                        id="retrySubmit"
+                    >
+                        إعادة المحاولة
+                    </button>
+
+                </div>
+
+            `;
+
+
+            const retry =
+                document.getElementById(
+                    "retrySubmit"
+                );
+
+
+            if (retry) {
+
+                retry.addEventListener(
+                    "click",
+                    () =>
+                        finishExam(
+                            submitReason
+                        )
+                );
+
+            }
+
+
+        } finally {
+
+            submitting = false;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       Calculate Result
+    ===================================================== */
+
+    function calculateResult() {
+
+        let correctAnswers = 0;
+
+        let wrongAnswers = 0;
+
+        let unanswered = 0;
+
+
+        questions.forEach(
+            question => {
+
+                const selected =
+                    answers[
+                        question.id
+                    ];
+
+
+                if (
+                    selected ===
+                    undefined ||
+                    selected ===
+                    null ||
+                    selected === ""
+                ) {
+
+                    unanswered++;
+
+                    return;
+
+                }
+
+
+                const correct =
+                    getCorrectAnswer(
+                        question
+                    );
+
+
+                if (
+                    normalizeAnswer(
+                        selected
+                    ) ===
+                    normalizeAnswer(
+                        correct
+                    )
+                ) {
+
+                    correctAnswers++;
+
+                } else {
+
+                    wrongAnswers++;
+
+                }
+
+            }
+        );
+
+
+        const total =
+            questions.length;
+
+
+        const percentage =
+            total > 0
+
+                ? Number(
+                    (
+                        (
+                            correctAnswers /
+                            total
+                        ) *
+                        100
+                    ).toFixed(2)
+                )
+
+                : 0;
+
+
+        return {
+
+            correctAnswers,
+
+            wrongAnswers,
+
+            unanswered,
+
+            total,
+
+            score:
+                correctAnswers,
+
+            percentage
+
+        };
+
+    }
+
+
+    /* =====================================================
+       Correct Answer
+    ===================================================== */
+
+    function getCorrectAnswer(
+        question
+    ) {
+
+        /*
+         * ندعم عدة أسماء حتى لا نكسر
+         * شكل البيانات الحالي.
+         */
+
+        return (
+            question.correctAnswer ??
+            question.answer ??
+            question.correct ??
+            question.correctOption ??
+            question.correctOptionId ??
+            ""
+        );
+
+    }
+
+
+    function normalizeAnswer(
+        value
+    ) {
+
+        if (
+            value === null ||
+            value === undefined
+        ) {
+
+            return "";
+
+        }
+
+
+        if (
+            typeof value ===
+            "object"
+        ) {
+
+            return String(
+                value.id ??
+                value.value ??
+                value.text ??
+                ""
+            )
+                .trim()
+                .toLowerCase();
+
+        }
+
+
+        return String(
+            value
+        )
+            .trim()
+            .toLowerCase();
+
+    }
+
+
+    /* =====================================================
+       Previous Submission
+    ===================================================== */
+
+    async function hasPreviousSubmission(
+        examId
+    ) {
+
+        /*
+         * مهم:
+         *
+         * هذا الاستعلام يحتاج Index/Rules
+         * مناسبة في Firestore.
+         */
+
+        const resultsQuery =
+            query(
+
+                collection(
+                    db,
+                    "examResults"
+                ),
+
+                where(
+                    "examId",
+                    "==",
+                    examId
+                ),
+
+                where(
+                    "studentId",
+                    "==",
+                    student.id
+                )
+
+            );
+
+
+        const snapshot =
+            await getDocs(
+                resultsQuery
+            );
+
+
+        return !snapshot.empty;
+
+    }
+
+
+    /* =====================================================
+       Result Screen
+    ===================================================== */
+
+    function renderResult(
+        result
+    ) {
+
+        const content =
+            document.getElementById(
+                "studentPageContent"
+            );
+
+
+        content.innerHTML = `
+
+            <div class="result-card">
+
+                <div class="result-icon">
+                    🎉
+                </div>
+
+
+                <h2>
+                    تم تسليم الاختبار بنجاح
+                </h2>
+
+
+                <div class="result-score">
+
+                    ${result.score}
+
+                    /
+
+                    ${result.total}
+
+                </div>
+
+
+                <div class="result-details">
+
+                    النسبة المئوية:
+                    <strong>
+                        ${result.percentage}%
+                    </strong>
+
+                    <br>
+
+                    الإجابات الصحيحة:
+                    ${result.correctAnswers}
+
+                    <br>
+
+                    الإجابات الخاطئة:
+                    ${result.wrongAnswers}
+
+                    <br>
+
+                    بدون إجابة:
+                    ${result.unanswered}
+
+                </div>
+
+
+                <div class="result-actions">
+
+                    <a
+                        href="exams.html"
+                        class="result-button"
+                    >
+                        العودة إلى الاختبارات
+                    </a>
 
                 </div>
 
@@ -1007,247 +2506,49 @@ try {
     }
 
 
-    // =================================================
-    // Exam Status
-    // =================================================
+    /* =====================================================
+       Already Submitted
+    ===================================================== */
 
-    function getStatus(
-        exam
-    ) {
+    function renderAlreadySubmitted() {
 
-        if (
-            exam.status ===
-            "cancelled"
-        ) {
-
-            return "cancelled";
-
-        }
-
-
-        if (
-            exam.status ===
-            "ended"
-        ) {
-
-            return "ended";
-
-        }
-
-
-        if (
-            exam.status ===
-            "available"
-        ) {
-
-            return "available";
-
-        }
-
-
-        const start =
-            getTime(
-                exam.startAt
+        const content =
+            document.getElementById(
+                "studentPageContent"
             );
 
 
-        const end =
-            getTime(
-                exam.endAt
-            );
+        content.innerHTML = `
+
+            <div class="result-card">
+
+                <div class="result-icon">
+                    ℹ️
+                </div>
 
 
-        const now =
-            Date.now();
+                <h2>
+                    تم أداء هذا الاختبار مسبقًا
+                </h2>
 
 
-        if (
-            end &&
-            now > end
-        ) {
+                <div class="result-details">
 
-            return "ended";
+                    لا يمكنك إعادة الاختبار مرة أخرى.
 
-        }
+                </div>
 
 
-        if (
-            start &&
-            now >= start &&
-            (
-                !end ||
-                now <= end
-            )
-        ) {
+                <div class="result-actions">
 
-            return "available";
+                    <a
+                        href="exams.html"
+                        class="result-button"
+                    >
+                        العودة إلى الاختبارات
+                    </a>
 
-        }
-
-
-        return "upcoming";
-
-    }
-
-
-    function getStatusInfo(
-        status
-    ) {
-
-        const data = {
-
-            available: {
-                label: "متاح الآن",
-                className:
-                    "status-available"
-            },
-
-            upcoming: {
-                label: "قادم",
-                className:
-                    "status-upcoming"
-            },
-
-            ended: {
-                label: "انتهى",
-                className:
-                    "status-ended"
-            },
-
-            cancelled: {
-                label: "ملغى",
-                className:
-                    "status-cancelled"
-            }
-
-        };
-
-
-        return (
-            data[status] ||
-            data.upcoming
-        );
-
-    }
-
-
-    function getTime(
-        value
-    ) {
-
-        if (!value) {
-            return 0;
-        }
-
-
-        if (
-            typeof value.toDate ===
-            "function"
-        ) {
-
-            return value.toDate()
-                .getTime();
-
-        }
-
-
-        const date =
-            new Date(value);
-
-
-        return isNaN(
-            date.getTime()
-        )
-            ? 0
-            : date.getTime();
-
-    }
-
-
-    // =================================================
-    // Open Exam
-    // =================================================
-
-    document.addEventListener(
-        "click",
-        event => {
-
-            const button =
-                event.target.closest(
-                    "[data-exam-id]"
-                );
-
-
-            if (!button) {
-                return;
-            }
-
-
-            const examId =
-                button.dataset.examId;
-
-
-            /*
-             * سيتم ربط الزر بصفحة حل الاختبار
-             * بعد تثبيت Structure الخاص بالأسئلة
-             * ونتائج الطالب.
-             */
-
-            console.log(
-                "Selected exam:",
-                examId
-            );
-
-
-            alert(
-                "تم اختيار الاختبار. سيتم فتح شاشة الأسئلة بعد تثبيت نظام الاختبارات."
-            );
-
-        }
-    );
-
-
-} catch (error) {
-
-    console.error(
-        "Student exams error:",
-        error
-    );
-
-
-    const app =
-        document.getElementById(
-            "studentApp"
-        );
-
-
-    if (app) {
-
-        app.innerHTML = `
-
-            <div
-                style="
-                    width:100%;
-                    min-height:100vh;
-                    display:flex;
-                    align-items:center;
-                    justify-content:center;
-                    padding:20px;
-                    text-align:center;
-                    font-family:Arial,Tahoma,sans-serif;
-                    color:#b42318;
-                "
-            >
-
-                ⚠️ حدث خطأ أثناء تحميل الاختبارات.
-
-                <br><br>
-
-                ${escapeHtml(
-                    studentErrorMessage(
-                        error
-                    )
-                )}
+                </div>
 
             </div>
 
@@ -1255,7 +2556,57 @@ try {
 
     }
 
-}
+
+    /* =====================================================
+       Error
+    ===================================================== */
+
+    function showError(
+        message
+    ) {
+
+        const content =
+            document.getElementById(
+                "studentPageContent"
+            );
+
+
+        if (!content) {
+            return;
+        }
+
+
+        content.innerHTML = `
+
+            <div
+                class="
+                    state-box
+                    error-box
+                "
+            >
+
+                ⚠️
+
+                <br>
+
+                ${escapeHtml(
+                    message
+                )}
+
+                <br><br>
+
+                <a
+                    href="exams.html"
+                    class="result-button"
+                >
+                    العودة إلى الاختبارات
+                </a>
+
+            </div>
+
+        `;
+
+    }
 
 </script>
 
