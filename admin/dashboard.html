@@ -141,6 +141,27 @@
 
             </div>
 
+
+            <!-- =================================================
+                 إضافة فقط: إجمالي النتائج
+            ================================================== -->
+
+            <div class="stat-card">
+
+                <div class="icon">
+                    🏆
+                </div>
+
+                <h3>
+                    إجمالي نتائج الاختبارات
+                </h3>
+
+                <strong id="examResultsCount">
+                    ...
+                </strong>
+
+            </div>
+
         </div>
 
 
@@ -206,6 +227,31 @@
 
         </div>
 
+
+        <!-- =================================================
+             إضافة فقط: آخر نتائج الطلاب
+        ================================================== -->
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <h2>
+                    آخر نتائج الاختبارات
+                </h2>
+
+            </div>
+
+
+            <div id="examResultsPreview"
+                 class="empty-state">
+
+                جاري تحميل النتائج...
+
+            </div>
+
+        </div>
+
     `;
 
 
@@ -218,34 +264,56 @@
             "usersCount"
         );
 
+
     const subscriptionsCount =
         document.getElementById(
             "subscriptionsCount"
         );
+
 
     const activeSubscriptionsCount =
         document.getElementById(
             "activeSubscriptionsCount"
         );
 
+
     const suspendedSubscriptionsCount =
         document.getElementById(
             "suspendedSubscriptionsCount"
         );
+
 
     const firestoreStatus =
         document.getElementById(
             "firestoreStatus"
         );
 
+
     const usersPreview =
         document.getElementById(
             "usersPreview"
         );
 
+
     const subscriptionsPreview =
         document.getElementById(
             "subscriptionsPreview"
+        );
+
+
+    // =====================================================
+    // إضافة فقط: Results Element
+    // =====================================================
+
+    const examResultsCount =
+        document.getElementById(
+            "examResultsCount"
+        );
+
+
+    const examResultsPreview =
+        document.getElementById(
+            "examResultsPreview"
         );
 
 
@@ -259,6 +327,7 @@
             await getDocs(
                 collection(db, "users")
             );
+
 
         const users =
             usersSnapshot.docs.map(
@@ -577,6 +646,230 @@
 
 
     // =====================================================
+    // إضافة فقط: Load Exam Results
+    // =====================================================
+
+    async function loadExamResults() {
+
+        const resultsSnapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "examResults"
+                )
+            );
+
+
+        const results =
+            resultsSnapshot.docs.map(
+                document => ({
+                    id: document.id,
+                    ...document.data()
+                })
+            );
+
+
+        examResultsCount.textContent =
+            results.length;
+
+
+        if (results.length === 0) {
+
+            examResultsPreview.innerHTML =
+                "لا توجد نتائج اختبارات حاليًا.";
+
+            return results;
+
+        }
+
+
+        /*
+         * ترتيب النتائج:
+         * الأحدث أولًا إذا كان submittedAt موجودًا.
+         */
+
+        results.sort(
+            (a, b) => {
+
+                const dateA =
+                    getTimestampValue(
+                        a.submittedAt
+                    );
+
+                const dateB =
+                    getTimestampValue(
+                        b.submittedAt
+                    );
+
+                return dateB - dateA;
+
+            }
+        );
+
+
+        /*
+         * نعرض آخر 10 نتائج فقط
+         * في الصفحة الرئيسية.
+         */
+
+        const preview =
+            results.slice(0, 10);
+
+
+        examResultsPreview.innerHTML = `
+
+            <div style="
+                overflow-x:auto;
+            ">
+
+                <table style="
+                    width:100%;
+                    border-collapse:collapse;
+                    text-align:right;
+                ">
+
+                    <thead>
+
+                        <tr>
+
+                            <th style="
+                                padding:12px;
+                                border-bottom:1px solid #e5edf3;
+                            ">
+                                الطالب
+                            </th>
+
+                            <th style="
+                                padding:12px;
+                                border-bottom:1px solid #e5edf3;
+                            ">
+                                الاختبار
+                            </th>
+
+                            <th style="
+                                padding:12px;
+                                border-bottom:1px solid #e5edf3;
+                            ">
+                                المرحلة
+                            </th>
+
+                            <th style="
+                                padding:12px;
+                                border-bottom:1px solid #e5edf3;
+                            ">
+                                الدرجة
+                            </th>
+
+                            <th style="
+                                padding:12px;
+                                border-bottom:1px solid #e5edf3;
+                            ">
+                                النسبة
+                            </th>
+
+                            <th style="
+                                padding:12px;
+                                border-bottom:1px solid #e5edf3;
+                            ">
+                                الحالة
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        ${preview.map(result => `
+
+                            <tr>
+
+                                <td style="
+                                    padding:12px;
+                                    border-bottom:1px solid #edf1f4;
+                                    font-weight:bold;
+                                ">
+                                    ${escapeHtml(
+                                        result.studentName || "—"
+                                    )}
+                                </td>
+
+
+                                <td style="
+                                    padding:12px;
+                                    border-bottom:1px solid #edf1f4;
+                                ">
+                                    ${escapeHtml(
+                                        result.examTitle || "اختبار"
+                                    )}
+                                </td>
+
+
+                                <td style="
+                                    padding:12px;
+                                    border-bottom:1px solid #edf1f4;
+                                ">
+                                    ${escapeHtml(
+                                        result.stageId || "—"
+                                    )}
+                                </td>
+
+
+                                <td style="
+                                    padding:12px;
+                                    border-bottom:1px solid #edf1f4;
+                                    font-weight:bold;
+                                ">
+                                    ${escapeHtml(
+                                        result.score ?? "0"
+                                    )}
+                                    /
+                                    ${escapeHtml(
+                                        result.total ?? "0"
+                                    )}
+                                </td>
+
+
+                                <td style="
+                                    padding:12px;
+                                    border-bottom:1px solid #edf1f4;
+                                    font-weight:bold;
+                                    color:#087ea4;
+                                ">
+                                    ${escapeHtml(
+                                        result.percentage ?? "0"
+                                    )}%
+                                </td>
+
+
+                                <td style="
+                                    padding:12px;
+                                    border-bottom:1px solid #edf1f4;
+                                ">
+                                    ${getSubmitReasonLabel(
+                                        result.submitReason
+                                    )}
+                                </td>
+
+                            </tr>
+
+                        `).join("")}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        `;
+
+
+        return results;
+    }
+
+
+    // =====================================================
     // Helpers
     // =====================================================
 
@@ -588,6 +881,7 @@
             .replaceAll(">", "&gt;")
             .replaceAll('"', "&quot;")
             .replaceAll("'", "&#039;");
+
     }
 
 
@@ -613,6 +907,95 @@
 
 
     // =====================================================
+    // إضافة فقط: Result Helpers
+    // =====================================================
+
+    function getSubmitReasonLabel(reason) {
+
+        switch (reason) {
+
+            case "manual":
+                return "📝 تسليم يدوي";
+
+            case "timeout":
+                return "⏱️ انتهاء الوقت";
+
+            default:
+                return "⚪ غير محدد";
+
+        }
+
+    }
+
+
+    function getTimestampValue(value) {
+
+        if (!value) {
+            return 0;
+        }
+
+
+        /*
+         * Firestore Timestamp
+         */
+
+        if (
+            typeof value.toMillis ===
+            "function"
+        ) {
+
+            return value.toMillis();
+
+        }
+
+
+        /*
+         * Timestamp object
+         */
+
+        if (
+            value.seconds !==
+            undefined
+        ) {
+
+            return (
+                Number(value.seconds) *
+                1000
+            );
+
+        }
+
+
+        /*
+         * JavaScript Date
+         */
+
+        if (
+            value instanceof Date
+        ) {
+
+            return value.getTime();
+
+        }
+
+
+        /*
+         * String date
+         */
+
+        const parsed =
+            new Date(value)
+                .getTime();
+
+
+        return Number.isNaN(parsed)
+            ? 0
+            : parsed;
+
+    }
+
+
+    // =====================================================
     // Run Firestore Test
     // =====================================================
 
@@ -622,12 +1005,19 @@
 
             const [
                 users,
-                subscriptions
+                subscriptions,
+                examResults
             ] = await Promise.all([
 
                 loadUsers(),
 
-                loadSubscriptions()
+                loadSubscriptions(),
+
+                // =================================================
+                // إضافة فقط: قراءة examResults
+                // =================================================
+
+                loadExamResults()
 
             ]);
 
@@ -654,6 +1044,11 @@
 
                     <br>
 
+                    تم قراءة Collection:
+                    <strong>examResults</strong>
+
+                    <br>
+
                     إجمالي المستخدمين:
                     ${users.length}
 
@@ -661,6 +1056,11 @@
 
                     إجمالي الاشتراكات:
                     ${subscriptions.length}
+
+                    <br>
+
+                    إجمالي نتائج الاختبارات:
+                    ${examResults.length}
 
                 </div>
 
@@ -686,7 +1086,7 @@
 
                     <br>
 
-                    ${
+                    ${ 
                         escapeHtml(
                             error.message
                         )
