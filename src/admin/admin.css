@@ -756,4 +756,111 @@ a {
     }
 
 }
+/* =========================================
+Admin Tables
+========================================= */
+
+.admin-table-wrapper {
+width: 100%;
+overflow-x: auto;
+}
+
+.admin-table {
+width: 100%;
+border-collapse: collapse;
+min-width: 700px;
+}
+
+.admin-table th {
+background: #f7fafc;
+color: #657585;
+font-size: 11px;
+font-weight: 700;
+padding: 13px 10px;
+text-align: right;
+white-space: nowrap;
+}
+
+.admin-table td {
+padding: 13px 10px;
+border-top: 1px solid #edf1f4;
+font-size: 12px;
+vertical-align: middle;
+}
+
+.admin-table tr:hover td {
+background: #fbfdfe;
+}
+
+/* =========================================
+Admin Form
+========================================= */
+
+.admin-form {
+display: grid;
+gap: 15px;
+}
+
+.admin-form-group {
+display: grid;
+gap: 7px;
+}
+
+.admin-form-group label {
+font-size: 12px;
+font-weight: 700;
+color: #607080;
+}
+
+.admin-form-group input,
+.admin-form-group select,
+.admin-form-group textarea {
+width: 100%;
+border: 1px solid #dce7ed;
+border-radius: 9px;
+padding: 11px 12px;
+background: white;
+color: #17324a;
+font-family: inherit;
+outline: none;
+}
+
+.admin-form-group textarea {
+min-height: 100px;
+resize: vertical;
+}
+
+.admin-form-group input:focus,
+.admin-form-group select:focus,
+.admin-form-group textarea:focus {
+border-color: #087ea4;
+}
+
+/* =========================================
+Status
+========================================= */
+
+.admin-status {
+display: inline-flex;
+align-items: center;
+padding: 5px 9px;
+border-radius: 20px;
+font-size: 10px;
+font-weight: 700;
+}
+
+.admin-status.success {
+background: #eaf8f0;
+color: #16834f;
+}
+
+.admin-status.warning {
+background: #fff5e8;
+color: #b7791f;
+}
+
+.admin-status.danger {
+background: #fff1f1;
+color: #b42318;
+}
 
