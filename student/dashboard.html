@@ -188,7 +188,11 @@
         }
 
         .welcome {
-            background: linear-gradient(135deg, #087ea4, #075f7c);
+            background: linear-gradient(
+                135deg,
+                #087ea4,
+                #075f7c
+            );
             color: white;
             border-radius: 18px;
             padding: 25px;
@@ -206,7 +210,8 @@
 
         .cards {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns:
+                repeat(4, 1fr);
             gap: 15px;
             margin-bottom: 20px;
         }
@@ -235,7 +240,8 @@
 
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns:
+                1fr 1fr;
             gap: 18px;
         }
 
@@ -251,11 +257,35 @@
             font-size: 16px;
         }
 
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .panel-header h3 {
+            margin-bottom: 0;
+        }
+
+        .panel-link {
+            color: #087ea4;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .panel-link:hover {
+            text-decoration: underline;
+        }
+
         .empty {
             padding: 25px;
             text-align: center;
             color: #8795a0;
             font-size: 13px;
+            line-height: 2;
         }
 
         .lecture-item,
@@ -280,6 +310,110 @@
         .item-meta {
             color: #82919d;
             font-size: 11px;
+            line-height: 1.8;
+        }
+
+        .lecture-item-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .lecture-item-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .lecture-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .status-scheduled {
+            background: #eef8fb;
+            color: #087ea4;
+        }
+
+        .status-live {
+            background: #eaf8f0;
+            color: #16834f;
+        }
+
+        .status-ended {
+            background: #f1f3f5;
+            color: #687783;
+        }
+
+        .status-cancelled {
+            background: #fff1f1;
+            color: #b42318;
+        }
+
+        .item-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 32px;
+            padding: 0 11px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 10px;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .live-button {
+            background: #087ea4;
+            color: white;
+        }
+
+        .recording-button {
+            background: #eef8fb;
+            color: #087ea4;
+        }
+
+        .exam-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .exam-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 11px;
+            background: #eef8fb;
+            color: #087ea4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 18px;
+        }
+
+        .exam-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notification-item {
+            position: relative;
+        }
+
+        .notification-item::before {
+            content: "";
+            position: absolute;
+            right: -1px;
+            top: 17px;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #087ea4;
         }
 
         @media (max-width: 900px) {
@@ -293,7 +427,8 @@
             }
 
             .cards {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns:
+                    repeat(2, 1fr);
             }
 
         }
@@ -316,7 +451,8 @@
 
             .student-nav {
                 display: grid;
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns:
+                    repeat(3, 1fr);
             }
 
             .student-logout {
@@ -334,6 +470,10 @@
             .cards,
             .dashboard-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .lecture-item-top {
+                flex-direction: column;
             }
 
         }
@@ -366,7 +506,25 @@
     } from "../src/student/student.js";
 
 
+    import {
+        db
+    } from "../src/firebase/init.js";
+
+
+    import {
+        collection,
+        query,
+        where,
+        getDocs
+    } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
     try {
+
+        // =================================================
+        // Student Protection
+        // =================================================
 
         const {
             student,
@@ -374,6 +532,10 @@
         } =
             await protectStudentPage();
 
+
+        // =================================================
+        // Student Layout
+        // =================================================
 
         createStudentLayout(
             student,
@@ -393,6 +555,10 @@
             );
 
 
+        // =================================================
+        // Dashboard HTML
+        // =================================================
+
         content.innerHTML = `
 
             <div class="welcome">
@@ -402,7 +568,8 @@
                     ${escapeHtml(
                         student.name ||
                         "طالب مسار التمريض"
-                    )} 👋
+                    )}
+                    👋
                 </h2>
 
                 <p>
@@ -482,50 +649,108 @@
 
             <div class="dashboard-grid">
 
+                <!-- =====================================
+                     Upcoming Lectures
+                     ===================================== -->
+
                 <div class="panel">
 
-                    <h3>
-                        🎥 المحاضرات القادمة
-                    </h3>
+                    <div class="panel-header">
+
+                        <h3>
+                            🎥 المحاضرات القادمة
+                        </h3>
+
+                        <a
+                            class="panel-link"
+                            href="lectures.html"
+                        >
+                            عرض الكل
+                        </a>
+
+                    </div>
 
                     <div id="upcomingLectures">
-                        جاري التحميل...
+
+                        <div class="empty">
+                            ⏳ جاري التحميل...
+                        </div>
+
                     </div>
 
                 </div>
 
 
+                <!-- =====================================
+                     Available Exams
+                     ===================================== -->
+
                 <div class="panel">
 
-                    <h3>
-                        📝 الاختبارات المتاحة
-                    </h3>
+                    <div class="panel-header">
+
+                        <h3>
+                            📝 الاختبارات المتاحة
+                        </h3>
+
+                        <a
+                            class="panel-link"
+                            href="exams.html"
+                        >
+                            عرض الكل
+                        </a>
+
+                    </div>
 
                     <div id="availableExams">
-                        جاري التحميل...
+
+                        <div class="empty">
+                            ⏳ جاري التحميل...
+                        </div>
+
                     </div>
 
                 </div>
 
 
+                <!-- =====================================
+                     Notifications
+                     ===================================== -->
+
                 <div class="panel">
 
-                    <h3>
-                        🔔 آخر التنبيهات
-                    </h3>
+                    <div class="panel-header">
+
+                        <h3>
+                            🔔 آخر التنبيهات
+                        </h3>
+
+                    </div>
 
                     <div id="notifications">
-                        جاري التحميل...
+
+                        <div class="empty">
+                            ⏳ جاري التحميل...
+                        </div>
+
                     </div>
 
                 </div>
 
 
+                <!-- =====================================
+                     Progress
+                     ===================================== -->
+
                 <div class="panel">
 
-                    <h3>
-                        📊 التقدم الدراسي
-                    </h3>
+                    <div class="panel-header">
+
+                        <h3>
+                            📊 التقدم الدراسي
+                        </h3>
+
+                    </div>
 
                     <div class="empty">
                         سيتم احتساب تقدمك تلقائيًا
@@ -540,46 +765,58 @@
 
 
         // =================================================
-        // Lectures
+        // 1. Lectures
+        // نفس نظام lectures.html / schedule.html
         // =================================================
 
         try {
 
-            const lectures =
-                await getCollection(
-                    "lectures"
+            const lecturesQuery =
+                query(
+
+                    collection(
+                        db,
+                        "lectures"
+                    ),
+
+                    where(
+                        "stageId",
+                        "==",
+                        student.stageId
+                    ),
+
+                    where(
+                        "isPublished",
+                        "==",
+                        true
+                    )
+
                 );
 
 
-            const stageLectures =
-                lectures
-                    .filter(
-                        lecture =>
-                            !lecture.stageId ||
-                            lecture.stageId ===
-                            student.stageId
+            const snapshot =
+                await getDocs(
+                    lecturesQuery
+                );
+
+
+            const lectures =
+                snapshot.docs
+                    .map(
+                        item => ({
+                            id: item.id,
+                            ...item.data()
+                        })
                     )
                     .sort(
-                        (a, b) => {
-
-                            const da =
-                                a.startAt ||
-                                a.date;
-
-                            const db =
-                                b.startAt ||
-                                b.date;
-
-                            return (
-                                String(da || "")
-                                    .localeCompare(
-                                        String(db || "")
-                                    )
-                            );
-
-                        }
-                    )
-                    .slice(0, 5);
+                        (a, b) =>
+                            getTime(
+                                a.scheduledAt
+                            ) -
+                            getTime(
+                                b.scheduledAt
+                            )
+                    );
 
 
             const box =
@@ -588,48 +825,57 @@
                 );
 
 
-            if (!stageLectures.length) {
+            // ---------------------------------------------
+            // نعرض أهم 5 محاضرات فقط
+            // ---------------------------------------------
 
-                box.innerHTML =
-                    `<div class="empty">
+            const upcoming =
+                lectures
+                    .filter(
+                        lecture => {
+
+                            const status =
+                                getLectureStatus(
+                                    lecture
+                                );
+
+                            return (
+                                status ===
+                                    "scheduled" ||
+                                status ===
+                                    "live"
+                            );
+
+                        }
+                    )
+                    .slice(0, 5);
+
+
+            if (!upcoming.length) {
+
+                box.innerHTML = `
+
+                    <div class="empty">
+
+                        🎥
+
+                        <br>
+
                         لا توجد محاضرات قادمة حاليًا.
-                    </div>`;
+
+                    </div>
+
+                `;
 
             } else {
 
                 box.innerHTML =
-                    stageLectures
+                    upcoming
                         .map(
-                            lecture => `
-
-                                <div class="lecture-item">
-
-                                    <div class="item-title">
-                                        ${escapeHtml(
-                                            lecture.title ||
-                                            lecture.name ||
-                                            "محاضرة"
-                                        )}
-                                    </div>
-
-                                    <div class="item-meta">
-                                        ${escapeHtml(
-                                            lecture.subjectId ||
-                                            lecture.subject ||
-                                            ""
-                                        )}
-                                        ${lecture.startAt
-                                            ? " • " +
-                                              formatDateTime(
-                                                  lecture.startAt
-                                              )
-                                            : ""
-                                        }
-                                    </div>
-
-                                </div>
-
-                            `
+                            lecture =>
+                                createLectureItem(
+                                    lecture
+                                )
                         )
                         .join("");
 
@@ -637,20 +883,37 @@
 
         } catch (error) {
 
+            console.error(
+                "Dashboard lectures error:",
+                error
+            );
+
+
             document.getElementById(
                 "upcomingLectures"
-            ).innerHTML =
-                `<div class="empty">
+            ).innerHTML = `
+
+                <div class="empty">
+
+                    ⚠️
+
+                    <br>
+
                     ${escapeHtml(
-                        studentErrorMessage(error)
+                        studentErrorMessage(
+                            error
+                        )
                     )}
-                </div>`;
+
+                </div>
+
+            `;
 
         }
 
 
         // =================================================
-        // Exams
+        // 2. Exams
         // =================================================
 
         try {
@@ -664,10 +927,15 @@
             const available =
                 exams
                     .filter(
-                        exam =>
-                            !exam.stageId ||
-                            exam.stageId ===
-                            student.stageId
+                        exam => {
+
+                            return (
+                                !exam.stageId ||
+                                exam.stageId ===
+                                student.stageId
+                            );
+
+                        }
                     )
                     .slice(0, 5);
 
@@ -680,10 +948,19 @@
 
             if (!available.length) {
 
-                box.innerHTML =
-                    `<div class="empty">
+                box.innerHTML = `
+
+                    <div class="empty">
+
+                        📝
+
+                        <br>
+
                         لا توجد اختبارات متاحة حاليًا.
-                    </div>`;
+
+                    </div>
+
+                `;
 
             } else {
 
@@ -694,20 +971,32 @@
 
                                 <div class="exam-item">
 
-                                    <div class="item-title">
-                                        ${escapeHtml(
-                                            exam.title ||
-                                            exam.name ||
-                                            "اختبار"
-                                        )}
+                                    <div class="exam-icon">
+                                        📝
                                     </div>
 
-                                    <div class="item-meta">
-                                        ${escapeHtml(
-                                            exam.subjectId ||
-                                            exam.subject ||
-                                            ""
-                                        )}
+                                    <div class="exam-content">
+
+                                        <div class="item-title">
+
+                                            ${escapeHtml(
+                                                exam.title ||
+                                                exam.name ||
+                                                "اختبار"
+                                            )}
+
+                                        </div>
+
+                                        <div class="item-meta">
+
+                                            ${escapeHtml(
+                                                exam.subject ||
+                                                exam.subjectId ||
+                                                "اختبار"
+                                            )}
+
+                                        </div>
+
                                     </div>
 
                                 </div>
@@ -720,20 +1009,37 @@
 
         } catch (error) {
 
+            console.error(
+                "Dashboard exams error:",
+                error
+            );
+
+
             document.getElementById(
                 "availableExams"
-            ).innerHTML =
-                `<div class="empty">
+            ).innerHTML = `
+
+                <div class="empty">
+
+                    ⚠️
+
+                    <br>
+
                     ${escapeHtml(
-                        studentErrorMessage(error)
+                        studentErrorMessage(
+                            error
+                        )
                     )}
-                </div>`;
+
+                </div>
+
+            `;
 
         }
 
 
         // =================================================
-        // Notifications
+        // 3. Notifications
         // =================================================
 
         try {
@@ -760,6 +1066,7 @@
 
                             }
 
+
                             if (
                                 notification.stageId
                             ) {
@@ -770,6 +1077,7 @@
                                 );
 
                             }
+
 
                             return true;
 
@@ -788,10 +1096,19 @@
                 !studentNotifications.length
             ) {
 
-                box.innerHTML =
-                    `<div class="empty">
+                box.innerHTML = `
+
+                    <div class="empty">
+
+                        🔔
+
+                        <br>
+
                         لا توجد تنبيهات حاليًا.
-                    </div>`;
+
+                    </div>
+
+                `;
 
             } else {
 
@@ -803,18 +1120,22 @@
                                 <div class="notification-item">
 
                                     <div class="item-title">
+
                                         ${escapeHtml(
                                             notification.title ||
                                             "تنبيه"
                                         )}
+
                                     </div>
 
                                     <div class="item-meta">
+
                                         ${escapeHtml(
                                             notification.message ||
                                             notification.body ||
                                             ""
                                         )}
+
                                     </div>
 
                                 </div>
@@ -827,21 +1148,430 @@
 
         } catch (error) {
 
+            console.error(
+                "Dashboard notifications error:",
+                error
+            );
+
+
             document.getElementById(
                 "notifications"
-            ).innerHTML =
-                `<div class="empty">
+            ).innerHTML = `
+
+                <div class="empty">
+
+                    ⚠️
+
+                    <br>
+
                     ${escapeHtml(
-                        studentErrorMessage(error)
+                        studentErrorMessage(
+                            error
+                        )
                     )}
-                </div>`;
+
+                </div>
+
+            `;
+
+        }
+
+
+        // =================================================
+        // Lecture Card
+        // =================================================
+
+        function createLectureItem(
+            lecture
+        ) {
+
+            const status =
+                getLectureStatus(
+                    lecture
+                );
+
+
+            const title =
+                lecture.title ||
+                "محاضرة";
+
+
+            const subject =
+                lecture.subject ||
+                lecture.subjectId ||
+                "غير محدد";
+
+
+            const teacher =
+                lecture.teacherName ||
+                lecture.teacher ||
+                lecture.teacherId ||
+                "غير محدد";
+
+
+            const statusInfo =
+                getStatusInfo(
+                    status
+                );
+
+
+            const liveUrl =
+                lecture.liveUrl ||
+                "";
+
+
+            const recordingUrl =
+                lecture.recordingUrl ||
+                "";
+
+
+            let action = "";
+
+
+            if (
+                status === "live" &&
+                liveUrl
+            ) {
+
+                action = `
+
+                    <a
+                        class="item-button live-button"
+                        href="${escapeHtml(
+                            liveUrl
+                        )}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        🔴 دخول Live
+                    </a>
+
+                `;
+
+            } else if (
+                status === "ended" &&
+                recordingUrl
+            ) {
+
+                action = `
+
+                    <a
+                        class="item-button recording-button"
+                        href="${escapeHtml(
+                            recordingUrl
+                        )}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        ▶️ مشاهدة التسجيل
+                    </a>
+
+                `;
+
+            }
+
+
+            return `
+
+                <div class="lecture-item">
+
+                    <div class="lecture-item-top">
+
+                        <div class="lecture-item-content">
+
+                            <div class="item-title">
+
+                                ${escapeHtml(
+                                    title
+                                )}
+
+                            </div>
+
+                            <div class="item-meta">
+
+                                📚
+                                ${escapeHtml(
+                                    subject
+                                )}
+
+                                <br>
+
+                                👨‍🏫
+                                ${escapeHtml(
+                                    teacher
+                                )}
+
+                                <br>
+
+                                🕒
+                                ${escapeHtml(
+                                    formatDateTime(
+                                        lecture.scheduledAt
+                                    )
+                                )}
+
+                            </div>
+
+                            ${
+                                action
+                            }
+
+                        </div>
+
+
+                        <span
+                            class="
+                                lecture-status
+                                ${statusInfo.className}
+                            "
+                        >
+                            ${statusInfo.label}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+
+        // =================================================
+        // Lecture Status
+        // مطابق schedule.html
+        // =================================================
+
+        function getLectureStatus(
+            lecture
+        ) {
+
+            if (
+                lecture.status ===
+                "cancelled"
+            ) {
+
+                return "cancelled";
+
+            }
+
+
+            if (
+                lecture.status ===
+                "live"
+            ) {
+
+                return "live";
+
+            }
+
+
+            if (
+                lecture.status ===
+                "ended"
+            ) {
+
+                return "ended";
+
+            }
+
+
+            const start =
+                getTime(
+                    lecture.scheduledAt
+                );
+
+
+            const end =
+                getTime(
+                    lecture.endAt
+                );
+
+
+            const now =
+                Date.now();
+
+
+            if (
+                end &&
+                now > end
+            ) {
+
+                return "ended";
+
+            }
+
+
+            if (
+                start &&
+                now >= start &&
+                (
+                    !end ||
+                    now <= end
+                )
+            ) {
+
+                return "live";
+
+            }
+
+
+            return "scheduled";
+
+        }
+
+
+        // =================================================
+        // Status Information
+        // =================================================
+
+        function getStatusInfo(
+            status
+        ) {
+
+            const data = {
+
+                scheduled: {
+
+                    label:
+                        "قادمة",
+
+                    className:
+                        "status-scheduled"
+
+                },
+
+                live: {
+
+                    label:
+                        "مباشر الآن",
+
+                    className:
+                        "status-live"
+
+                },
+
+                ended: {
+
+                    label:
+                        "انتهت",
+
+                    className:
+                        "status-ended"
+
+                },
+
+                cancelled: {
+
+                    label:
+                        "ملغاة",
+
+                    className:
+                        "status-cancelled"
+
+                }
+
+            };
+
+
+            return (
+                data[status] ||
+                data.scheduled
+            );
+
+        }
+
+
+        // =================================================
+        // Firestore Timestamp / Date
+        // مطابق للصفحات الأخرى
+        // =================================================
+
+        function getTime(
+            value
+        ) {
+
+            if (!value) {
+
+                return 0;
+
+            }
+
+
+            if (
+                typeof value.toDate ===
+                "function"
+            ) {
+
+                return value
+                    .toDate()
+                    .getTime();
+
+            }
+
+
+            const date =
+                new Date(
+                    value
+                );
+
+
+            return isNaN(
+                date.getTime()
+            )
+                ? 0
+                : date.getTime();
 
         }
 
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Student dashboard error:",
+            error
+        );
+
+
+        const app =
+            document.getElementById(
+                "studentApp"
+            );
+
+
+        if (app) {
+
+            app.innerHTML = `
+
+                <div
+                    style="
+                        width:100%;
+                        min-height:100vh;
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        padding:20px;
+                        text-align:center;
+                        font-family:Arial,Tahoma,sans-serif;
+                        color:#b42318;
+                    "
+                >
+
+                    ⚠️ حدث خطأ أثناء تحميل لوحة الطالب.
+
+                    <br><br>
+
+                    ${escapeHtml(
+                        studentErrorMessage(
+                            error
+                        )
+                    )}
+
+                </div>
+
+            `;
+
+        }
 
     }
 
