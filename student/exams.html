@@ -1,363 +1,202 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">
 
-<head>
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <meta charset="UTF-8">
+<title>اختباراتي | بوابة التمريض</title>
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<style>
 
-    <title>
-        الاختبارات | بوابة التمريض
-    </title>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
 
-    <style>
+    body {
+        font-family: Arial, Tahoma, sans-serif;
+        background: #f4f8fa;
+        color: #243746;
+        min-height: 100vh;
+    }
 
-        * {
-            box-sizing: border-box;
-        }
+    .header {
+        background: #087ea4;
+        color: white;
+        padding: 22px 18px;
+        box-shadow: 0 3px 15px rgba(0,0,0,.08);
+    }
 
-        body {
-            margin: 0;
-            background: #f5f8fa;
-            font-family:
-                Tahoma,
-                Arial,
-                sans-serif;
-            color: #20313d;
-        }
+    .header-inner {
+        width: min(1100px, 100%);
+        margin: auto;
+    }
 
-        button,
-        input {
-            font-family: inherit;
-        }
+    .header h1 {
+        font-size: 23px;
+        margin-bottom: 6px;
+    }
 
+    .header p {
+        font-size: 13px;
+        opacity: .9;
+    }
 
-        /* =====================================================
-           Header
-        ===================================================== */
+    .container {
+        width: min(1100px, 100%);
+        margin: 25px auto;
+        padding: 0 15px;
+    }
 
-        .page-header {
-            background: #087ea4;
-            color: white;
-            padding: 25px 20px;
-            box-shadow:
-                0 5px 20px rgba(0, 0, 0, .08);
-        }
+    .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
 
-        .header-inner {
-            max-width: 1100px;
-            margin: auto;
-        }
+    .toolbar h2 {
+        font-size: 19px;
+    }
 
-        .page-header h1 {
-            margin: 0 0 7px;
-            font-size: 24px;
-        }
+    .toolbar p {
+        color: #71808d;
+        font-size: 12px;
+        margin-top: 5px;
+    }
 
-        .page-header p {
-            margin: 0;
-            font-size: 13px;
-            opacity: .9;
-            line-height: 1.8;
-        }
+    .student-info {
+        background: white;
+        border: 1px solid #e2ebf0;
+        border-radius: 13px;
+        padding: 13px 15px;
+        font-size: 12px;
+        color: #60717e;
+    }
 
+    .exams-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 17px;
+    }
 
-        /* =====================================================
-           Container
-        ===================================================== */
+    .exam-card {
+        background: white;
+        border: 1px solid #e2ebf0;
+        border-radius: 16px;
+        padding: 20px;
+        transition: .2s;
+    }
 
-        .container {
-            width: min(1100px, calc(100% - 30px));
-            margin: 25px auto 40px;
-        }
+    .exam-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(20,70,90,.08);
+    }
 
+    .exam-card h3 {
+        font-size: 17px;
+        line-height: 1.6;
+        margin-bottom: 9px;
+    }
 
-        /* =====================================================
-           User Info
-        ===================================================== */
+    .exam-description {
+        color: #71808d;
+        font-size: 12px;
+        line-height: 1.8;
+        min-height: 43px;
+        margin-bottom: 15px;
+    }
 
-        .student-info {
-            background: white;
-            border: 1px solid #e2ebf0;
-            border-radius: 15px;
-            padding: 16px 18px;
-            margin-bottom: 20px;
+    .exam-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-bottom: 17px;
+    }
 
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 15px;
-        }
+    .exam-meta span {
+        background: #f3f7f9;
+        color: #60717e;
+        border-radius: 8px;
+        padding: 7px 9px;
+        font-size: 10px;
+    }
 
-        .student-info strong {
-            font-size: 14px;
-        }
+    .start-button {
+        width: 100%;
+        border: none;
+        border-radius: 9px;
+        padding: 11px;
+        background: #087ea4;
+        color: white;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: bold;
+    }
 
-        .student-stage {
-            color: #71808d;
-            font-size: 11px;
-            margin-top: 5px;
-        }
+    .start-button:hover {
+        background: #076d8e;
+    }
 
+    .empty-state {
+        grid-column: 1 / -1;
+        background: white;
+        border: 1px solid #e2ebf0;
+        border-radius: 15px;
+        padding: 40px 20px;
+        text-align: center;
+        color: #71808d;
+        line-height: 2;
+        font-size: 13px;
+    }
 
-        /* =====================================================
-           Section
-        ===================================================== */
+    .loading {
+        text-align: center;
+        padding: 40px;
+        color: #71808d;
+    }
 
-        .section-title {
-            margin-bottom: 15px;
-        }
+    .error-box {
+        background: #fff1f1;
+        border: 1px solid #ffd7d7;
+        color: #b42318;
+        border-radius: 12px;
+        padding: 17px;
+        text-align: center;
+        font-size: 12px;
+    }
 
-        .section-title h2 {
-            margin: 0 0 5px;
-            font-size: 18px;
-        }
-
-        .section-title p {
-            margin: 0;
-            color: #7b8993;
-            font-size: 12px;
-        }
-
-
-        /* =====================================================
-           Exams Grid
-        ===================================================== */
+    @media (max-width: 700px) {
 
         .exams-grid {
-            display: grid;
-            grid-template-columns:
-                repeat(2, minmax(0, 1fr));
-            gap: 18px;
+            grid-template-columns: 1fr;
         }
 
-        .exam-card {
-            background: white;
-            border: 1px solid #e0e9ee;
-            border-radius: 17px;
-            padding: 20px;
-
-            transition:
-                transform .2s ease,
-                box-shadow .2s ease;
+        .toolbar {
+            flex-direction: column;
+            align-items: stretch;
         }
 
-        .exam-card:hover {
-            transform: translateY(-2px);
-
-            box-shadow:
-                0 10px 30px rgba(0, 0, 0, .07);
-        }
-
-        .exam-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 10px;
-
-            margin-bottom: 12px;
-        }
-
-        .exam-card h3 {
-            margin: 0;
-            font-size: 16px;
-            line-height: 1.7;
-        }
-
-        .published-badge {
-            flex-shrink: 0;
-
-            background: #eaf8f0;
-            color: #16834f;
-
-            padding: 5px 9px;
-            border-radius: 20px;
-
-            font-size: 10px;
-            font-weight: bold;
-        }
-
-
-        /* =====================================================
-           Description
-        ===================================================== */
-
-        .exam-description {
-            color: #71808d;
-            font-size: 12px;
-            line-height: 1.9;
-
-            min-height: 45px;
-            margin-bottom: 15px;
-        }
-
-
-        /* =====================================================
-           Meta
-        ===================================================== */
-
-        .exam-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 7px;
-
-            margin-bottom: 17px;
-        }
-
-        .exam-meta span {
-            background: #f4f8fa;
-            color: #60717e;
-
-            padding: 7px 9px;
-            border-radius: 8px;
-
-            font-size: 10px;
-        }
-
-
-        /* =====================================================
-           Start Button
-        ===================================================== */
-
-        .start-button {
+        .student-info {
             width: 100%;
-
-            border: none;
-            border-radius: 9px;
-
-            padding: 11px;
-
-            background: #087ea4;
-            color: white;
-
-            cursor: pointer;
-
-            font-size: 12px;
-            font-weight: bold;
-
-            transition:
-                background .2s ease;
         }
 
-        .start-button:hover {
-            background: #066b8c;
-        }
+    }
 
+</style>
 
-        /* =====================================================
-           Empty State
-        ===================================================== */
-
-        .empty-state {
-            background: white;
-
-            border:
-                1px solid #e1eaf0;
-
-            border-radius: 15px;
-
-            padding: 35px 20px;
-
-            text-align: center;
-
-            color: #71808d;
-
-            font-size: 13px;
-
-            line-height: 2;
-        }
-
-
-        /* =====================================================
-           Loading
-        ===================================================== */
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #71808d;
-            font-size: 13px;
-        }
-
-
-        /* =====================================================
-           Error
-        ===================================================== */
-
-        .error-box {
-            background: #fff5f5;
-            border: 1px solid #f1cccc;
-            color: #b42318;
-
-            border-radius: 14px;
-
-            padding: 20px;
-
-            text-align: center;
-
-            font-size: 13px;
-
-            line-height: 1.8;
-        }
-
-
-        /* =====================================================
-           Responsive
-        ===================================================== */
-
-        @media (max-width: 750px) {
-
-            .exams-grid {
-                grid-template-columns: 1fr;
-            }
-
-        }
-
-        @media (max-width: 550px) {
-
-            .page-header {
-                padding: 20px 15px;
-            }
-
-            .page-header h1 {
-                font-size: 20px;
-            }
-
-            .container {
-                width:
-                    calc(100% - 20px);
-                margin-top: 15px;
-            }
-
-            .student-info {
-                align-items: flex-start;
-                flex-direction: column;
-            }
-
-        }
-
-    </style>
-
-</head>
-
-
-<body>
-
-
-<header class="page-header">
+</head><body><header class="header">
 
     <div class="header-inner">
 
-        <h1>
-            📝 الاختبارات
-        </h1>
+        <h1>بوابة التمريض</h1>
 
         <p>
-            اختبر معلوماتك وراجع مستواك في المواد الدراسية.
+            الاختبارات الإلكترونية
         </p>
 
     </div>
@@ -367,39 +206,26 @@
 
 <main class="container">
 
-
-    <div
-        id="studentInfo"
-        class="student-info"
-    >
+    <div class="toolbar">
 
         <div>
 
-            <strong id="studentName">
-                جاري تحميل بيانات الطالب...
-            </strong>
+            <h2>
+                الاختبارات المتاحة
+            </h2>
 
-            <div
-                id="studentStage"
-                class="student-stage"
-            >
-                ...
-            </div>
+            <p>
+                اختر الاختبار الذي تريد البدء فيه.
+            </p>
 
         </div>
 
-    </div>
-
-
-    <div class="section-title">
-
-        <h2>
-            الاختبارات المتاحة
-        </h2>
-
-        <p>
-            الاختبارات المنشورة الخاصة بمرحلتك الدراسية.
-        </p>
+        <div
+            id="studentInfo"
+            class="student-info"
+        >
+            جاري تحميل بيانات الطالب...
+        </div>
 
     </div>
 
@@ -415,47 +241,41 @@
 
     </div>
 
-
 </main>
-
 
 <script type="module">
 
-    /* =========================================================
-       Imports
-    ========================================================= */
-
     import {
+        auth,
         db
     } from "../src/firebase/init.js";
 
     import {
-        getAuth,
         onAuthStateChanged
     } from
         "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
     import {
+        doc,
+        getDoc,
         collection,
         query,
         where,
-        getDocs,
-        doc,
-        getDoc
+        getDocs
     } from
         "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-    /* =========================================================
-       Firebase Auth
-    ========================================================= */
+    const examsContainer =
+        document.getElementById(
+            "examsContainer"
+        );
 
-    const auth = getAuth();
+    const studentInfo =
+        document.getElementById(
+            "studentInfo"
+        );
 
-
-    /* =========================================================
-       Start
-    ========================================================= */
 
     onAuthStateChanged(
         auth,
@@ -463,9 +283,8 @@
 
             if (!user) {
 
-                showError(
-                    "يجب تسجيل الدخول أولًا للوصول إلى الاختبارات."
-                );
+                window.location.href =
+                    "../login.html";
 
                 return;
 
@@ -474,9 +293,56 @@
 
             try {
 
-                await loadStudentAndExams(
-                    user
+                const userSnapshot =
+                    await getDoc(
+                        doc(
+                            db,
+                            "users",
+                            user.uid
+                        )
+                    );
+
+
+                if (!userSnapshot.exists()) {
+
+                    throw new Error(
+                        "بيانات الطالب غير موجودة."
+                    );
+
+                }
+
+
+                const userData =
+                    userSnapshot.data();
+
+
+                if (
+                    userData.role !== "student" ||
+                    userData.isActive !== true
+                ) {
+
+                    throw new Error(
+                        "هذا الحساب غير مسموح له بالدخول إلى صفحة الطلاب."
+                    );
+
+                }
+
+
+                const stageId =
+                    userData.stageId;
+
+
+                studentInfo.textContent =
+                    userData.name ||
+                    userData.displayName ||
+                    user.email ||
+                    "الطالب";
+
+
+                await loadExams(
+                    stageId
                 );
+
 
             } catch (error) {
 
@@ -485,11 +351,14 @@
                     error
                 );
 
-                showError(
-                    getFriendlyError(
-                        error
-                    )
-                );
+                examsContainer.innerHTML = `
+                    <div class="error-box">
+                        ⚠️ ${escapeHtml(
+                            error.message ||
+                            "تعذر تحميل الاختبارات."
+                        )}
+                    </div>
+                `;
 
             }
 
@@ -497,114 +366,30 @@
     );
 
 
-    /* =========================================================
-       Load Student + Exams
-    ========================================================= */
-
-    async function loadStudentAndExams(
-        user
+    async function loadExams(
+        stageId
     ) {
 
-        const userRef =
-            doc(
-                db,
-                "users",
-                user.uid
-            );
+        if (!stageId) {
 
+            examsContainer.innerHTML = `
+                <div class="empty-state">
+                    ⚠️ لم يتم تحديد المرحلة الدراسية لهذا الحساب.
+                </div>
+            `;
 
-        const userSnapshot =
-            await getDoc(
-                userRef
-            );
-
-
-        if (!userSnapshot.exists()) {
-
-            throw new Error(
-                "بيانات الطالب غير موجودة."
-            );
+            return;
 
         }
 
 
-        const student =
-            userSnapshot.data();
-
-
-        /* =====================================================
-           Check Student
-        ===================================================== */
-
-        if (
-            student.role !==
-            "student"
-        ) {
-
-            throw new Error(
-                "هذا الحساب ليس حساب طالب."
-            );
-
-        }
-
-
-        if (
-            student.isActive !==
-            true
-        ) {
-
-            throw new Error(
-                "حساب الطالب غير نشط."
-            );
-
-        }
-
-
-        /* =====================================================
-           Render Student
-        ===================================================== */
-
-        document.getElementById(
-            "studentName"
-        ).textContent =
-            student.name ||
-            student.displayName ||
-            user.displayName ||
-            "الطالب";
-
-
-        document.getElementById(
-            "studentStage"
-        ).textContent =
-            student.stageId
-                ? `المرحلة الدراسية: ${student.stageId}`
-                : "المرحلة الدراسية غير محددة";
-
-
-        /* =====================================================
-           Stage Required
-        ===================================================== */
-
-        if (
-            !student.stageId
-        ) {
-
-            throw new Error(
-                "لم يتم تحديد المرحلة الدراسية لحسابك."
-            );
-
-        }
-
-
-        /* =====================================================
-           Firestore Query
-           
-           مهم جدًا:
-           الاستعلام مطابق لشروط Firestore Rules:
-           
-           isPublished == true
-           stageId == student's stageId
-        ===================================================== */
+        /*
+         * مهم جدًا:
+         * الاستعلام متوافق مع Firestore Rules:
+         *
+         * isPublished == true
+         * stageId == student.stageId
+         */
 
         const examsQuery =
             query(
@@ -622,7 +407,7 @@
                 where(
                     "stageId",
                     "==",
-                    student.stageId
+                    stageId
                 )
             );
 
@@ -636,52 +421,25 @@
         const exams =
             snapshot.docs.map(
                 item => ({
-
-                    id:
-                        item.id,
-
+                    id: item.id,
                     ...item.data()
-
                 })
-            );
-
-
-        renderExams(
-            exams
-        );
-
-    }
-
-
-    /* =========================================================
-       Render Exams
-    ========================================================= */
-
-    function renderExams(
-        exams
-    ) {
-
-        const container =
-            document.getElementById(
-                "examsContainer"
             );
 
 
         if (!exams.length) {
 
-            container.innerHTML = `
-
+            examsContainer.innerHTML = `
                 <div class="empty-state">
 
-                    📭 لا توجد اختبارات متاحة حاليًا.
+                    📋 لا توجد اختبارات متاحة حاليًا.
 
                     <br>
 
                     سيتم ظهور الاختبارات هنا
-                    عند نشرها لمرحلتك الدراسية.
+                    عند نشرها للمرحلة الخاصة بك.
 
                 </div>
-
             `;
 
             return;
@@ -689,7 +447,7 @@
         }
 
 
-        container.innerHTML =
+        examsContainer.innerHTML =
             exams
                 .map(
                     exam =>
@@ -699,12 +457,32 @@
                 )
                 .join("");
 
+
+        document
+            .querySelectorAll(
+                "[data-start-exam]"
+            )
+            .forEach(
+                button => {
+
+                    button.addEventListener(
+                        "click",
+                        () => {
+
+                            const id =
+                                button.dataset.startExam;
+
+                            window.location.href =
+                                `exam.html?id=${encodeURIComponent(id)}`;
+
+                        }
+                    );
+
+                }
+            );
+
     }
 
-
-    /* =========================================================
-       Render Exam Card
-    ========================================================= */
 
     function renderExamCard(
         exam
@@ -753,27 +531,13 @@
 
             <div class="exam-card">
 
-                <div class="exam-card-header">
-
-                    <h3>
-                        ${title}
-                    </h3>
-
-                    <span
-                        class="published-badge"
-                    >
-                        منشور
-                    </span>
-
-                </div>
-
+                <h3>
+                    ${title}
+                </h3>
 
                 <div class="exam-description">
-
                     ${description}
-
                 </div>
-
 
                 <div class="exam-meta">
 
@@ -797,16 +561,13 @@
 
                 </div>
 
-
                 <button
                     class="start-button"
-                    data-exam-id="${escapeAttribute(
+                    data-start-exam="${escapeAttribute(
                         exam.id
                     )}"
                 >
-
                     🚀 بدء الاختبار
-
                 </button>
 
             </div>
@@ -815,105 +576,6 @@
 
     }
 
-
-    /* =========================================================
-       Button Events
-    ========================================================= */
-
-    document.addEventListener(
-        "click",
-        event => {
-
-            const button =
-                event.target.closest(
-                    "[data-exam-id]"
-                );
-
-
-            if (!button) {
-                return;
-            }
-
-
-            const examId =
-                button.dataset.examId;
-
-
-            if (!examId) {
-                return;
-            }
-
-
-            window.location.href =
-                `exam.html?id=${encodeURIComponent(
-                    examId
-                )}`;
-
-        }
-    );
-
-
-    /* =========================================================
-       Error
-    ========================================================= */
-
-    function showError(
-        message
-    ) {
-
-        const container =
-            document.getElementById(
-                "examsContainer"
-            );
-
-
-        container.innerHTML = `
-
-            <div class="error-box">
-
-                🔴 ${escapeHtml(
-                    message
-                )}
-
-            </div>
-
-        `;
-
-    }
-
-
-    /* =========================================================
-       Friendly Firebase Errors
-    ========================================================= */
-
-    function getFriendlyError(
-        error
-    ) {
-
-        if (
-            error?.code ===
-            "permission-denied"
-        ) {
-
-            return (
-                "ليس لديك صلاحية للوصول إلى الاختبارات. " +
-                "تأكد من أن الاشتراك فعال وأن المرحلة الدراسية صحيحة."
-            );
-
-        }
-
-
-        return (
-            error?.message ||
-            "حدث خطأ أثناء تحميل الاختبارات."
-        );
-
-    }
-
-
-    /* =========================================================
-       Escape
-    ========================================================= */
 
     function escapeHtml(
         value
@@ -956,9 +618,4 @@
 
     }
 
-</script>
-
-
-</body>
-
-</html>
+</script></body></html>
