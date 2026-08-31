@@ -21,31 +21,45 @@
 
     <style>
 
+        /* =====================================================
+           Exams Page
+        ===================================================== */
+
         .exam-toolbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 15px;
             margin-bottom: 20px;
-            flex-wrap: wrap;
         }
 
-        .exam-count {
-            color: #71808d;
-            font-size: 13px;
+        .exam-toolbar-info h2 {
+            font-size: 18px;
+            margin-bottom: 5px;
         }
 
-        .exam-grid {
+        .exam-toolbar-info p {
+            color: #82909c;
+            font-size: 12px;
+        }
+
+
+        /* =====================================================
+           Exam Cards
+        ===================================================== */
+
+        .exams-grid {
             display: grid;
             grid-template-columns:
                 repeat(2, minmax(0, 1fr));
+
             gap: 18px;
         }
 
         .exam-card {
-            background: white;
-            border: 1px solid #e5edf3;
-            border-radius: 15px;
+            background: #fff;
+            border: 1px solid #e3ebf1;
+            border-radius: 16px;
             padding: 20px;
         }
 
@@ -59,11 +73,10 @@
 
         .exam-card h3 {
             font-size: 16px;
-            line-height: 1.7;
-            color: #172b4d;
+            line-height: 1.6;
         }
 
-        .status {
+        .status-badge {
             padding: 5px 9px;
             border-radius: 20px;
             font-size: 10px;
@@ -71,12 +84,12 @@
             white-space: nowrap;
         }
 
-        .status.published {
+        .status-published {
             background: #eaf8f0;
             color: #16834f;
         }
 
-        .status.hidden {
+        .status-hidden {
             background: #fff1f1;
             color: #b42318;
         }
@@ -85,34 +98,35 @@
             color: #71808d;
             font-size: 12px;
             line-height: 1.8;
-            margin-bottom: 14px;
+            margin-bottom: 15px;
         }
 
         .exam-meta {
             display: flex;
             flex-wrap: wrap;
             gap: 7px;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
 
         .exam-meta span {
-            background: #f3f8fb;
-            color: #607180;
+            background: #f4f8fa;
+            color: #60717e;
             border-radius: 8px;
-            padding: 6px 9px;
+            padding: 7px 9px;
             font-size: 10px;
         }
 
         .exam-actions {
             display: flex;
             gap: 8px;
-            flex-wrap: wrap;
+            border-top: 1px solid #edf1f4;
+            padding-top: 15px;
         }
 
-        .small-button {
+        .exam-actions button {
             border: none;
             border-radius: 8px;
-            padding: 9px 12px;
+            padding: 9px 13px;
             cursor: pointer;
             font-size: 11px;
             font-weight: bold;
@@ -123,33 +137,20 @@
             color: #087ea4;
         }
 
-        .toggle-button {
-            background: #f4f6f8;
-            color: #526474;
-        }
-
         .delete-button {
             background: #fff1f1;
             color: #b42318;
         }
 
-        .empty-state {
-            background: white;
-            border: 1px solid #e5edf3;
-            border-radius: 15px;
-            text-align: center;
-            padding: 45px 20px;
-            color: #84919d;
-        }
 
-        /* =========================
+        /* =====================================================
            Modal
-        ========================= */
+        ===================================================== */
 
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(15, 35, 50, .55);
+            background: rgba(15, 35, 50, .45);
             display: none;
             align-items: center;
             justify-content: center;
@@ -157,15 +158,15 @@
             z-index: 1000;
         }
 
-        .modal-overlay.show {
+        .modal-overlay.active {
             display: flex;
         }
 
-        .modal {
+        .exam-modal {
+            background: white;
             width: min(950px, 100%);
             max-height: 92vh;
             overflow-y: auto;
-            background: white;
             border-radius: 18px;
             padding: 25px;
         }
@@ -174,28 +175,34 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 22px;
+            gap: 10px;
         }
 
         .modal-header h2 {
             font-size: 19px;
         }
 
-        .close-button {
+        .close-modal {
             width: 35px;
             height: 35px;
             border: none;
             border-radius: 9px;
-            background: #f3f5f7;
+            background: #f3f6f8;
             cursor: pointer;
             font-size: 18px;
         }
+
+
+        /* =====================================================
+           Form
+        ===================================================== */
 
         .form-grid {
             display: grid;
             grid-template-columns:
                 repeat(2, minmax(0, 1fr));
+
             gap: 15px;
         }
 
@@ -209,17 +216,17 @@
 
         .form-group label {
             display: block;
-            margin-bottom: 7px;
             font-size: 12px;
             font-weight: bold;
-            color: #425466;
+            color: #445765;
+            margin-bottom: 7px;
         }
 
         .form-group input,
         .form-group textarea,
         .form-group select {
             width: 100%;
-            border: 1px solid #dce7ed;
+            border: 1px solid #dce6eb;
             border-radius: 9px;
             padding: 11px 12px;
             font-family: inherit;
@@ -229,7 +236,7 @@
         }
 
         .form-group textarea {
-            min-height: 80px;
+            min-height: 85px;
             resize: vertical;
         }
 
@@ -239,51 +246,65 @@
             border-color: #087ea4;
         }
 
-        .published-row {
+
+        /* =====================================================
+           Publish
+        ===================================================== */
+
+        .publish-box {
+            background: #f7fafb;
+            border: 1px solid #e4edf2;
+            border-radius: 11px;
+            padding: 13px;
             display: flex;
             align-items: center;
-            gap: 9px;
-            margin: 5px 0 20px;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .publish-box input {
+            width: 18px;
+            height: 18px;
+        }
+
+        .publish-box label {
             font-size: 12px;
             font-weight: bold;
+            cursor: pointer;
         }
 
-        .published-row input {
-            width: 17px;
-            height: 17px;
-        }
 
-        /* =========================
+        /* =====================================================
            Questions
-        ========================= */
+        ===================================================== */
 
         .questions-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin: 20px 0 12px;
+            margin: 25px 0 15px;
         }
 
         .questions-header h3 {
-            font-size: 15px;
+            font-size: 16px;
         }
 
         .add-question-button {
             border: none;
-            background: #eaf7fb;
-            color: #087ea4;
+            background: #087ea4;
+            color: white;
             border-radius: 8px;
-            padding: 9px 12px;
+            padding: 9px 13px;
             cursor: pointer;
             font-weight: bold;
             font-size: 11px;
         }
 
         .question-editor {
-            border: 1px solid #e2ebf0;
-            border-radius: 13px;
-            padding: 16px;
-            margin-bottom: 12px;
+            border: 1px solid #e1eaf0;
+            border-radius: 14px;
+            padding: 17px;
+            margin-bottom: 13px;
             background: #fbfdfe;
         }
 
@@ -291,11 +312,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 13px;
         }
 
         .question-editor-header strong {
-            font-size: 12px;
+            font-size: 13px;
         }
 
         .remove-question {
@@ -306,109 +327,87 @@
             padding: 6px 9px;
             cursor: pointer;
             font-size: 10px;
+            font-weight: bold;
         }
 
         .question-text-input {
-            width: 100%;
-            border: 1px solid #dce7ed;
-            border-radius: 8px;
-            padding: 10px;
-            font-family: inherit;
-            margin-bottom: 10px;
-            outline: none;
+            margin-bottom: 13px;
         }
 
-        .options-title {
-            font-size: 11px;
-            font-weight: bold;
-            color: #607180;
-            margin-bottom: 8px;
+        .question-text-input input {
+            width: 100%;
+            border: 1px solid #dce6eb;
+            border-radius: 9px;
+            padding: 11px;
+            font-family: inherit;
+            font-size: 12px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 9px;
         }
 
         .option-editor {
-            display: grid;
-            grid-template-columns: 1fr auto;
+            display: flex;
+            align-items: center;
             gap: 7px;
-            margin-bottom: 7px;
         }
 
-        .option-editor input {
+        .option-editor input[type="radio"] {
+            accent-color: #087ea4;
+            flex-shrink: 0;
+        }
+
+        .option-editor input[type="text"] {
             width: 100%;
-            border: 1px solid #dce7ed;
+            border: 1px solid #dce6eb;
             border-radius: 8px;
-            padding: 9px;
+            padding: 10px;
             font-family: inherit;
             font-size: 11px;
         }
 
-        .option-editor button {
-            width: 34px;
-            border: none;
-            border-radius: 7px;
-            background: #fff1f1;
-            color: #b42318;
-            cursor: pointer;
+        .correct-label {
+            font-size: 9px;
+            color: #71808d;
+            white-space: nowrap;
         }
 
-        .add-option-button {
-            border: none;
-            background: transparent;
-            color: #087ea4;
-            cursor: pointer;
-            font-size: 10px;
-            font-weight: bold;
-            margin-top: 3px;
-        }
 
-        .correct-answer-row {
-            margin-top: 12px;
-        }
-
-        .correct-answer-row label {
-            display: block;
-            font-size: 10px;
-            color: #607180;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .correct-answer-row select {
-            width: 100%;
-            border: 1px solid #dce7ed;
-            border-radius: 8px;
-            padding: 9px;
-            font-family: inherit;
-            font-size: 11px;
-            background: white;
-        }
+        /* =====================================================
+           Modal Footer
+        ===================================================== */
 
         .modal-footer {
             display: flex;
             justify-content: flex-end;
             gap: 9px;
-            margin-top: 20px;
+            margin-top: 25px;
             padding-top: 18px;
             border-top: 1px solid #edf1f4;
         }
 
-        .secondary-button {
+        .modal-footer button {
             border: none;
-            background: #edf2f5;
-            color: #526474;
-            padding: 11px 18px;
             border-radius: 9px;
+            padding: 11px 18px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 11px;
+        }
+
+        .cancel-button {
+            background: #edf2f5;
+            color: #53636f;
         }
 
         .save-button {
-            border: none;
             background: #087ea4;
             color: white;
-            padding: 11px 20px;
-            border-radius: 9px;
-            cursor: pointer;
-            font-weight: bold;
         }
 
         .save-button:disabled {
@@ -416,29 +415,52 @@
             cursor: not-allowed;
         }
 
-        .loading-box {
-            text-align: center;
-            padding: 35px;
-            color: #84919d;
+
+        /* =====================================================
+           Empty
+        ===================================================== */
+
+        .empty-state {
+            background: #fff;
+            border: 1px solid #e5edf3;
+            border-radius: 15px;
         }
 
-        .message {
-            padding: 11px 13px;
-            border-radius: 9px;
-            font-size: 11px;
-            margin-bottom: 15px;
+
+        /* =====================================================
+           Toast
+        ===================================================== */
+
+        .toast {
+            position: fixed;
+            left: 20px;
+            bottom: 20px;
+            z-index: 2000;
+            padding: 12px 17px;
+            border-radius: 10px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
             display: none;
+            box-shadow: 0 8px 25px rgba(0,0,0,.15);
         }
 
-        .message.error {
-            display: block;
-            background: #fff1f1;
-            color: #b42318;
+        .toast.success {
+            background: #16834f;
         }
+
+        .toast.error {
+            background: #b42318;
+        }
+
+
+        /* =====================================================
+           Responsive
+        ===================================================== */
 
         @media (max-width: 800px) {
 
-            .exam-grid {
+            .exams-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -450,28 +472,29 @@
                 grid-column: auto;
             }
 
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+
         }
 
-        @media (max-width: 500px) {
-
-            .modal {
-                padding: 17px;
-            }
+        @media (max-width: 600px) {
 
             .exam-toolbar {
                 align-items: stretch;
+                flex-direction: column;
             }
 
             .exam-toolbar .primary-button {
                 width: 100%;
             }
 
-            .modal-footer {
-                flex-direction: column;
+            .exam-modal {
+                padding: 17px;
             }
 
-            .modal-footer button {
-                width: 100%;
+            .question-navigation {
+                flex-direction: column;
             }
 
         }
@@ -480,12 +503,217 @@
 
 </head>
 
+
 <body>
 
 <div id="adminApp"></div>
 
 
+<!-- =========================================================
+     Modal
+========================================================= -->
+
+<div
+    id="examModal"
+    class="modal-overlay"
+>
+
+    <div class="exam-modal">
+
+        <div class="modal-header">
+
+            <h2 id="modalTitle">
+                إضافة اختبار
+            </h2>
+
+            <button
+                type="button"
+                class="close-modal"
+                id="closeModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="examForm">
+
+            <input
+                type="hidden"
+                id="examId"
+            >
+
+
+            <!-- =================================================
+                 Basic Data
+            ================================================== -->
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>
+                        عنوان الاختبار *
+                    </label>
+
+                    <input
+                        id="examTitle"
+                        type="text"
+                        placeholder="مثال: اختبار طب الباطنة - الفصل الأول"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        المادة
+                    </label>
+
+                    <input
+                        id="examSubject"
+                        type="text"
+                        placeholder="مثال: طب الباطنة"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        المرحلة الدراسية
+                    </label>
+
+                    <input
+                        id="examStage"
+                        type="text"
+                        placeholder="مثال: first-year أو المرحلة الأولى"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        مدة الاختبار بالدقائق
+                    </label>
+
+                    <input
+                        id="examDuration"
+                        type="number"
+                        min="0"
+                        placeholder="مثال: 30"
+                    >
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label>
+                        وصف الاختبار
+                    </label>
+
+                    <textarea
+                        id="examDescription"
+                        placeholder="اكتب وصفًا مختصرًا للاختبار..."
+                    ></textarea>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 Publish
+            ================================================== -->
+
+            <div class="publish-box">
+
+                <input
+                    type="checkbox"
+                    id="examPublished"
+                    checked
+                >
+
+                <label for="examPublished">
+                    نشر الاختبار للطلاب
+                </label>
+
+            </div>
+
+
+            <!-- =================================================
+                 Questions
+            ================================================== -->
+
+            <div class="questions-header">
+
+                <h3>
+                    أسئلة الاختبار
+                </h3>
+
+                <button
+                    type="button"
+                    id="addQuestionButton"
+                    class="add-question-button"
+                >
+                    + إضافة سؤال
+                </button>
+
+            </div>
+
+
+            <div id="questionsContainer"></div>
+
+
+            <!-- =================================================
+                 Footer
+            ================================================== -->
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="cancel-button"
+                    id="cancelButton"
+                >
+                    إلغاء
+                </button>
+
+                <button
+                    type="submit"
+                    class="save-button"
+                    id="saveButton"
+                >
+                    حفظ الاختبار
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<div
+    id="toast"
+    class="toast"
+></div>
+
+
 <script type="module">
+
+    /* =========================================================
+       Imports
+    ========================================================= */
 
     import {
         protectAdminPage
@@ -502,296 +730,215 @@
     import {
         collection,
         getDocs,
+        doc,
+        getDoc,
         addDoc,
         updateDoc,
         deleteDoc,
-        doc
+        serverTimestamp
     } from
         "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-    /* =====================================================
-       Admin
-    ===================================================== */
-
-    const admin =
-        await protectAdminPage();
-
-    createAdminLayout(
-        admin.data
-    );
-
-
-    document.getElementById(
-        "pageTitle"
-    ).textContent =
-        "إدارة الاختبارات";
-
-
-    const pageContent =
-        document.getElementById(
-            "pageContent"
-        );
-
-
-    pageContent.innerHTML = `
-
-        <div class="exam-toolbar">
-
-            <div class="exam-count"
-                 id="examCount">
-                جاري تحميل الاختبارات...
-            </div>
-
-            <button
-                class="primary-button"
-                id="addExamButton"
-            >
-                + إضافة اختبار
-            </button>
-
-        </div>
-
-
-        <div id="examList">
-            <div class="loading-box">
-                ⏳ جاري تحميل الاختبارات...
-            </div>
-        </div>
-
-
-        <div
-            class="modal-overlay"
-            id="examModal"
-        >
-
-            <div class="modal">
-
-                <div class="modal-header">
-
-                    <h2 id="modalTitle">
-                        إضافة اختبار
-                    </h2>
-
-                    <button
-                        class="close-button"
-                        id="closeModal"
-                    >
-                        ×
-                    </button>
-
-                </div>
-
-
-                <div
-                    class="message"
-                    id="formMessage"
-                ></div>
-
-
-                <div class="form-grid">
-
-                    <div class="form-group full">
-
-                        <label>
-                            اسم الاختبار
-                        </label>
-
-                        <input
-                            id="examTitle"
-                            type="text"
-                            placeholder="مثال: اختبار الفصل الأول - طب الباطنة"
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label>
-                            المادة
-                        </label>
-
-                        <input
-                            id="examSubject"
-                            type="text"
-                            placeholder="مثال: طب الباطنة"
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label>
-                            المرحلة الدراسية
-                        </label>
-
-                        <select id="examStage">
-
-                            <option value="">
-                                جميع المراحل
-                            </option>
-
-                            <option value="stage-1">
-                                الصف الأول الثانوي التمريض
-                            </option>
-
-                            <option value="stage-2">
-                                الصف الثاني الثانوي التمريض
-                            </option>
-
-                            <option value="stage-3">
-                                الصف الثالث الثانوي التمريض
-                            </option>
-
-                            <option value="stage-4">
-                                الصف الأول المعهد
-                            </option>
-
-                            <option value="stage-5">
-                                الصف الثاني المعهد
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label>
-                            مدة الاختبار بالدقائق
-                        </label>
-
-                        <input
-                            id="examDuration"
-                            type="number"
-                            min="0"
-                            placeholder="مثال: 30"
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label>
-                            وصف الاختبار
-                        </label>
-
-                        <textarea
-                            id="examDescription"
-                            placeholder="وصف مختصر يظهر للطالب"
-                        ></textarea>
-
-                    </div>
-
-                </div>
-
-
-                <label class="published-row">
-
-                    <input
-                        type="checkbox"
-                        id="examPublished"
-                    >
-
-                    نشر الاختبار للطلاب
-
-                </label>
-
-
-                <div class="questions-header">
-
-                    <h3>
-                        الأسئلة
-                    </h3>
-
-                    <button
-                        class="add-question-button"
-                        id="addQuestionButton"
-                    >
-                        + إضافة سؤال
-                    </button>
-
-                </div>
-
-
-                <div id="questionsEditor"></div>
-
-
-                <div class="modal-footer">
-
-                    <button
-                        class="secondary-button"
-                        id="cancelButton"
-                    >
-                        إلغاء
-                    </button>
-
-                    <button
-                        class="save-button"
-                        id="saveExamButton"
-                    >
-                        حفظ الاختبار
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    `;
-
-
-    /* =====================================================
+    /* =========================================================
        State
-    ===================================================== */
+    ========================================================= */
 
-    let exams = [];
+    let admin = null;
 
     let editingExamId = null;
 
-    let questionsState = [];
+    let questionCounter = 0;
 
 
-    /* =====================================================
-       Elements
-    ===================================================== */
+    /* =========================================================
+       Start
+    ========================================================= */
 
-    const examList =
-        document.getElementById(
-            "examList"
+    try {
+
+        const result =
+            await protectAdminPage();
+
+        admin =
+            result;
+
+        createAdminLayout(
+            admin.data
         );
 
-    const examCount =
         document.getElementById(
-            "examCount"
+            "pageTitle"
+        ).textContent =
+            "إدارة الاختبارات";
+
+
+        document.getElementById(
+            "pageContent"
+        ).innerHTML = `
+
+            <div class="exam-toolbar">
+
+                <div class="exam-toolbar-info">
+
+                    <h2>
+                        الاختبارات
+                    </h2>
+
+                    <p>
+                        إنشاء وإدارة الاختبارات والأسئلة الخاصة بالطلاب.
+                    </p>
+
+                </div>
+
+                <button
+                    id="newExamButton"
+                    class="primary-button"
+                >
+                    + إضافة اختبار
+                </button>
+
+            </div>
+
+
+            <div
+                id="examsContainer"
+                class="exams-grid"
+            >
+
+                <div class="empty-state">
+
+                    ⏳ جاري تحميل الاختبارات...
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        bindPageEvents();
+
+        await loadExams();
+
+    } catch (error) {
+
+        console.error(
+            "Admin exams error:",
+            error
         );
 
-    const modal =
-        document.getElementById(
-            "examModal"
-        );
+        const content =
+            document.getElementById(
+                "pageContent"
+            );
 
-    const questionsEditor =
-        document.getElementById(
-            "questionsEditor"
-        );
+        if (content) {
 
-    const formMessage =
-        document.getElementById(
-            "formMessage"
-        );
+            content.innerHTML = `
+
+                <div class="empty-state">
+
+                    ⚠️ حدث خطأ أثناء تحميل صفحة الاختبارات.
+
+                </div>
+
+            `;
+
+        }
+
+    }
 
 
-    /* =====================================================
+    /* =========================================================
+       Page Events
+    ========================================================= */
+
+    function bindPageEvents() {
+
+        document
+            .getElementById(
+                "newExamButton"
+            )
+            .addEventListener(
+                "click",
+                () => openCreateModal()
+            );
+
+
+        document
+            .getElementById(
+                "closeModal"
+            )
+            .addEventListener(
+                "click",
+                closeModal
+            );
+
+
+        document
+            .getElementById(
+                "cancelButton"
+            )
+            .addEventListener(
+                "click",
+                closeModal
+            );
+
+
+        document
+            .getElementById(
+                "addQuestionButton"
+            )
+            .addEventListener(
+                "click",
+                () => addQuestion()
+            );
+
+
+        document
+            .getElementById(
+                "examForm"
+            )
+            .addEventListener(
+                "submit",
+                saveExam
+            );
+
+
+        document
+            .getElementById(
+                "examModal"
+            )
+            .addEventListener(
+                "click",
+                event => {
+
+                    if (
+                        event.target.id ===
+                        "examModal"
+                    ) {
+
+                        closeModal();
+
+                    }
+
+                }
+            );
+
+    }
+
+
+    /* =========================================================
        Load Exams
-    ===================================================== */
+    ========================================================= */
 
     async function loadExams() {
+
+        const container =
+            document.getElementById(
+                "examsContainer"
+            );
 
         try {
 
@@ -803,105 +950,82 @@
                     )
                 );
 
-            exams =
+
+            const exams =
                 snapshot.docs.map(
                     item => ({
-                        id: item.id,
+
+                        id:
+                            item.id,
+
                         ...item.data()
+
                     })
                 );
 
 
-            renderExams();
+            if (!exams.length) {
+
+                container.innerHTML = `
+
+                    <div class="empty-state">
+
+                        لا توجد اختبارات حتى الآن.
+
+                        <br><br>
+
+                        اضغط على
+                        <strong>
+                            + إضافة اختبار
+                        </strong>
+                        لإنشاء أول اختبار.
+
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+
+            container.innerHTML =
+                exams
+                    .map(
+                        exam =>
+                            renderExamCard(
+                                exam
+                            )
+                    )
+                    .join("");
+
+
+            bindExamCardEvents();
 
         } catch (error) {
 
             console.error(
-                "Load exams error:",
                 error
             );
 
-            examList.innerHTML = `
+            container.innerHTML = `
 
                 <div class="empty-state">
 
-                    ⚠️ حدث خطأ أثناء تحميل الاختبارات.
+                    ⚠️ تعذر تحميل الاختبارات.
 
                 </div>
 
             `;
-
-            examCount.textContent =
-                "تعذر تحميل الاختبارات.";
 
         }
 
     }
 
 
-    /* =====================================================
-       Render Exams
-    ===================================================== */
-
-    function renderExams() {
-
-        examCount.textContent =
-            `عدد الاختبارات: ${exams.length}`;
-
-
-        if (!exams.length) {
-
-            examList.innerHTML = `
-
-                <div class="empty-state">
-
-                    <div style="font-size:35px;margin-bottom:12px;">
-                        📝
-                    </div>
-
-                    لا توجد اختبارات حتى الآن.
-
-                    <br><br>
-
-                    اضغط على
-                    <strong>
-                        + إضافة اختبار
-                    </strong>
-                    لإنشاء أول اختبار.
-
-                </div>
-
-            `;
-
-            return;
-
-        }
-
-
-        examList.innerHTML = `
-
-            <div class="exam-grid">
-
-                ${
-                    exams
-                        .map(
-                            exam =>
-                                renderExamCard(
-                                    exam
-                                )
-                        )
-                        .join("")
-                }
-
-            </div>
-
-        `;
-
-
-        bindExamActions();
-
-    }
-
+    /* =========================================================
+       Render Exam Card
+    ========================================================= */
 
     function renderExamCard(
         exam
@@ -911,7 +1035,7 @@
             escapeHtml(
                 exam.title ||
                 exam.name ||
-                "اختبار بدون اسم"
+                "اختبار بدون عنوان"
             );
 
 
@@ -926,24 +1050,21 @@
             escapeHtml(
                 exam.subject ||
                 exam.subjectId ||
-                "—"
+                "غير محدد"
             );
 
 
         const stage =
             escapeHtml(
-                getStageName(
-                    exam.stageId
-                )
+                exam.stageId ||
+                "كل المراحل"
             );
 
 
         const duration =
-            Number(
-                exam.duration ||
-                exam.durationMinutes ||
-                0
-            );
+            exam.duration ||
+            exam.durationMinutes ||
+            0;
 
 
         const questions =
@@ -970,26 +1091,30 @@
 
                     <span
                         class="
-                            status
+                            status-badge
                             ${
                                 published
-                                    ? "published"
-                                    : "hidden"
+                                    ? "status-published"
+                                    : "status-hidden"
                             }
                         "
                     >
+
                         ${
                             published
                                 ? "منشور"
-                                : "مخفي"
+                                : "غير منشور"
                         }
+
                     </span>
 
                 </div>
 
 
                 <div class="exam-description">
+
                     ${description}
+
                 </div>
 
 
@@ -1003,19 +1128,23 @@
                         🎓 ${stage}
                     </span>
 
+                    <span>
+                        📋 ${questions} سؤال
+                    </span>
+
                     ${
                         duration
                             ? `
                                 <span>
-                                    ⏱️ ${duration} دقيقة
+                                    ⏱️ ${escapeHtml(
+                                        String(
+                                            duration
+                                        )
+                                    )} دقيقة
                                 </span>
-                              `
+                            `
                             : ""
                     }
-
-                    <span>
-                        📝 ${questions} سؤال
-                    </span>
 
                 </div>
 
@@ -1023,9 +1152,8 @@
                 <div class="exam-actions">
 
                     <button
-                        class="small-button edit-button"
-                        data-action="edit"
-                        data-id="${escapeAttribute(
+                        class="edit-button"
+                        data-edit-exam="${escapeHtml(
                             exam.id
                         )}"
                     >
@@ -1034,24 +1162,8 @@
 
 
                     <button
-                        class="small-button toggle-button"
-                        data-action="toggle"
-                        data-id="${escapeAttribute(
-                            exam.id
-                        )}"
-                    >
-                        ${
-                            published
-                                ? "👁️ إخفاء"
-                                : "📢 نشر"
-                        }
-                    </button>
-
-
-                    <button
-                        class="small-button delete-button"
-                        data-action="delete"
-                        data-id="${escapeAttribute(
+                        class="delete-button"
+                        data-delete-exam="${escapeHtml(
                             exam.id
                         )}"
                     >
@@ -1067,75 +1179,48 @@
     }
 
 
-    /* =====================================================
-       Exam Actions
-    ===================================================== */
+    /* =========================================================
+       Card Events
+    ========================================================= */
 
-    function bindExamActions() {
+    function bindExamCardEvents() {
 
         document
             .querySelectorAll(
-                "[data-action]"
+                "[data-edit-exam]"
             )
             .forEach(
                 button => {
 
                     button.addEventListener(
                         "click",
-                        async () => {
+                        () => {
 
-                            const id =
-                                button.dataset.id;
+                            editExam(
+                                button.dataset.editExam
+                            );
 
-                            const action =
-                                button.dataset.action;
+                        }
+                    );
 
-
-                            if (
-                                action ===
-                                "edit"
-                            ) {
-
-                                const exam =
-                                    exams.find(
-                                        item =>
-                                            item.id ===
-                                            id
-                                    );
-
-                                if (exam) {
-
-                                    openEditModal(
-                                        exam
-                                    );
-
-                                }
-
-                            }
+                }
+            );
 
 
-                            if (
-                                action ===
-                                "toggle"
-                            ) {
+        document
+            .querySelectorAll(
+                "[data-delete-exam]"
+            )
+            .forEach(
+                button => {
 
-                                await toggleExam(
-                                    id
-                                );
+                    button.addEventListener(
+                        "click",
+                        () => {
 
-                            }
-
-
-                            if (
-                                action ===
-                                "delete"
-                            ) {
-
-                                await deleteExam(
-                                    id
-                                );
-
-                            }
+                            deleteExam(
+                                button.dataset.deleteExam
+                            );
 
                         }
                     );
@@ -1146,28 +1231,13 @@
     }
 
 
-    /* =====================================================
-       Add Exam
-    ===================================================== */
+    /* =========================================================
+       Open Create Modal
+    ========================================================= */
 
-    document
-        .getElementById(
-            "addExamButton"
-        )
-        .addEventListener(
-            "click",
-            () => {
+    function openCreateModal() {
 
-                openAddModal();
-
-            }
-        );
-
-
-    function openAddModal() {
-
-        editingExamId =
-            null;
+        editingExamId = null;
 
         document.getElementById(
             "modalTitle"
@@ -1176,511 +1246,418 @@
 
 
         document.getElementById(
-            "examTitle"
-        ).value = "";
-
-
-        document.getElementById(
-            "examSubject"
-        ).value = "";
-
-
-        document.getElementById(
-            "examStage"
-        ).value = "";
-
-
-        document.getElementById(
-            "examDuration"
-        ).value = "";
-
-
-        document.getElementById(
-            "examDescription"
-        ).value = "";
-
-
-        document.getElementById(
-            "examPublished"
-        ).checked = false;
-
-
-        questionsState = [];
-
-
-        addQuestion();
-
-
-        renderQuestionEditors();
-
-
-        clearMessage();
-
-
-        modal.classList.add(
-            "show"
-        );
-
-    }
-
-
-    /* =====================================================
-       Edit Exam
-    ===================================================== */
-
-    function openEditModal(
-        exam
-    ) {
-
-        editingExamId =
-            exam.id;
-
-
-        document.getElementById(
-            "modalTitle"
-        ).textContent =
-            "تعديل الاختبار";
-
-
-        document.getElementById(
-            "examTitle"
-        ).value =
-            exam.title ||
-            exam.name ||
-            "";
-
-
-        document.getElementById(
-            "examSubject"
-        ).value =
-            exam.subject ||
-            exam.subjectId ||
-            "";
-
-
-        document.getElementById(
-            "examStage"
-        ).value =
-            exam.stageId ||
-            "";
-
-
-        document.getElementById(
-            "examDuration"
-        ).value =
-            exam.duration ||
-            exam.durationMinutes ||
-            "";
-
-
-        document.getElementById(
-            "examDescription"
-        ).value =
-            exam.description ||
-            "";
+            "examForm"
+        ).reset();
 
 
         document.getElementById(
             "examPublished"
         ).checked =
-            exam.isPublished === true;
+            true;
 
 
-        questionsState =
-            normalizeQuestionsForEditor(
-                exam.questions
+        document.getElementById(
+            "examId"
+        ).value =
+            "";
+
+
+        document.getElementById(
+            "questionsContainer"
+        ).innerHTML =
+            "";
+
+
+        questionCounter = 0;
+
+
+        addQuestion();
+
+
+        document
+            .getElementById(
+                "examModal"
+            )
+            .classList
+            .add(
+                "active"
             );
-
-
-        renderQuestionEditors();
-
-
-        clearMessage();
-
-
-        modal.classList.add(
-            "show"
-        );
 
     }
 
 
-    /* =====================================================
-       Questions
-    ===================================================== */
+    /* =========================================================
+       Edit Exam
+    ========================================================= */
 
-    document
-        .getElementById(
-            "addQuestionButton"
-        )
-        .addEventListener(
-            "click",
-            () => {
+    async function editExam(
+        examId
+    ) {
+
+        try {
+
+            const snapshot =
+                await getDoc(
+                    doc(
+                        db,
+                        "exams",
+                        examId
+                    )
+                );
+
+
+            if (!snapshot.exists()) {
+
+                showToast(
+                    "الاختبار غير موجود.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+
+            const exam = {
+
+                id:
+                    snapshot.id,
+
+                ...snapshot.data()
+
+            };
+
+
+            editingExamId =
+                exam.id;
+
+
+            document.getElementById(
+                "modalTitle"
+            ).textContent =
+                "تعديل الاختبار";
+
+
+            document.getElementById(
+                "examId"
+            ).value =
+                exam.id;
+
+
+            document.getElementById(
+                "examTitle"
+            ).value =
+                exam.title ||
+                exam.name ||
+                "";
+
+
+            document.getElementById(
+                "examSubject"
+            ).value =
+                exam.subject ||
+                exam.subjectId ||
+                "";
+
+
+            document.getElementById(
+                "examStage"
+            ).value =
+                exam.stageId ||
+                "";
+
+
+            document.getElementById(
+                "examDuration"
+            ).value =
+                exam.duration ||
+                exam.durationMinutes ||
+                "";
+
+
+            document.getElementById(
+                "examDescription"
+            ).value =
+                exam.description ||
+                "";
+
+
+            document.getElementById(
+                "examPublished"
+            ).checked =
+                exam.isPublished !== false;
+
+
+            const container =
+                document.getElementById(
+                    "questionsContainer"
+                );
+
+
+            container.innerHTML =
+                "";
+
+
+            questionCounter =
+                0;
+
+
+            const questions =
+                Array.isArray(
+                    exam.questions
+                )
+                    ? exam.questions
+                    : [];
+
+
+            if (!questions.length) {
 
                 addQuestion();
 
-                renderQuestionEditors();
+            } else {
+
+                questions.forEach(
+                    question =>
+                        addQuestion(
+                            question
+                        )
+                );
 
             }
-        );
 
 
-    function addQuestion() {
-
-        const index =
-            questionsState.length + 1;
-
-
-        questionsState.push({
-
-            id:
-                String(index),
-
-            text:
-                "",
-
-            options: [
-
-                {
-                    id: "0",
-                    text: ""
-                },
-
-                {
-                    id: "1",
-                    text: ""
-                },
-
-                {
-                    id: "2",
-                    text: ""
-                },
-
-                {
-                    id: "3",
-                    text: ""
-                }
-
-            ],
-
-            correctAnswer:
-                ""
-
-        });
-
-    }
-
-
-    function normalizeQuestionsForEditor(
-        raw
-    ) {
-
-        if (
-            !Array.isArray(
-                raw
-            )
-        ) {
-
-            return [];
-
-        }
-
-
-        return raw.map(
-            (
-                question,
-                index
-            ) => {
-
-                const options =
-                    Array.isArray(
-                        question.options
-                    )
-                        ? question.options
-                        : [];
-
-
-                return {
-
-                    id:
-                        String(
-                            question.id ||
-                            question.questionId ||
-                            index + 1
-                        ),
-
-                    text:
-                        question.text ||
-                        question.question ||
-                        question.title ||
-                        "",
-
-                    options:
-                        options.map(
-                            (
-                                option,
-                                optionIndex
-                            ) => {
-
-                                if (
-                                    typeof option ===
-                                    "object"
-                                ) {
-
-                                    return {
-
-                                        id:
-                                            String(
-                                                option.id ||
-                                                option.value ||
-                                                option.key ||
-                                                optionIndex
-                                            ),
-
-                                        text:
-                                            option.text ||
-                                            option.label ||
-                                            option.value ||
-                                            ""
-
-                                    };
-
-                                }
-
-
-                                return {
-
-                                    id:
-                                        String(
-                                            optionIndex
-                                        ),
-
-                                    text:
-                                        String(
-                                            option
-                                        )
-
-                                };
-
-                            }
-                        ),
-
-                    correctAnswer:
-                        String(
-                            question.correctAnswer ??
-                            question.answer ??
-                            question.correct ??
-                            question.correctOption ??
-                            question.correctOptionId ??
-                            ""
-                        )
-
-                };
-
-            }
-        );
-
-    }
-
-
-    function renderQuestionEditors() {
-
-        if (
-            !questionsState.length
-        ) {
-
-            questionsEditor.innerHTML = `
-
-                <div class="empty-state">
-
-                    لا توجد أسئلة.
-                    اضغط على إضافة سؤال.
-
-                </div>
-
-            `;
-
-            return;
-
-        }
-
-
-        questionsEditor.innerHTML =
-            questionsState
-                .map(
-                    (
-                        question,
-                        questionIndex
-                    ) =>
-                        renderQuestionEditor(
-                            question,
-                            questionIndex
-                        )
+            document
+                .getElementById(
+                    "examModal"
                 )
-                .join("");
+                .classList
+                .add(
+                    "active"
+                );
 
+        } catch (error) {
 
-        bindQuestionEditorEvents();
+            console.error(
+                error
+            );
+
+            showToast(
+                "تعذر فتح الاختبار.",
+                "error"
+            );
+
+        }
 
     }
 
 
-    function renderQuestionEditor(
-        question,
-        questionIndex
+    /* =========================================================
+       Add Question
+    ========================================================= */
+
+    function addQuestion(
+        question = null
     ) {
+
+        questionCounter++;
+
+
+        const questionId =
+            String(
+                question?.id ||
+                `q${questionCounter}`
+            );
+
+
+        const text =
+            question?.text ||
+            question?.question ||
+            "";
+
 
         const options =
-            question.options || [];
+            normalizeOptions(
+                question?.options
+            );
 
 
-        return `
-
-            <div
-                class="question-editor"
-                data-question-index="${questionIndex}"
-            >
-
-                <div class="question-editor-header">
-
-                    <strong>
-                        السؤال ${questionIndex + 1}
-                    </strong>
-
-                    <button
-                        type="button"
-                        class="remove-question"
-                        data-remove-question="${questionIndex}"
-                    >
-                        حذف السؤال
-                    </button>
-
-                </div>
+        const correct =
+            String(
+                question?.correctAnswer ??
+                question?.answer ??
+                question?.correct ??
+                question?.correctOption ??
+                question?.correctOptionId ??
+                ""
+            );
 
 
-                <input
-                    type="text"
-                    class="question-text-input"
-                    data-question-text="${questionIndex}"
-                    value="${escapeAttribute(
-                        question.text || ""
-                    )}"
-                    placeholder="اكتب نص السؤال هنا..."
-                >
+        const container =
+            document.getElementById(
+                "questionsContainer"
+            );
 
 
-                <div class="options-title">
-                    الاختيارات
-                </div>
+        const editor =
+            document.createElement(
+                "div"
+            );
 
 
-                <div class="options-container">
+        editor.className =
+            "question-editor";
 
-                    ${
-                        options
-                            .map(
-                                (
-                                    option,
-                                    optionIndex
-                                ) => `
 
-                                    <div
-                                        class="option-editor"
-                                    >
+        editor.dataset.questionId =
+            questionId;
 
-                                        <input
-                                            type="text"
-                                            data-option-text="${questionIndex}:${optionIndex}"
-                                            value="${escapeAttribute(
-                                                option.text || ""
-                                            )}"
-                                            placeholder="الاختيار ${String.fromCharCode(
-                                                65 +
-                                                optionIndex
-                                            )}"
-                                        >
 
-                                        <button
-                                            type="button"
-                                            data-remove-option="${questionIndex}:${optionIndex}"
-                                        >
-                                            ×
-                                        </button>
+        editor.innerHTML = `
 
-                                    </div>
+            <div class="question-editor-header">
 
-                                `
-                            )
-                            .join("")
-                    }
-
-                </div>
-
+                <strong>
+                    السؤال
+                    ${questionCounter}
+                </strong>
 
                 <button
                     type="button"
-                    class="add-option-button"
-                    data-add-option="${questionIndex}"
+                    class="remove-question"
                 >
-                    + إضافة اختيار
+                    🗑️ حذف السؤال
                 </button>
 
+            </div>
 
-                <div class="correct-answer-row">
 
-                    <label>
-                        الإجابة الصحيحة
-                    </label>
+            <div class="question-text-input">
 
-                    <select
-                        data-correct-answer="${questionIndex}"
-                    >
+                <input
+                    type="text"
+                    class="question-text"
+                    placeholder="اكتب نص السؤال..."
+                    value="${escapeAttribute(
+                        text
+                    )}"
+                >
 
-                        <option value="">
-                            اختر الإجابة الصحيحة
-                        </option>
+            </div>
 
-                        ${
-                            options
-                                .map(
-                                    (
-                                        option,
-                                        optionIndex
-                                    ) => `
 
-                                        <option
-                                            value="${escapeAttribute(
-                                                option.id
-                                            )}"
-                                            ${
-                                                String(
-                                                    question.correctAnswer
-                                                ) ===
-                                                String(
-                                                    option.id
-                                                )
-                                                    ? "selected"
-                                                    : ""
-                                            }
-                                        >
-                                            ${String.fromCharCode(
-                                                65 +
-                                                optionIndex
-                                            )}.
-                                            ${escapeHtml(
-                                                option.text ||
-                                                `الاختيار ${optionIndex + 1}`
-                                            )}
-                                        </option>
+            <div class="options-grid">
 
-                                    `
-                                )
-                                .join("")
-                        }
+                ${renderOptionEditor(
+                    questionId,
+                    "0",
+                    options[0]?.text || "",
+                    correct
+                )}
 
-                    </select>
+                ${renderOptionEditor(
+                    questionId,
+                    "1",
+                    options[1]?.text || "",
+                    correct
+                )}
 
-                </div>
+                ${renderOptionEditor(
+                    questionId,
+                    "2",
+                    options[2]?.text || "",
+                    correct
+                )}
+
+                ${renderOptionEditor(
+                    questionId,
+                    "3",
+                    options[3]?.text || "",
+                    correct
+                )}
+
+            </div>
+
+        `;
+
+
+        editor
+            .querySelector(
+                ".remove-question"
+            )
+            .addEventListener(
+                "click",
+                () => {
+
+                    editor.remove();
+
+                    refreshQuestionNumbers();
+
+                }
+            );
+
+
+        container.appendChild(
+            editor
+        );
+
+
+        refreshQuestionNumbers();
+
+    }
+
+
+    /* =========================================================
+       Option Editor
+    ========================================================= */
+
+    function renderOptionEditor(
+        questionId,
+        optionId,
+        text,
+        correct
+    ) {
+
+        return `
+
+            <div class="option-editor">
+
+                <input
+                    type="radio"
+                    name="correct-${escapeAttribute(
+                        questionId
+                    )}"
+                    value="${optionId}"
+                    ${
+                        String(
+                            correct
+                        ) ===
+                        String(
+                            optionId
+                        )
+                            ? "checked"
+                            : ""
+                    }
+                >
+
+                <span class="correct-label">
+                    ${
+                        String.fromCharCode(
+                            65 +
+                            Number(
+                                optionId
+                            )
+                        )
+                    }
+                </span>
+
+                <input
+                    type="text"
+                    class="option-text"
+                    placeholder="نص الاختيار"
+                    value="${escapeAttribute(
+                        text
+                    )}"
+                >
 
             </div>
 
@@ -1689,294 +1666,33 @@
     }
 
 
-    function bindQuestionEditorEvents() {
+    /* =========================================================
+       Refresh Question Numbers
+    ========================================================= */
+
+    function refreshQuestionNumbers() {
 
         document
             .querySelectorAll(
-                "[data-question-text]"
+                "#questionsContainer .question-editor"
             )
             .forEach(
-                input => {
+                (
+                    editor,
+                    index
+                ) => {
 
-                    input.addEventListener(
-                        "input",
-                        () => {
+                    const title =
+                        editor.querySelector(
+                            ".question-editor-header strong"
+                        );
 
-                            const index =
-                                Number(
-                                    input.dataset
-                                        .questionText
-                                );
+                    if (title) {
 
-                            questionsState[
-                                index
-                            ].text =
-                                input.value;
+                        title.textContent =
+                            `السؤال ${index + 1}`;
 
-                        }
-                    );
-
-                }
-            );
-
-
-        document
-            .querySelectorAll(
-                "[data-option-text]"
-            )
-            .forEach(
-                input => {
-
-                    input.addEventListener(
-                        "input",
-                        () => {
-
-                            const [
-                                questionIndex,
-                                optionIndex
-                            ] =
-                                input.dataset
-                                    .optionText
-                                    .split(":")
-                                    .map(
-                                        Number
-                                    );
-
-
-                            questionsState[
-                                questionIndex
-                            ].options[
-                                optionIndex
-                            ].text =
-                                input.value;
-
-                        }
-                    );
-
-                }
-            );
-
-
-        document
-            .querySelectorAll(
-                "[data-correct-answer]"
-            )
-            .forEach(
-                select => {
-
-                    select.addEventListener(
-                        "change",
-                        () => {
-
-                            const index =
-                                Number(
-                                    select.dataset
-                                        .correctAnswer
-                                );
-
-
-                            questionsState[
-                                index
-                            ].correctAnswer =
-                                select.value;
-
-                        }
-                    );
-
-                }
-            );
-
-
-        document
-            .querySelectorAll(
-                "[data-remove-question]"
-            )
-            .forEach(
-                button => {
-
-                    button.addEventListener(
-                        "click",
-                        () => {
-
-                            const index =
-                                Number(
-                                    button.dataset
-                                        .removeQuestion
-                                );
-
-
-                            questionsState.splice(
-                                index,
-                                1
-                            );
-
-
-                            questionsState =
-                                questionsState.map(
-                                    (
-                                        question,
-                                        newIndex
-                                    ) => ({
-
-                                        ...question,
-
-                                        id:
-                                            String(
-                                                newIndex + 1
-                                            )
-
-                                    })
-                                );
-
-
-                            renderQuestionEditors();
-
-                        }
-                    );
-
-                }
-            );
-
-
-        document
-            .querySelectorAll(
-                "[data-add-option]"
-            )
-            .forEach(
-                button => {
-
-                    button.addEventListener(
-                        "click",
-                        () => {
-
-                            const questionIndex =
-                                Number(
-                                    button.dataset
-                                        .addOption
-                                );
-
-
-                            const question =
-                                questionsState[
-                                    questionIndex
-                                ];
-
-
-                            question.options.push({
-
-                                id:
-                                    String(
-                                        question.options
-                                            .length
-                                    ),
-
-                                text:
-                                    ""
-
-                            });
-
-
-                            renderQuestionEditors();
-
-                        }
-                    );
-
-                }
-            );
-
-
-        document
-            .querySelectorAll(
-                "[data-remove-option]"
-            )
-            .forEach(
-                button => {
-
-                    button.addEventListener(
-                        "click",
-                        () => {
-
-                            const [
-                                questionIndex,
-                                optionIndex
-                            ] =
-                                button.dataset
-                                    .removeOption
-                                    .split(":")
-                                    .map(
-                                        Number
-                                    );
-
-
-                            const question =
-                                questionsState[
-                                    questionIndex
-                                ];
-
-
-                            if (
-                                question.options.length <=
-                                2
-                            ) {
-
-                                showMessage(
-                                    "يجب أن يحتوي السؤال على اختيارين على الأقل."
-                                );
-
-                                return;
-
-                            }
-
-
-                            const removed =
-                                question.options[
-                                    optionIndex
-                                ];
-
-
-                            question.options.splice(
-                                optionIndex,
-                                1
-                            );
-
-
-                            question.options =
-                                question.options.map(
-                                    (
-                                        option,
-                                        newIndex
-                                    ) => ({
-
-                                        ...option,
-
-                                        id:
-                                            String(
-                                                newIndex
-                                            )
-
-                                    })
-                                );
-
-
-                            if (
-                                String(
-                                    question.correctAnswer
-                                ) ===
-                                String(
-                                    removed.id
-                                )
-                            ) {
-
-                                question.correctAnswer =
-                                    "";
-
-                            }
-
-
-                            renderQuestionEditors();
-
-                        }
-                    );
+                    }
 
                 }
             );
@@ -1984,265 +1700,189 @@
     }
 
 
-    /* =====================================================
+    /* =========================================================
        Save Exam
-    ===================================================== */
+    ========================================================= */
 
-    document
-        .getElementById(
-            "saveExamButton"
-        )
-        .addEventListener(
-            "click",
-            saveExam
-        );
+    async function saveExam(
+        event
+    ) {
 
-
-    async function saveExam() {
-
-        clearMessage();
-
-
-        const title =
-            document.getElementById(
-                "examTitle"
-            ).value.trim();
-
-
-        const subject =
-            document.getElementById(
-                "examSubject"
-            ).value.trim();
-
-
-        const stageId =
-            document.getElementById(
-                "examStage"
-            ).value;
-
-
-        const duration =
-            Number(
-                document.getElementById(
-                    "examDuration"
-                ).value
-            ) || 0;
-
-
-        const description =
-            document.getElementById(
-                "examDescription"
-            ).value.trim();
-
-
-        const isPublished =
-            document.getElementById(
-                "examPublished"
-            ).checked;
-
-
-        if (!title) {
-
-            showMessage(
-                "من فضلك اكتب اسم الاختبار."
-            );
-
-            return;
-
-        }
-
-
-        if (!questionsState.length) {
-
-            showMessage(
-                "أضف سؤالًا واحدًا على الأقل."
-            );
-
-            return;
-
-        }
-
-
-        for (
-            let i = 0;
-            i < questionsState.length;
-            i++
-        ) {
-
-            const question =
-                questionsState[i];
-
-
-            if (
-                !question.text.trim()
-            ) {
-
-                showMessage(
-                    `اكتب نص السؤال رقم ${i + 1}.`
-                );
-
-                return;
-
-            }
-
-
-            if (
-                !Array.isArray(
-                    question.options
-                ) ||
-                question.options.length < 2
-            ) {
-
-                showMessage(
-                    `السؤال رقم ${i + 1} يجب أن يحتوي على اختيارين على الأقل.`
-                );
-
-                return;
-
-            }
-
-
-            const hasEmptyOption =
-                question.options.some(
-                    option =>
-                        !String(
-                            option.text || ""
-                        ).trim()
-                );
-
-
-            if (
-                hasEmptyOption
-            ) {
-
-                showMessage(
-                    `يوجد اختيار فارغ في السؤال رقم ${i + 1}.`
-                );
-
-                return;
-
-            }
-
-
-            if (
-                question.correctAnswer ===
-                ""
-            ) {
-
-                showMessage(
-                    `حدد الإجابة الصحيحة للسؤال رقم ${i + 1}.`
-                );
-
-                return;
-
-            }
-
-        }
+        event.preventDefault();
 
 
         const saveButton =
             document.getElementById(
-                "saveExamButton"
+                "saveButton"
             );
 
 
         saveButton.disabled =
             true;
 
-        saveButton.textContent =
-            "⏳ جاري الحفظ...";
-
 
         try {
 
-            /*
-             * هذا هو الـschema الأساسي
-             * الذي تقرأه student/exam.html
-             */
+            const title =
+                document.getElementById(
+                    "examTitle"
+                ).value.trim();
+
+
+            const subject =
+                document.getElementById(
+                    "examSubject"
+                ).value.trim();
+
+
+            const stageId =
+                document.getElementById(
+                    "examStage"
+                ).value.trim();
+
+
+            const duration =
+                Number(
+                    document.getElementById(
+                        "examDuration"
+                    ).value
+                ) || 0;
+
+
+            const description =
+                document.getElementById(
+                    "examDescription"
+                ).value.trim();
+
+
+            const isPublished =
+                document.getElementById(
+                    "examPublished"
+                ).checked;
+
+
+            if (!title) {
+
+                throw new Error(
+                    "يجب كتابة عنوان الاختبار."
+                );
+
+            }
+
+
+            const questions =
+                collectQuestions();
+
+
+            if (!questions.length) {
+
+                throw new Error(
+                    "يجب إضافة سؤال واحد على الأقل."
+                );
+
+            }
+
+
+            /* ================================================
+               نفس الـSchema الذي يقرأه student/exam.html
+            ================================================= */
 
             const examData = {
 
-                title,
+                title:
 
-                description,
+                    title,
 
-                subject,
 
-                stageId,
+                description:
 
-                duration,
+                    description,
 
-                isPublished,
+
+                subject:
+
+                    subject,
+
+
+                stageId:
+
+                    stageId,
+
+
+                duration:
+
+                    duration,
+
+
+                durationMinutes:
+
+                    duration,
+
+
+                isPublished:
+
+                    isPublished,
+
 
                 questions:
-                    questionsState.map(
-                        (
-                            question,
-                            index
-                        ) => ({
 
-                            id:
-                                String(
-                                    index + 1
-                                ),
+                    questions,
 
-                            text:
-                                question.text
-                                    .trim(),
 
-                            options:
-                                question.options
-                                    .map(
-                                        (
-                                            option,
-                                            optionIndex
-                                        ) => ({
+                updatedAt:
 
-                                            id:
-                                                String(
-                                                    optionIndex
-                                                ),
-
-                                            text:
-                                                String(
-                                                    option.text
-                                                ).trim()
-
-                                        })
-                                    ),
-
-                            correctAnswer:
-                                String(
-                                    question.correctAnswer
-                                )
-
-                        })
-                    )
+                    serverTimestamp()
 
             };
 
 
-            if (
-                editingExamId
-            ) {
+            if (editingExamId) {
 
                 await updateDoc(
+
                     doc(
                         db,
                         "exams",
                         editingExamId
                     ),
+
                     examData
+
+                );
+
+
+                showToast(
+                    "تم تحديث الاختبار بنجاح.",
+                    "success"
                 );
 
             } else {
 
+                examData.createdAt =
+                    serverTimestamp();
+
+
+                examData.createdBy =
+                    admin?.data?.uid ||
+                    admin?.uid ||
+                    "";
+
+
                 await addDoc(
+
                     collection(
                         db,
                         "exams"
                     ),
+
                     examData
+
+                );
+
+
+                showToast(
+                    "تم إنشاء الاختبار بنجاح.",
+                    "success"
                 );
 
             }
@@ -2252,7 +1892,6 @@
 
             await loadExams();
 
-
         } catch (error) {
 
             console.error(
@@ -2261,8 +1900,10 @@
             );
 
 
-            showMessage(
-                "حدث خطأ أثناء حفظ الاختبار. تأكد من صلاحيات Firestore."
+            showToast(
+                error.message ||
+                "حدث خطأ أثناء حفظ الاختبار.",
+                "error"
             );
 
         } finally {
@@ -2270,101 +1911,161 @@
             saveButton.disabled =
                 false;
 
-            saveButton.textContent =
-                "حفظ الاختبار";
-
         }
 
     }
 
 
-    /* =====================================================
-       Toggle Published
-    ===================================================== */
+    /* =========================================================
+       Collect Questions
+    ========================================================= */
 
-    async function toggleExam(
-        examId
-    ) {
+    function collectQuestions() {
 
-        const exam =
-            exams.find(
-                item =>
-                    item.id ===
-                    examId
+        const editors =
+            document.querySelectorAll(
+                "#questionsContainer .question-editor"
             );
 
 
-        if (!exam) {
-            return;
-        }
+        const questions = [];
 
 
-        const nextStatus =
-            exam.isPublished !== true;
+        editors.forEach(
+            (
+                editor,
+                index
+            ) => {
+
+                const questionText =
+                    editor
+                        .querySelector(
+                            ".question-text"
+                        )
+                        .value
+                        .trim();
 
 
-        try {
+                if (!questionText) {
 
-            await updateDoc(
-                doc(
-                    db,
-                    "exams",
-                    examId
-                ),
-                {
-                    isPublished:
-                        nextStatus
+                    return;
+
                 }
-            );
 
 
-            await loadExams();
+                const optionInputs =
+                    editor.querySelectorAll(
+                        ".option-text"
+                    );
 
-        } catch (error) {
 
-            console.error(
-                "Toggle exam error:",
-                error
-            );
+                const radio =
+                    editor.querySelector(
+                        'input[type="radio"]:checked'
+                    );
 
-            alert(
-                "تعذر تغيير حالة الاختبار."
-            );
 
-        }
+                const options = [];
+
+
+                optionInputs.forEach(
+                    (
+                        input,
+                        optionIndex
+                    ) => {
+
+                        const text =
+                            input.value.trim();
+
+
+                        if (text) {
+
+                            options.push({
+
+                                id:
+                                    String(
+                                        optionIndex
+                                    ),
+
+                                text:
+                                    text
+
+                            });
+
+                        }
+
+                    }
+                );
+
+
+                if (options.length < 2) {
+
+                    throw new Error(
+                        `السؤال ${index + 1} يجب أن يحتوي على اختيارين على الأقل.`
+                    );
+
+                }
+
+
+                if (!radio) {
+
+                    throw new Error(
+                        `يجب تحديد الإجابة الصحيحة للسؤال ${index + 1}.`
+                    );
+
+                }
+
+
+                const correctOption =
+                    radio.value;
+
+
+                questions.push({
+
+                    id:
+                        String(
+                            editor.dataset.questionId ||
+                            `q${index + 1}`
+                        ),
+
+                    text:
+                        questionText,
+
+                    options:
+                        options,
+
+                    correctAnswer:
+                        correctOption
+
+                });
+
+            }
+        );
+
+
+        return questions;
 
     }
 
 
-    /* =====================================================
+    /* =========================================================
        Delete Exam
-    ===================================================== */
+    ========================================================= */
 
     async function deleteExam(
         examId
     ) {
 
-        const exam =
-            exams.find(
-                item =>
-                    item.id ===
-                    examId
-            );
-
-
-        if (!exam) {
-            return;
-        }
-
-
         const confirmed =
             window.confirm(
-                `هل أنت متأكد من حذف الاختبار "${exam.title || "هذا الاختبار"}"؟`
+                "هل أنت متأكد من حذف هذا الاختبار؟\n\nسيتم حذف Document الاختبار نفسه."
             );
 
 
         if (!confirmed) {
+
             return;
+
         }
 
 
@@ -2379,17 +2080,23 @@
             );
 
 
+            showToast(
+                "تم حذف الاختبار.",
+                "success"
+            );
+
+
             await loadExams();
 
         } catch (error) {
 
             console.error(
-                "Delete exam error:",
                 error
             );
 
-            alert(
-                "تعذر حذف الاختبار."
+            showToast(
+                "تعذر حذف الاختبار.",
+                "error"
             );
 
         }
@@ -2397,135 +2104,110 @@
     }
 
 
-    /* =====================================================
-       Modal Controls
-    ===================================================== */
-
-    document
-        .getElementById(
-            "closeModal"
-        )
-        .addEventListener(
-            "click",
-            closeModal
-        );
-
-
-    document
-        .getElementById(
-            "cancelButton"
-        )
-        .addEventListener(
-            "click",
-            closeModal
-        );
-
-
-    modal.addEventListener(
-        "click",
-        event => {
-
-            if (
-                event.target ===
-                modal
-            ) {
-
-                closeModal();
-
-            }
-
-        }
-    );
-
+    /* =========================================================
+       Close Modal
+    ========================================================= */
 
     function closeModal() {
 
-        modal.classList.remove(
-            "show"
-        );
+        document
+            .getElementById(
+                "examModal"
+            )
+            .classList
+            .remove(
+                "active"
+            );
 
         editingExamId =
             null;
 
-        questionsState =
-            [];
-
     }
 
 
-    /* =====================================================
-       Messages
-    ===================================================== */
+    /* =========================================================
+       Normalize Options
+    ========================================================= */
 
-    function showMessage(
-        message
+    function normalizeOptions(
+        options
     ) {
 
-        formMessage.textContent =
-            message;
+        if (
+            !Array.isArray(
+                options
+            )
+        ) {
 
-        formMessage.className =
-            "message error";
+            return [];
 
-    }
-
-
-    function clearMessage() {
-
-        formMessage.textContent =
-            "";
-
-        formMessage.className =
-            "message";
-
-    }
+        }
 
 
-    /* =====================================================
-       Helpers
-    ===================================================== */
+        return options.map(
+            (
+                option,
+                index
+            ) => {
 
-    function getStageName(
-        stageId
-    ) {
+                if (
+                    typeof option ===
+                    "object"
+                ) {
 
-        const stages = {
+                    return {
 
-            "stage-1":
-                "الأول الثانوي",
+                        id:
+                            String(
+                                option.id ??
+                                option.value ??
+                                option.key ??
+                                index
+                            ),
 
-            "stage-2":
-                "الثاني الثانوي",
+                        text:
+                            String(
+                                option.text ??
+                                option.label ??
+                                option.value ??
+                                ""
+                            )
 
-            "stage-3":
-                "الثالث الثانوي",
+                    };
 
-            "stage-4":
-                "الأول المعهد",
-
-            "stage-5":
-                "الثاني المعهد"
-
-        };
+                }
 
 
-        return (
-            stages[
-                stageId
-            ] ||
-            "جميع المراحل"
+                return {
+
+                    id:
+                        String(
+                            index
+                        ),
+
+                    text:
+                        String(
+                            option
+                        )
+
+                };
+
+            }
         );
 
     }
 
+
+    /* =========================================================
+       Escape Helpers
+    ========================================================= */
 
     function escapeHtml(
         value
     ) {
 
         return String(
-            value ??
-            ""
+            value ?? ""
         )
             .replace(
                 /&/g,
@@ -2562,13 +2244,56 @@
     }
 
 
-    /* =====================================================
-       Start
-    ===================================================== */
+    /* =========================================================
+       Toast
+    ========================================================= */
 
-    await loadExams();
+    let toastTimer = null;
+
+
+    function showToast(
+        message,
+        type = "success"
+    ) {
+
+        const toast =
+            document.getElementById(
+                "toast"
+            );
+
+
+        toast.textContent =
+            message;
+
+
+        toast.className =
+            `toast ${type}`;
+
+
+        toast.style.display =
+            "block";
+
+
+        clearTimeout(
+            toastTimer
+        );
+
+
+        toastTimer =
+            setTimeout(
+                () => {
+
+                    toast.style.display =
+                        "none";
+
+                },
+                3000
+            );
+
+    }
 
 </script>
 
 </body>
+
 </html>
