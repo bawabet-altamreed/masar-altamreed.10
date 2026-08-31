@@ -32,42 +32,659 @@
     import { createAdminLayout }
         from "../src/admin/layout.js";
 
-    const admin = await protectAdminPage();
+    import { db }
+        from "../src/firebase/init.js";
 
-    createAdminLayout(admin.data);
+    import {
+        collection,
+        getDocs
+    } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-    document.getElementById("pageTitle").textContent =
-        "إدارة الاختبارات";
 
-    document.getElementById("pageContent").innerHTML = `
+    try {
 
-        <div class="panel">
+        const admin =
+            await protectAdminPage();
 
-            <div class="panel-header">
 
-                <h2>
-                    الاختبارات
-                </h2>
+        createAdminLayout(
+            admin.data
+        );
 
-                <button class="primary-button">
+
+        document.getElementById(
+            "pageTitle"
+        ).textContent =
+            "إدارة الاختبارات";
+
+
+        const content =
+            document.getElementById(
+                "pageContent"
+            );
+
+
+        content.innerHTML = `
+
+            <div class="admin-page-intro">
+
+                <div>
+
+                    <h2>
+                        📝 الاختبارات
+                    </h2>
+
+                    <p>
+                        إدارة الاختبارات المتاحة
+                        للطلاب ومتابعة حالتها.
+                    </p>
+
+                </div>
+
+                <button
+                    id="addExamButton"
+                    class="primary-button"
+                >
                     + إضافة اختبار
                 </button>
 
             </div>
 
-            <div class="empty-state">
 
-                ستظهر هنا الاختبارات الموجودة في
-                <strong>exams</strong>.
+            <div class="admin-stats-grid">
+
+                <div class="admin-mini-card">
+
+                    <span>
+                        📝
+                    </span>
+
+                    <div>
+
+                        <small>
+                            إجمالي الاختبارات
+                        </small>
+
+                        <strong id="totalExams">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="admin-mini-card">
+
+                    <span>
+                        🟢
+                    </span>
+
+                    <div>
+
+                        <small>
+                            الاختبارات المنشورة
+                        </small>
+
+                        <strong id="publishedExams">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="admin-mini-card">
+
+                    <span>
+                        🔒
+                    </span>
+
+                    <div>
+
+                        <small>
+                            غير المنشورة
+                        </small>
+
+                        <strong id="unpublishedExams">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
 
             </div>
 
-        </div>
 
-    `;
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h2>
+                        قائمة الاختبارات
+                    </h2>
+
+                    <input
+                        id="examSearch"
+                        class="admin-search"
+                        type="search"
+                        placeholder="ابحث عن اختبار أو مادة..."
+                    >
+
+                </div>
+
+
+                <div
+                    id="examsContainer"
+                    class="admin-list"
+                >
+
+                    <div class="admin-loading">
+                        ⏳ جاري تحميل الاختبارات...
+                    </div>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        const container =
+            document.getElementById(
+                "examsContainer"
+            );
+
+
+        const search =
+            document.getElementById(
+                "examSearch"
+            );
+
+
+        let exams = [];
+
+
+        // =================================================
+        // تحميل الاختبارات
+        // =================================================
+
+        const snapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "exams"
+                )
+            );
+
+
+        exams =
+            snapshot.docs
+                .map(
+                    item => ({
+                        id: item.id,
+                        ...item.data()
+                    })
+                )
+                .sort(
+                    (a, b) =>
+                        getTime(
+                            b.createdAt
+                        ) -
+                        getTime(
+                            a.createdAt
+                        )
+                );
+
+
+        updateStats();
+
+
+        render();
+
+
+        search.addEventListener(
+            "input",
+            render
+        );
+
+
+        function updateStats() {
+
+            const total =
+                exams.length;
+
+
+            const published =
+                exams.filter(
+                    exam =>
+                        exam.isPublished === true
+                ).length;
+
+
+            const unpublished =
+                total -
+                published;
+
+
+            document.getElementById(
+                "totalExams"
+            ).textContent =
+                total;
+
+
+            document.getElementById(
+                "publishedExams"
+            ).textContent =
+                published;
+
+
+            document.getElementById(
+                "unpublishedExams"
+            ).textContent =
+                unpublished;
+
+        }
+
+
+        function render() {
+
+            const value =
+                search.value
+                    .trim()
+                    .toLowerCase();
+
+
+            const filtered =
+                exams.filter(
+                    exam => {
+
+                        const title =
+                            String(
+                                exam.title ||
+                                exam.name ||
+                                ""
+                            ).toLowerCase();
+
+
+                        const subject =
+                            String(
+                                exam.subject ||
+                                exam.subjectId ||
+                                ""
+                            ).toLowerCase();
+
+
+                        return (
+                            !value ||
+                            title.includes(value) ||
+                            subject.includes(value)
+                        );
+
+                    }
+                );
+
+
+            if (!filtered.length) {
+
+                container.innerHTML = `
+
+                    <div class="admin-empty">
+
+                        📝
+
+                        <br><br>
+
+                        ${
+                            exams.length
+                                ? "لا توجد نتائج مطابقة للبحث."
+                                : "لا توجد اختبارات حاليًا."
+                        }
+
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+
+            container.innerHTML =
+                filtered
+                    .map(
+                        exam =>
+                            examCard(
+                                exam
+                            )
+                    )
+                    .join("");
+
+        }
+
+
+        function examCard(
+            exam
+        ) {
+
+            const title =
+                exam.title ||
+                exam.name ||
+                "اختبار بدون عنوان";
+
+
+            const subject =
+                exam.subject ||
+                exam.subjectId ||
+                "غير محدد";
+
+
+            const stage =
+                exam.stageId ||
+                "كل المراحل";
+
+
+            const duration =
+                exam.duration ||
+                "غير محددة";
+
+
+            const questionCount =
+                Array.isArray(
+                    exam.questions
+                )
+                    ? exam.questions.length
+                    : (
+                        exam.questionCount ||
+                        "—"
+                    );
+
+
+            const published =
+                exam.isPublished === true;
+
+
+            const start =
+                exam.startAt ||
+                exam.scheduledAt;
+
+
+            return `
+
+                <div class="admin-list-card">
+
+                    <div class="admin-list-avatar">
+                        📝
+                    </div>
+
+
+                    <div class="admin-list-info">
+
+                        <h3>
+                            ${escapeHtml(title)}
+                        </h3>
+
+                        <p>
+                            📚
+                            ${escapeHtml(subject)}
+                        </p>
+
+                        <small>
+                            المرحلة:
+                            ${escapeHtml(stage)}
+                        </small>
+
+                    </div>
+
+
+                    <div class="admin-list-details">
+
+                        <span>
+                            ⏱️
+                            ${escapeHtml(duration)}
+                        </span>
+
+                        <span>
+                            ❓
+                            ${escapeHtml(
+                                questionCount
+                            )}
+                            سؤال
+                        </span>
+
+                        ${
+                            start
+                                ? `
+                                    <span>
+                                        🕒
+                                        ${escapeHtml(
+                                            formatDateTime(
+                                                start
+                                            )
+                                        )}
+                                    </span>
+                                `
+                                : ""
+                        }
+
+                    </div>
+
+
+                    <div class="admin-list-meta">
+
+                        <span
+                            class="
+                                admin-status
+                                ${
+                                    published
+                                        ? "admin-status-active"
+                                        : "admin-status-disabled"
+                                }
+                            "
+                        >
+
+                            ${
+                                published
+                                    ? "منشور"
+                                    : "غير منشور"
+                            }
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="admin-list-actions">
+
+                        <button
+                            class="secondary-button"
+                            data-exam-id="${escapeHtml(
+                                exam.id
+                            )}"
+                        >
+                            عرض
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+
+        document
+            .getElementById(
+                "addExamButton"
+            )
+            .addEventListener(
+                "click",
+                () => {
+
+                    alert(
+                        "سيتم ربط إنشاء الاختبار بصفحة إعداد الأسئلة بعد تثبيت شكل Document الخاص بالاختبارات."
+                    );
+
+                }
+            );
+
+
+    } catch (error) {
+
+        console.error(
+            "Admin exams error:",
+            error
+        );
+
+
+        const content =
+            document.getElementById(
+                "pageContent"
+            );
+
+
+        if (content) {
+
+            content.innerHTML = `
+
+                <div class="admin-error">
+
+                    ⚠️ حدث خطأ أثناء تحميل الاختبارات.
+
+                    <br><br>
+
+                    ${escapeHtml(
+                        error?.message ||
+                        "حدث خطأ غير معروف."
+                    )}
+
+                </div>
+
+            `;
+
+        }
+
+    }
+
+
+    function getTime(
+        value
+    ) {
+
+        if (!value) {
+            return 0;
+        }
+
+
+        if (
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            return value.toDate()
+                .getTime();
+
+        }
+
+
+        const date =
+            new Date(value);
+
+
+        return isNaN(
+            date.getTime()
+        )
+            ? 0
+            : date.getTime();
+
+    }
+
+
+    function formatDateTime(
+        value
+    ) {
+
+        if (!value) {
+            return "";
+        }
+
+
+        let date;
+
+
+        if (
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            date =
+                value.toDate();
+
+        } else {
+
+            date =
+                new Date(value);
+
+        }
+
+
+        if (
+            isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return "";
+
+        }
+
+
+        return new Intl.DateTimeFormat(
+            "ar-EG",
+            {
+                dateStyle: "medium",
+                timeStyle: "short"
+            }
+        ).format(date);
+
+    }
+
+
+    function escapeHtml(
+        value
+    ) {
+
+        return String(
+            value ?? ""
+        )
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
+
+    }
 
 </script>
 
 </body>
-
 </html>
