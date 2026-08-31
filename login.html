@@ -1,90 +1,339 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <title>تسجيل الدخول | مسار التمريض</title>
 
-    <title>تسجيل الدخول - مسار التمريض</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    <link
-        rel="stylesheet"
-        href="src/styles/main.css"
-    >
+        body {
+            font-family: Arial, Tahoma, sans-serif;
+            min-height: 100vh;
+            background: #f3f8fb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
 
+        .login-container {
+            width: 100%;
+            max-width: 430px;
+        }
+
+        .login-card {
+            background: #ffffff;
+            border: 1px solid #e4edf3;
+            border-radius: 22px;
+            padding: 38px 30px;
+            box-shadow: 0 15px 45px rgba(20, 60, 80, 0.08);
+        }
+
+        .logo {
+            width: 75px;
+            height: 75px;
+            border-radius: 20px;
+            background: #087ea4;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 38px;
+            margin: 0 auto 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #12304a;
+            font-size: 27px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            color: #34495e;
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            height: 50px;
+            border: 1px solid #d7e3eb;
+            border-radius: 11px;
+            padding: 0 15px;
+            font-size: 15px;
+            outline: none;
+            direction: ltr;
+            text-align: left;
+            transition: 0.2s;
+        }
+
+        input:focus {
+            border-color: #087ea4;
+            box-shadow: 0 0 0 3px rgba(8, 126, 164, 0.08);
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 15px;
+            padding-left: 50px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 19px;
+        }
+
+        .login-button {
+            width: 100%;
+            height: 52px;
+            border: none;
+            border-radius: 11px;
+            background: #087ea4;
+            color: white;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 5px;
+        }
+
+        .login-button:hover {
+            background: #066985;
+        }
+
+        .login-button:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .message {
+            display: none;
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .message.error {
+            display: block;
+            background: #fff1f1;
+            color: #b42318;
+            border: 1px solid #ffd5d5;
+        }
+
+        .message.success {
+            display: block;
+            background: #effaf3;
+            color: #147a3e;
+            border: 1px solid #ccebd8;
+        }
+
+        .support {
+            margin-top: 24px;
+            padding: 16px;
+            background: #f6fafc;
+            border-radius: 12px;
+            text-align: center;
+            color: #637585;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .whatsapp {
+            color: #087ea4;
+            font-weight: 800;
+            direction: ltr;
+            display: inline-block;
+        }
+
+        .back {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #087ea4;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .copyright {
+            text-align: center;
+            color: #8a98a5;
+            font-size: 12px;
+            margin-top: 18px;
+        }
+    </style>
 </head>
 
 <body>
 
-    <main id="login-app">
+<div class="login-container">
 
-        <section class="login-container">
+    <div class="login-card">
 
-            <div class="login-card">
+        <div class="logo">🩺</div>
 
-                <h1>
-                    مسار التمريض
-                </h1>
+        <h1>مسار التمريض</h1>
 
-                <p>
-                    تسجيل الدخول
-                </p>
+        <p class="subtitle">
+            سجل الدخول للمتابعة
+        </p>
 
-                <form id="login-form">
+        <form id="loginForm">
 
-                    <div class="form-group">
+            <div class="form-group">
+                <label for="subscriptionCode">
+                    🔑 كود الاشتراك
+                </label>
 
-                        <label for="email">
-                            البريد الإلكتروني
-                        </label>
+                <input
+                    type="text"
+                    id="subscriptionCode"
+                    name="subscriptionCode"
+                    placeholder="أدخل كود الاشتراك"
+                    autocomplete="username"
+                    required
+                >
+            </div>
 
-                        <input
-                            id="email"
-                            type="email"
-                            required
-                        >
+            <div class="form-group">
 
-                    </div>
+                <label for="password">
+                    🔒 كلمة المرور
+                </label>
 
-                    <div class="form-group">
+                <div class="password-wrapper">
 
-                        <label for="password">
-                            كلمة المرور
-                        </label>
-
-                        <input
-                            id="password"
-                            type="password"
-                            required
-                        >
-
-                    </div>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="أدخل كلمة المرور"
+                        autocomplete="current-password"
+                        required
+                    >
 
                     <button
-                        type="submit"
-                        id="login-button"
+                        type="button"
+                        class="toggle-password"
+                        id="togglePassword"
+                        aria-label="إظهار كلمة المرور"
                     >
-                        تسجيل الدخول
+                        👁️
                     </button>
 
-                </form>
-
-                <div id="login-message"></div>
+                </div>
 
             </div>
 
-        </section>
+            <button
+                type="submit"
+                class="login-button"
+                id="loginButton"
+            >
+                تسجيل الدخول
+            </button>
 
-    </main>
+            <div
+                id="message"
+                class="message"
+                role="alert"
+            ></div>
 
-    <script
-        type="module"
-        src="src/core/login.js"
-    ></script>
+        </form>
+
+        <div class="support">
+
+            إذا لم يكن لديك كود اشتراك،
+            <br>
+
+            تواصل مع إدارة مسار التمريض.
+
+            <br>
+
+            <span class="whatsapp">
+                واتساب: 01222736904
+            </span>
+
+        </div>
+
+        <a href="index.html" class="back">
+            ← العودة إلى الصفحة الرئيسية
+        </a>
+
+    </div>
+
+    <div class="copyright">
+        © 2026 مسار التمريض | Masar Al-Tamreed
+    </div>
+
+</div>
+
+<script>
+    const passwordInput = document.getElementById("password");
+    const togglePassword = document.getElementById("togglePassword");
+
+    togglePassword.addEventListener("click", () => {
+
+        const isPassword = passwordInput.type === "password";
+
+        passwordInput.type = isPassword ? "text" : "password";
+
+        togglePassword.textContent = isPassword ? "🙈" : "👁️";
+
+    });
+
+
+    const loginForm = document.getElementById("loginForm");
+
+    loginForm.addEventListener("submit", (event) => {
+
+        event.preventDefault();
+
+        /*
+         * Firebase Authentication سيتم ربطه هنا
+         * بعد إضافة Firebase Config الخاص بالمشروع.
+         *
+         * لن يتم تنفيذ أي عملية تسجيل دخول
+         * قبل تحديد طريقة الربط مع Firebase.
+         */
+
+        console.log("Login form ready.");
+
+    });
+</script>
 
 </body>
 </html>
