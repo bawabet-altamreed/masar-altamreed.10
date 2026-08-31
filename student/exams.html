@@ -1,261 +1,1264 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>الاختبارات | مسار التمريض</title>
+    <title>
+        الاختبارات | مسار التمريض
+    </title>
 
-<style>
+    <style>
 
-body {
-    margin: 0;
-    font-family: Arial, Tahoma, sans-serif;
-    background: #f3f8fb;
-}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-.page {
-    padding: 25px;
-}
+        body {
+            font-family: Arial, Tahoma, sans-serif;
+            background: #f3f8fb;
+            color: #17324a;
+        }
 
-.exam {
-    background: white;
-    border: 1px solid #e3edf2;
-    border-radius: 15px;
-    padding: 20px;
-    margin-bottom: 15px;
-}
+        .student-app {
+            min-height: 100vh;
+            display: flex;
+        }
 
-.exam h3 {
-    margin-bottom: 10px;
-}
+        .student-sidebar {
+            width: 250px;
+            background: #ffffff;
+            border-left: 1px solid #e3edf2;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            right: 0;
+            top: 0;
+            bottom: 0;
+        }
 
-.meta {
-    color: #71808d;
-    font-size: 12px;
-    line-height: 1.9;
-}
+        .student-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px;
+            margin-bottom: 25px;
+        }
 
-.button {
-    margin-top: 12px;
-    padding: 10px 16px;
-    border: 0;
-    border-radius: 9px;
-    background: #087ea4;
-    color: white;
-    cursor: pointer;
-}
+        .student-brand-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 13px;
+            background: #087ea4;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 23px;
+        }
 
-.empty {
-    background: white;
-    padding: 30px;
-    text-align: center;
-    border-radius: 15px;
-    color: #71808d;
-}
+        .student-brand strong {
+            display: block;
+            font-size: 15px;
+        }
 
-</style>
+        .student-brand small {
+            display: block;
+            color: #82919d;
+            margin-top: 3px;
+            font-size: 10px;
+            direction: ltr;
+        }
+
+        .student-user {
+            background: #f4f9fb;
+            border-radius: 14px;
+            padding: 12px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .student-avatar,
+        .header-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #087ea4;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .student-user strong {
+            display: block;
+            font-size: 12px;
+        }
+
+        .student-user small {
+            display: block;
+            color: #82919d;
+            margin-top: 4px;
+            font-size: 10px;
+        }
+
+        .student-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .student-nav a {
+            text-decoration: none;
+            color: #60717f;
+            padding: 12px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .student-nav a:hover,
+        .student-nav a.active {
+            background: #eaf7fb;
+            color: #087ea4;
+        }
+
+        .student-logout {
+            margin-top: auto;
+            height: 42px;
+            border: none;
+            border-radius: 10px;
+            background: #fff1f1;
+            color: #b42318;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .student-main {
+            flex: 1;
+            margin-right: 250px;
+        }
+
+        .student-header {
+            min-height: 82px;
+            background: #ffffff;
+            border-bottom: 1px solid #e3edf2;
+            padding: 18px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .student-header h1 {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        .student-header p {
+            color: #81909c;
+            font-size: 12px;
+        }
+
+        .student-header-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .student-content {
+            padding: 25px;
+        }
+
+        .page-intro {
+            background: linear-gradient(
+                135deg,
+                #087ea4,
+                #075f7c
+            );
+            color: white;
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .page-intro h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .page-intro p {
+            font-size: 13px;
+            opacity: .9;
+            line-height: 1.8;
+        }
+
+        .filters {
+            background: #ffffff;
+            border: 1px solid #e4edf2;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-input,
+        .filter-select {
+            height: 43px;
+            border: 1px solid #d7e3eb;
+            border-radius: 9px;
+            padding: 0 12px;
+            outline: none;
+            font-size: 13px;
+            background: #ffffff;
+        }
+
+        .filter-input {
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .filter-select {
+            min-width: 170px;
+        }
+
+        .filter-input:focus,
+        .filter-select:focus {
+            border-color: #087ea4;
+        }
+
+        .exams-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .exam-card {
+            background: #ffffff;
+            border: 1px solid #e4edf2;
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .exam-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .exam-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 13px;
+            background: #eaf7fb;
+            color: #087ea4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 23px;
+            flex-shrink: 0;
+        }
+
+        .exam-title {
+            flex: 1;
+        }
+
+        .exam-title h3 {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 5px;
+        }
+
+        .exam-title p {
+            color: #087ea4;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .exam-status {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .status-available {
+            background: #eaf8f0;
+            color: #16834f;
+        }
+
+        .status-upcoming {
+            background: #eef8fb;
+            color: #087ea4;
+        }
+
+        .status-ended {
+            background: #f1f3f5;
+            color: #687783;
+        }
+
+        .status-cancelled {
+            background: #fff1f1;
+            color: #b42318;
+        }
+
+        .exam-details {
+            border-top: 1px solid #edf1f4;
+            padding-top: 14px;
+        }
+
+        .detail-row {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 10px;
+            color: #617381;
+            font-size: 12px;
+        }
+
+        .detail-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-icon {
+            width: 24px;
+            text-align: center;
+        }
+
+        .detail-row strong {
+            color: #34495e;
+        }
+
+        .exam-actions {
+            margin-top: 16px;
+        }
+
+        .exam-button {
+            width: 100%;
+            height: 42px;
+            border: none;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .open-button {
+            background: #087ea4;
+            color: white;
+        }
+
+        .open-button:hover {
+            background: #075f7c;
+        }
+
+        .disabled-button {
+            background: #edf1f4;
+            color: #8795a0;
+            cursor: not-allowed;
+        }
+
+        .empty,
+        .loading,
+        .error-box {
+            background: white;
+            border: 1px solid #e4edf2;
+            border-radius: 15px;
+            padding: 45px 20px;
+            text-align: center;
+            font-size: 13px;
+            line-height: 2;
+            grid-column: 1 / -1;
+        }
+
+        .empty {
+            color: #8795a0;
+        }
+
+        .loading {
+            color: #087ea4;
+        }
+
+        .error-box {
+            background: #fff1f1;
+            border-color: #ffd5d5;
+            color: #b42318;
+        }
+
+        @media (max-width: 900px) {
+
+            .student-sidebar {
+                width: 210px;
+            }
+
+            .student-main {
+                margin-right: 210px;
+            }
+
+            .exams-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 650px) {
+
+            .student-sidebar {
+                position: static;
+                width: 100%;
+                min-height: auto;
+            }
+
+            .student-app {
+                display: block;
+            }
+
+            .student-main {
+                margin-right: 0;
+            }
+
+            .student-nav {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .student-logout {
+                margin-top: 15px;
+            }
+
+            .student-header {
+                padding: 15px;
+            }
+
+            .student-content {
+                padding: 15px;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            .filter-input,
+            .filter-select {
+                width: 100%;
+                min-width: 0;
+            }
+
+        }
+
+    </style>
 
 </head>
 
 <body>
 
-<div id="studentApp"></div>
+<div
+    id="studentApp"
+    class="student-app"
+>
+    جاري تحميل المنصة...
+</div>
+
 
 <script type="module">
 
 import {
     protectStudentPage,
     createStudentLayout,
-    getCollection,
     escapeHtml,
     formatDateTime,
     studentErrorMessage
 } from "../src/student/student.js";
 
 
-const {
-    student
-} = await protectStudentPage();
+import {
+    db
+} from "../src/firebase/init.js";
 
 
-createStudentLayout(
-    student,
-    "exams"
-);
-
-
-document.getElementById(
-    "studentPageTitle"
-).textContent =
-    "الاختبارات";
-
-
-const content =
-    document.getElementById(
-        "studentPageContent"
-    );
-
-
-content.innerHTML = `
-
-<div class="page">
-
-    <div id="exams">
-        جاري تحميل الاختبارات...
-    </div>
-
-</div>
-
-`;
+import {
+    collection,
+    query,
+    where,
+    getDocs
+} from
+    "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
 try {
 
-    const exams =
-        await getCollection(
-            "exams"
-        );
+    const {
+        student
+    } =
+        await protectStudentPage();
 
 
-    const available =
-        exams.filter(
-            exam =>
-                !exam.stageId ||
-                exam.stageId ===
-                student.stageId
-        );
+    createStudentLayout(
+        student,
+        "exams"
+    );
 
 
-    const box =
+    document.getElementById(
+        "studentPageTitle"
+    ).textContent =
+        "الاختبارات";
+
+
+    const content =
         document.getElementById(
-            "exams"
+            "studentPageContent"
         );
 
 
-    if (!available.length) {
+    content.innerHTML = `
 
-        box.innerHTML =
-            `<div class="empty">
-                لا توجد اختبارات متاحة حاليًا.
-            </div>`;
+        <div class="page-intro">
 
-    } else {
+            <h2>
+                📝 الاختبارات
+            </h2>
 
-        box.innerHTML =
-            available
-                .map(
-                    exam => `
+            <p>
+                تابع الاختبارات المتاحة لمرحلتك
+                الدراسية، واعرف مواعيدها ومدتها
+                وحالتها قبل بدء الاختبار.
+            </p>
 
-                    <div class="exam">
-
-                        <h3>
-                            ${escapeHtml(
-                                exam.title ||
-                                exam.name ||
-                                "اختبار"
-                            )}
-                        </h3>
-
-                        <div class="meta">
-
-                            المادة:
-                            ${escapeHtml(
-                                exam.subjectId ||
-                                exam.subject ||
-                                "—"
-                            )}
-
-                            <br>
-
-                            ${
-                                exam.duration
-                                    ? "المدة: " +
-                                      escapeHtml(
-                                          exam.duration
-                                      )
-                                    : ""
-                            }
-
-                            ${
-                                exam.startAt
-                                    ? "<br>يبدأ: " +
-                                      formatDateTime(
-                                          exam.startAt
-                                      )
-                                    : ""
-                            }
-
-                        </div>
+        </div>
 
 
-                        <button
-                            class="button"
-                            data-exam-id="${escapeHtml(
-                                exam.id
-                            )}"
-                        >
-                            📝 فتح الاختبار
-                        </button>
+        <div class="filters">
 
-                    </div>
-
-                    `
-                )
-                .join("");
+            <input
+                type="search"
+                id="examSearch"
+                class="filter-input"
+                placeholder="ابحث عن اختبار أو مادة..."
+            >
 
 
-        document
-            .querySelectorAll(
-                "[data-exam-id]"
+            <select
+                id="statusFilter"
+                class="filter-select"
+            >
+
+                <option value="all">
+                    كل الاختبارات
+                </option>
+
+                <option value="available">
+                    المتاحة الآن
+                </option>
+
+                <option value="upcoming">
+                    القادمة
+                </option>
+
+                <option value="ended">
+                    انتهت
+                </option>
+
+                <option value="cancelled">
+                    ملغاة
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div
+            id="examsContainer"
+            class="exams-grid"
+        >
+
+            <div class="loading">
+                ⏳ جاري تحميل الاختبارات...
+            </div>
+
+        </div>
+
+    `;
+
+
+    const container =
+        document.getElementById(
+            "examsContainer"
+        );
+
+
+    const searchInput =
+        document.getElementById(
+            "examSearch"
+        );
+
+
+    const statusFilter =
+        document.getElementById(
+            "statusFilter"
+        );
+
+
+    // =================================================
+    // Secure Student Query
+    // =================================================
+
+    const examsQuery =
+        query(
+
+            collection(
+                db,
+                "exams"
+            ),
+
+            where(
+                "stageId",
+                "==",
+                student.stageId
+            ),
+
+            where(
+                "isPublished",
+                "==",
+                true
             )
-            .forEach(
-                button => {
 
-                    button.addEventListener(
-                        "click",
-                        () => {
+        );
 
-                            /*
-                             * شاشة حل الاختبار سيتم ربطها
-                             * مباشرة مع شكل Document الخاص
-                             * بالـexams بعد تثبيت حقول الأسئلة.
-                             */
 
-                            alert(
-                                "تم اختيار الاختبار. شاشة الأسئلة سيتم ربطها مع بيانات الاختبار."
-                            );
+    const snapshot =
+        await getDocs(
+            examsQuery
+        );
 
-                        }
+
+    const exams =
+        snapshot.docs
+            .map(
+                item => ({
+                    id: item.id,
+                    ...item.data()
+                })
+            )
+            .sort(
+                (a, b) =>
+                    getTime(
+                        a.startAt
+                    ) -
+                    getTime(
+                        b.startAt
+                    )
+            );
+
+
+    render();
+
+
+    searchInput.addEventListener(
+        "input",
+        render
+    );
+
+
+    statusFilter.addEventListener(
+        "change",
+        render
+    );
+
+
+    function render() {
+
+        const search =
+            searchInput.value
+                .trim()
+                .toLowerCase();
+
+
+        const selectedStatus =
+            statusFilter.value;
+
+
+        const filtered =
+            exams.filter(
+                exam => {
+
+                    const title =
+                        String(
+                            exam.title ||
+                            exam.name ||
+                            ""
+                        ).toLowerCase();
+
+
+                    const subject =
+                        String(
+                            exam.subject ||
+                            exam.subjectId ||
+                            ""
+                        ).toLowerCase();
+
+
+                    const matchesSearch =
+                        !search ||
+                        title.includes(search) ||
+                        subject.includes(search);
+
+
+                    const status =
+                        getStatus(
+                            exam
+                        );
+
+
+                    const matchesStatus =
+                        selectedStatus === "all" ||
+                        selectedStatus === status;
+
+
+                    return (
+                        matchesSearch &&
+                        matchesStatus
                     );
 
                 }
             );
 
+
+        if (!filtered.length) {
+
+            container.innerHTML = `
+
+                <div class="empty">
+
+                    📝
+
+                    <br>
+
+                    لا توجد اختبارات مطابقة حاليًا.
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        container.innerHTML =
+            filtered
+                .map(
+                    exam =>
+                        createExamCard(
+                            exam
+                        )
+                )
+                .join("");
+
     }
+
+
+    function createExamCard(
+        exam
+    ) {
+
+        const status =
+            getStatus(
+                exam
+            );
+
+
+        const statusInfo =
+            getStatusInfo(
+                status
+            );
+
+
+        const title =
+            exam.title ||
+            exam.name ||
+            "اختبار";
+
+
+        const subject =
+            exam.subject ||
+            exam.subjectId ||
+            "غير محدد";
+
+
+        const duration =
+            exam.duration ||
+            "غير محددة";
+
+
+        const startAt =
+            exam.startAt ||
+            null;
+
+
+        const endAt =
+            exam.endAt ||
+            null;
+
+
+        const canOpen =
+            status === "available";
+
+
+        return `
+
+            <div class="exam-card">
+
+                <div class="exam-top">
+
+                    <div class="exam-icon">
+                        📝
+                    </div>
+
+
+                    <div class="exam-title">
+
+                        <h3>
+                            ${escapeHtml(title)}
+                        </h3>
+
+                        <p>
+                            📚
+                            ${escapeHtml(subject)}
+                        </p>
+
+                    </div>
+
+
+                    <span
+                        class="
+                            exam-status
+                            ${statusInfo.className}
+                        "
+                    >
+                        ${statusInfo.label}
+                    </span>
+
+                </div>
+
+
+                <div class="exam-details">
+
+                    <div class="detail-row">
+
+                        <span class="detail-icon">
+                            📚
+                        </span>
+
+                        <span>
+                            المادة:
+                            <strong>
+                                ${escapeHtml(subject)}
+                            </strong>
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail-row">
+
+                        <span class="detail-icon">
+                            ⏱️
+                        </span>
+
+                        <span>
+                            المدة:
+                            <strong>
+                                ${escapeHtml(
+                                    String(duration)
+                                )}
+                            </strong>
+                        </span>
+
+                    </div>
+
+
+                    ${
+                        startAt
+                            ? `
+
+                                <div class="detail-row">
+
+                                    <span class="detail-icon">
+                                        🕒
+                                    </span>
+
+                                    <span>
+                                        يبدأ:
+                                        <strong>
+                                            ${escapeHtml(
+                                                formatDateTime(
+                                                    startAt
+                                                )
+                                            )}
+                                        </strong>
+                                    </span>
+
+                                </div>
+
+                            `
+                            : ""
+                    }
+
+
+                    ${
+                        endAt
+                            ? `
+
+                                <div class="detail-row">
+
+                                    <span class="detail-icon">
+                                        ⏰
+                                    </span>
+
+                                    <span>
+                                        ينتهي:
+                                        <strong>
+                                            ${escapeHtml(
+                                                formatDateTime(
+                                                    endAt
+                                                )
+                                            )}
+                                        </strong>
+                                    </span>
+
+                                </div>
+
+                            `
+                            : ""
+                    }
+
+                </div>
+
+
+                <div class="exam-actions">
+
+                    ${
+                        canOpen
+
+                            ? `
+
+                                <button
+                                    class="exam-button open-button"
+                                    data-exam-id="${escapeHtml(
+                                        exam.id
+                                    )}"
+                                >
+                                    📝 فتح الاختبار
+                                </button>
+
+                            `
+
+                            : `
+
+                                <button
+                                    class="exam-button disabled-button"
+                                    disabled
+                                >
+                                    ${
+                                        status === "cancelled"
+                                            ? "الاختبار ملغى"
+                                            : status === "ended"
+                                                ? "انتهى الاختبار"
+                                                : "الاختبار لم يبدأ بعد"
+                                    }
+                                </button>
+
+                            `
+                    }
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+
+    // =================================================
+    // Exam Status
+    // =================================================
+
+    function getStatus(
+        exam
+    ) {
+
+        if (
+            exam.status ===
+            "cancelled"
+        ) {
+
+            return "cancelled";
+
+        }
+
+
+        if (
+            exam.status ===
+            "ended"
+        ) {
+
+            return "ended";
+
+        }
+
+
+        if (
+            exam.status ===
+            "available"
+        ) {
+
+            return "available";
+
+        }
+
+
+        const start =
+            getTime(
+                exam.startAt
+            );
+
+
+        const end =
+            getTime(
+                exam.endAt
+            );
+
+
+        const now =
+            Date.now();
+
+
+        if (
+            end &&
+            now > end
+        ) {
+
+            return "ended";
+
+        }
+
+
+        if (
+            start &&
+            now >= start &&
+            (
+                !end ||
+                now <= end
+            )
+        ) {
+
+            return "available";
+
+        }
+
+
+        return "upcoming";
+
+    }
+
+
+    function getStatusInfo(
+        status
+    ) {
+
+        const data = {
+
+            available: {
+                label: "متاح الآن",
+                className:
+                    "status-available"
+            },
+
+            upcoming: {
+                label: "قادم",
+                className:
+                    "status-upcoming"
+            },
+
+            ended: {
+                label: "انتهى",
+                className:
+                    "status-ended"
+            },
+
+            cancelled: {
+                label: "ملغى",
+                className:
+                    "status-cancelled"
+            }
+
+        };
+
+
+        return (
+            data[status] ||
+            data.upcoming
+        );
+
+    }
+
+
+    function getTime(
+        value
+    ) {
+
+        if (!value) {
+            return 0;
+        }
+
+
+        if (
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            return value.toDate()
+                .getTime();
+
+        }
+
+
+        const date =
+            new Date(value);
+
+
+        return isNaN(
+            date.getTime()
+        )
+            ? 0
+            : date.getTime();
+
+    }
+
+
+    // =================================================
+    // Open Exam
+    // =================================================
+
+    document.addEventListener(
+        "click",
+        event => {
+
+            const button =
+                event.target.closest(
+                    "[data-exam-id]"
+                );
+
+
+            if (!button) {
+                return;
+            }
+
+
+            const examId =
+                button.dataset.examId;
+
+
+            /*
+             * سيتم ربط الزر بصفحة حل الاختبار
+             * بعد تثبيت Structure الخاص بالأسئلة
+             * ونتائج الطالب.
+             */
+
+            console.log(
+                "Selected exam:",
+                examId
+            );
+
+
+            alert(
+                "تم اختيار الاختبار. سيتم فتح شاشة الأسئلة بعد تثبيت نظام الاختبارات."
+            );
+
+        }
+    );
+
 
 } catch (error) {
 
-    document.getElementById(
-        "exams"
-    ).innerHTML =
-        `<div class="empty">
-            ${escapeHtml(
-                studentErrorMessage(error)
-            )}
-        </div>`;
+    console.error(
+        "Student exams error:",
+        error
+    );
+
+
+    const app =
+        document.getElementById(
+            "studentApp"
+        );
+
+
+    if (app) {
+
+        app.innerHTML = `
+
+            <div
+                style="
+                    width:100%;
+                    min-height:100vh;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    padding:20px;
+                    text-align:center;
+                    font-family:Arial,Tahoma,sans-serif;
+                    color:#b42318;
+                "
+            >
+
+                ⚠️ حدث خطأ أثناء تحميل الاختبارات.
+
+                <br><br>
+
+                ${escapeHtml(
+                    studentErrorMessage(
+                        error
+                    )
+                )}
+
+            </div>
+
+        `;
+
+    }
 
 }
 
 </script>
 
 </body>
-</html>
 
+</html>
