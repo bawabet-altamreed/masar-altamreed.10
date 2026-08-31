@@ -1,0 +1,261 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>الاختبارات | مسار التمريض</title>
+
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial, Tahoma, sans-serif;
+    background: #f3f8fb;
+}
+
+.page {
+    padding: 25px;
+}
+
+.exam {
+    background: white;
+    border: 1px solid #e3edf2;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+.exam h3 {
+    margin-bottom: 10px;
+}
+
+.meta {
+    color: #71808d;
+    font-size: 12px;
+    line-height: 1.9;
+}
+
+.button {
+    margin-top: 12px;
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 9px;
+    background: #087ea4;
+    color: white;
+    cursor: pointer;
+}
+
+.empty {
+    background: white;
+    padding: 30px;
+    text-align: center;
+    border-radius: 15px;
+    color: #71808d;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="studentApp"></div>
+
+<script type="module">
+
+import {
+    protectStudentPage,
+    createStudentLayout,
+    getCollection,
+    escapeHtml,
+    formatDateTime,
+    studentErrorMessage
+} from "../src/student/student.js";
+
+
+const {
+    student
+} = await protectStudentPage();
+
+
+createStudentLayout(
+    student,
+    "exams"
+);
+
+
+document.getElementById(
+    "studentPageTitle"
+).textContent =
+    "الاختبارات";
+
+
+const content =
+    document.getElementById(
+        "studentPageContent"
+    );
+
+
+content.innerHTML = `
+
+<div class="page">
+
+    <div id="exams">
+        جاري تحميل الاختبارات...
+    </div>
+
+</div>
+
+`;
+
+
+try {
+
+    const exams =
+        await getCollection(
+            "exams"
+        );
+
+
+    const available =
+        exams.filter(
+            exam =>
+                !exam.stageId ||
+                exam.stageId ===
+                student.stageId
+        );
+
+
+    const box =
+        document.getElementById(
+            "exams"
+        );
+
+
+    if (!available.length) {
+
+        box.innerHTML =
+            `<div class="empty">
+                لا توجد اختبارات متاحة حاليًا.
+            </div>`;
+
+    } else {
+
+        box.innerHTML =
+            available
+                .map(
+                    exam => `
+
+                    <div class="exam">
+
+                        <h3>
+                            ${escapeHtml(
+                                exam.title ||
+                                exam.name ||
+                                "اختبار"
+                            )}
+                        </h3>
+
+                        <div class="meta">
+
+                            المادة:
+                            ${escapeHtml(
+                                exam.subjectId ||
+                                exam.subject ||
+                                "—"
+                            )}
+
+                            <br>
+
+                            ${
+                                exam.duration
+                                    ? "المدة: " +
+                                      escapeHtml(
+                                          exam.duration
+                                      )
+                                    : ""
+                            }
+
+                            ${
+                                exam.startAt
+                                    ? "<br>يبدأ: " +
+                                      formatDateTime(
+                                          exam.startAt
+                                      )
+                                    : ""
+                            }
+
+                        </div>
+
+
+                        <button
+                            class="button"
+                            data-exam-id="${escapeHtml(
+                                exam.id
+                            )}"
+                        >
+                            📝 فتح الاختبار
+                        </button>
+
+                    </div>
+
+                    `
+                )
+                .join("");
+
+
+        document
+            .querySelectorAll(
+                "[data-exam-id]"
+            )
+            .forEach(
+                button => {
+
+                    button.addEventListener(
+                        "click",
+                        () => {
+
+                            /*
+                             * شاشة حل الاختبار سيتم ربطها
+                             * مباشرة مع شكل Document الخاص
+                             * بالـexams بعد تثبيت حقول الأسئلة.
+                             */
+
+                            alert(
+                                "تم اختيار الاختبار. شاشة الأسئلة سيتم ربطها مع بيانات الاختبار."
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+    }
+
+} catch (error) {
+
+    document.getElementById(
+        "exams"
+    ).innerHTML =
+        `<div class="empty">
+            ${escapeHtml(
+                studentErrorMessage(error)
+            )}
+        </div>`;
+
+}
+
+</script>
+
+</body>
+</html>
+
