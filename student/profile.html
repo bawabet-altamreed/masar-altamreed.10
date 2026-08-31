@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>حسابي | مسار التمريض</title>
+
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial, Tahoma, sans-serif;
+    background: #f3f8fb;
+}
+
+.page {
+    padding: 25px;
+}
+
+.panel {
+    max-width: 700px;
+    background: white;
+    border-radius: 15px;
+    border: 1px solid #e3edf2;
+    padding: 22px;
+}
+
+.field {
+    padding: 14px 0;
+    border-bottom: 1px solid #edf1f4;
+}
+
+.label {
+    color: #71808d;
+    font-size: 11px;
+    margin-bottom: 6px;
+}
+
+.value {
+    font-weight: bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="studentApp"></div>
+
+<script type="module">
+
+import {
+    protectStudentPage,
+    createStudentLayout,
+    escapeHtml,
+    formatDate,
+    studentErrorMessage
+} from "../src/student/student.js";
+
+
+try {
+
+    const {
+        student,
+        subscription
+    } =
+        await protectStudentPage();
+
+
+    createStudentLayout(
+        student,
+        "profile"
+    );
+
+
+    document.getElementById(
+        "studentPageTitle"
+    ).textContent =
+        "حسابي";
+
+
+    document.getElementById(
+        "studentPageContent"
+    ).innerHTML = `
+
+    <div class="page">
+
+        <div class="panel">
+
+            <h2>
+                👤 بيانات الحساب
+            </h2>
+
+
+            <div class="field">
+
+                <div class="label">
+                    اسم الطالب
+                </div>
+
+                <div class="value">
+                    ${escapeHtml(
+                        student.name ||
+                        "—"
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="field">
+
+                <div class="label">
+                    كود الاشتراك
+                </div>
+
+                <div
+                    class="value"
+                    dir="ltr"
+                >
+                    ${escapeHtml(
+                        student.subscriptionCode ||
+                        student.username ||
+                        "—"
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="field">
+
+                <div class="label">
+                    المرحلة
+                </div>
+
+                <div class="value">
+                    ${escapeHtml(
+                        student.stageId ||
+                        "—"
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="field">
+
+                <div class="label">
+                    رقم الهاتف
+                </div>
+
+                <div class="value">
+                    ${escapeHtml(
+                        student.phone ||
+                        "—"
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="field">
+
+                <div class="label">
+                    حالة الحساب
+                </div>
+
+                <div class="value">
+                    نشط
+                </div>
+
+            </div>
+
+
+            <div class="field">
+
+                <div class="label">
+                    حالة الاشتراك
+                </div>
+
+                <div class="value">
+                    نشط
+                </div>
+
+            </div>
+
+
+            <div class="field">
+
+                <div class="label">
+                    بداية الاشتراك
+                </div>
+
+                <div class="value">
+                    ${formatDate(
+                        subscription.startDate
+                    )}
+                </div>
+
+            </div>
+
+
+            <div class="field">
+
+                <div class="label">
+                    نهاية الاشتراك
+                </div>
+
+                <div class="value">
+                    ${formatDate(
+                        subscription.endDate
+                    )}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    `;
+
+} catch (error) {
+
+    console.error(
+        "Profile Error:",
+        error
+    );
+
+}
+
+</script>
+
+</body>
+</html>
