@@ -301,7 +301,9 @@
 
 </div>
 
-<script>
+    <script type="module">
+    import "../src/firebase/test.js";
+
     const passwordInput = document.getElementById("password");
     const togglePassword = document.getElementById("togglePassword");
 
@@ -312,7 +314,6 @@
         passwordInput.type = isPassword ? "text" : "password";
 
         togglePassword.textContent = isPassword ? "🙈" : "👁️";
-
     });
 
 
@@ -322,18 +323,11 @@
 
         event.preventDefault();
 
-        /*
-         * Firebase Authentication سيتم ربطه هنا
-         * بعد إضافة Firebase Config الخاص بالمشروع.
-         *
-         * لن يتم تنفيذ أي عملية تسجيل دخول
-         * قبل تحديد طريقة الربط مع Firebase.
-         */
-
-        console.log("Login form ready.");
+        console.log("Login form is ready.");
 
     });
 </script>
+
 
 </body>
 </html>
