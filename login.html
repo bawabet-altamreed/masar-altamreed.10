@@ -331,28 +331,739 @@
 
 </div>
 
-    <script type="module">
-    import "./src/firebase/test.js";
+  <script type="module">
 
-    const passwordInput = document.getElementById("password");
-    const togglePassword = document.getElementById("togglePassword");
+    // =====================================================
+    // Firebase
+    // =====================================================
 
-    togglePassword.addEventListener("click", () => {
+    import {
+        auth,
+        db
+    } from "./src/firebase/init.js";
 
-        const isPassword = passwordInput.type === "password";
+    import {
+        signInWithEmailAndPassword
+    } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
-        passwordInput.type = isPassword ? "text" : "password";
+    import {
+        doc,
+        getDoc
+    } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-        togglePassword.textContent = isPassword ? "🙈" : "👁️";
-    });
 
-    const loginForm = document.getElementById("loginForm");
+    // =====================================================
+    // Elements
+    // =====================================================
 
-    loginForm.addEventListener("submit", (event) => {
+    const passwordInput =
+        document.getElementById("password");
 
-        event.preventDefault();
+    const togglePassword =
+        document.getElementById("togglePassword");
 
-    });
+    const loginForm =
+        document.getElementById("loginForm");
+
+    const loginButton =
+        document.getElementById("loginButton");
+
+    const message =
+        document.getElementById("message");
+
+    const firebaseStatus =
+        document.getElementById("firebaseStatus");
+
+    const subscriptionCodeInput =
+        document.getElementById("subscriptionCode");
+
+
+    // =====================================================
+    // Firebase Status
+    // =====================================================
+
+    firebaseStatus.innerHTML = `
+        🟢 Firebase Connected
+        <strong>
+            Firebase جاهز لتسجيل الدخول
+        </strong>
+    `;
+
+    firebaseStatus.classList.add(
+        "firebase-success"
+    );
+
+
+    // =====================================================
+    // Toggle Password
+    // =====================================================
+
+    togglePassword.addEventListener(
+        "click",
+        () => {
+
+            const isPassword =
+                passwordInput.type === "password";
+
+            passwordInput.type =
+                isPassword
+                    ? "text"
+                    : "password";
+
+            togglePassword.textContent =
+                isPassword
+                    ? "🙈"
+                    : "👁️";
+
+        }
+    );
+
+
+    // =====================================================
+    // Message
+    // =====================================================
+
+    function showMessage(
+        text,
+        type = "error"
+    ) {
+
+        message.textContent =
+            text;
+
+        message.className =
+            `message ${type}`;
+
+    }
+
+
+    function clearMessage() {
+
+        message.textContent = "";
+
+        message.className =
+            "message";
+
+    }
+
+
+    // =====================================================
+    // Normalize Subscription Code
+    // =====================================================
+
+    function normalizeCode(
+        value
+    ) {
+
+        return String(value || "")
+            .trim()
+            .toUpperCase();
+
+    }
+
+
+    // =====================================================
+    // Internal Firebase Email
+    // =====================================================
+    //
+    // الطالب يدخل:
+    //
+    // MASAR001
+    //
+    // Firebase Authentication يستخدم:
+    //
+    // masar001@students.masar-altamreed.com
+    //
+    // الطالب لا يحتاج لمعرفة البريد الداخلي.
+    //
+
+    function getInternalEmail(
+        code
+    ) {
+
+        return `${code.toLowerCase()}@students.masar-altamreed.com`;
+
+    }
+
+
+    // =====================================================
+    // Login
+    // =====================================================
+
+    loginForm.addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+            clearMessage();
+
+
+            const code =
+                normalizeCode(
+                    subscriptionCodeInput.value
+                );
+
+
+            const password =
+                passwordInput.value;
+
+
+            // -------------------------------------------------
+            // Basic Validation
+            // -------------------------------------------------
+
+            if (!code) {
+
+                showMessage(
+                    "من فضلك أدخل كود الاشتراك."
+                );
+
+                return;
+
+            }
+
+
+            if (!password) {
+
+                showMessage(
+                    "من فضلك أدخل كلمة المرور."
+                );
+
+                return;
+
+            }
+
+
+            loginButton.disabled =
+                true;
+
+            loginButton.textContent =
+                "جاري تسجيل الدخول...";
+
+
+            try {
+
+                // =================================================
+                // 1. Check Subscription Document
+                // =================================================
+
+                const subscriptionRef =
+                    doc(
+                        db,
+                        "subscriptions",
+                        code
+                    );
+
+
+                const subscriptionSnapshot =
+                    await getDoc(
+                        subscriptionRef
+                    );
+
+
+                if (
+                    !subscriptionSnapshot.exists()
+                ) {
+
+                    throw new Error(
+                        "INVALID_SUBSCRIPTION"
+                    );
+
+                }
+
+
+                const subscription =
+                    subscriptionSnapshot.data();
+
+
+                // =================================================
+                // 2. Check Subscription Code
+                // =================================================
+
+                if (
+                    String(
+                        subscription.code || ""
+                    ).toUpperCase() !== code
+                ) {
+
+                    throw new Error(
+                        "INVALID_SUBSCRIPTION"
+                    );
+
+                }
+
+
+                // =================================================
+                // 3. Check Subscription Status
+                // =================================================
+
+                if (
+                    subscription.status !==
+                    "active"
+                ) {
+
+                    if (
+                        subscription.status ===
+                        "expired"
+                    ) {
+
+                        throw new Error(
+                            "SUBSCRIPTION_EXPIRED"
+                        );
+
+                    }
+
+
+                    if (
+                        subscription.status ===
+                        "suspended"
+                    ) {
+
+                        throw new Error(
+                            "SUBSCRIPTION_SUSPENDED"
+                        );
+
+                    }
+
+
+                    throw new Error(
+                        "SUBSCRIPTION_INACTIVE"
+                    );
+
+                }
+
+
+                // =================================================
+                // 4. Check Subscription Dates
+                // =================================================
+
+                const now =
+                    new Date();
+
+
+                let startDate = null;
+                let endDate = null;
+
+
+                if (
+                    subscription.startDate &&
+                    typeof subscription.startDate.toDate ===
+                    "function"
+                ) {
+
+                    startDate =
+                        subscription.startDate.toDate();
+
+                }
+
+
+                if (
+                    subscription.endDate &&
+                    typeof subscription.endDate.toDate ===
+                    "function"
+                ) {
+
+                    endDate =
+                        subscription.endDate.toDate();
+
+                }
+
+
+                if (
+                    startDate &&
+                    now < startDate
+                ) {
+
+                    throw new Error(
+                        "SUBSCRIPTION_NOT_STARTED"
+                    );
+
+                }
+
+
+                if (
+                    endDate &&
+                    now > endDate
+                ) {
+
+                    throw new Error(
+                        "SUBSCRIPTION_EXPIRED"
+                    );
+
+                }
+
+
+                // =================================================
+                // 5. Get User ID
+                // =================================================
+
+                const userId =
+                    subscription.userId;
+
+
+                if (!userId) {
+
+                    throw new Error(
+                        "USER_NOT_LINKED"
+                    );
+
+                }
+
+
+                // =================================================
+                // 6. Read User Document
+                // =================================================
+
+                const userRef =
+                    doc(
+                        db,
+                        "users",
+                        userId
+                    );
+
+
+                const userSnapshot =
+                    await getDoc(
+                        userRef
+                    );
+
+
+                if (
+                    !userSnapshot.exists()
+                ) {
+
+                    throw new Error(
+                        "USER_NOT_FOUND"
+                    );
+
+                }
+
+
+                const user =
+                    userSnapshot.data();
+
+
+                // =================================================
+                // 7. Check User Role
+                // =================================================
+
+                if (
+                    user.role !==
+                    "student"
+                ) {
+
+                    throw new Error(
+                        "NOT_STUDENT"
+                    );
+
+                }
+
+
+                // =================================================
+                // 8. Check Account Status
+                // =================================================
+
+                if (
+                    user.isActive !== true
+                ) {
+
+                    throw new Error(
+                        "ACCOUNT_DISABLED"
+                    );
+
+                }
+
+
+                // =================================================
+                // 9. Check User Subscription Code
+                // =================================================
+
+                if (
+                    String(
+                        user.subscriptionCode || ""
+                    ).toUpperCase() !== code
+                ) {
+
+                    throw new Error(
+                        "USER_SUBSCRIPTION_MISMATCH"
+                    );
+
+                }
+
+
+                // =================================================
+                // 10. Firebase Authentication
+                // =================================================
+
+                const internalEmail =
+                    getInternalEmail(
+                        code
+                    );
+
+
+                const credential =
+                    await signInWithEmailAndPassword(
+                        auth,
+                        internalEmail,
+                        password
+                    );
+
+
+                const firebaseUser =
+                    credential.user;
+
+
+                // =================================================
+                // 11. Verify Firebase UID
+                // =================================================
+
+                if (
+                    firebaseUser.uid !==
+                    userId
+                ) {
+
+                    await auth.signOut();
+
+                    throw new Error(
+                        "USER_UID_MISMATCH"
+                    );
+
+                }
+
+
+                // =================================================
+                // 12. Successful Login
+                // =================================================
+
+                showMessage(
+                    "تم تسجيل الدخول بنجاح، جاري فتح لوحة الطالب...",
+                    "success"
+                );
+
+
+                loginButton.textContent =
+                    "تم تسجيل الدخول ✓";
+
+
+                // -------------------------------------------------
+                // Small delay for user feedback
+                // -------------------------------------------------
+
+                setTimeout(
+                    () => {
+
+                        window.location.href =
+                            "./student/dashboard.html";
+
+                    },
+                    500
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Student Login Error:",
+                    error
+                );
+
+
+                // =================================================
+                // Firebase Authentication Errors
+                // =================================================
+
+                if (
+                    error.code ===
+                    "auth/invalid-credential" ||
+                    error.code ===
+                    "auth/wrong-password" ||
+                    error.code ===
+                    "auth/user-not-found"
+                ) {
+
+                    showMessage(
+                        "كود الاشتراك أو كلمة المرور غير صحيحة."
+                    );
+
+                }
+
+
+                else if (
+                    error.code ===
+                    "auth/too-many-requests"
+                ) {
+
+                    showMessage(
+                        "تم إجراء محاولات كثيرة. حاول مرة أخرى بعد قليل."
+                    );
+
+                }
+
+
+                else if (
+                    error.message ===
+                    "INVALID_SUBSCRIPTION"
+                ) {
+
+                    showMessage(
+                        "كود الاشتراك غير موجود أو غير صحيح."
+                    );
+
+                }
+
+
+                else if (
+                    error.message ===
+                    "SUBSCRIPTION_EXPIRED"
+                ) {
+
+                    showMessage(
+                        "انتهى الاشتراك. يرجى التواصل مع إدارة مسار التمريض لتجديد الاشتراك."
+                    );
+
+                }
+
+
+                else if (
+                    error.message ===
+                    "SUBSCRIPTION_SUSPENDED"
+                ) {
+
+                    showMessage(
+                        "الاشتراك موقوف حاليًا. يرجى التواصل مع إدارة مسار التمريض."
+                    );
+
+                }
+
+
+                else if (
+                    error.message ===
+                    "SUBSCRIPTION_INACTIVE"
+                ) {
+
+                    showMessage(
+                        "الاشتراك غير فعال حاليًا."
+                    );
+
+                }
+
+
+                else if (
+                    error.message ===
+                    "SUBSCRIPTION_NOT_STARTED"
+                ) {
+
+                    showMessage(
+                        "لم يبدأ الاشتراك بعد."
+                    );
+
+                }
+
+
+                else if (
+                    error.message ===
+                    "USER_NOT_LINKED"
+                ) {
+
+                    showMessage(
+                        "حدث خطأ في ربط الاشتراك بحساب الطالب."
+                    );
+
+                }
+
+
+                else if (
+                    error.message ===
+                    "USER_NOT_FOUND"
+                ) {
+
+                    showMessage(
+                        "لم يتم العثور على بيانات الطالب."
+                    );
+
+                }
+
+
+                else if (
+                    error.message ===
+                    "ACCOUNT_DISABLED"
+                ) {
+
+                    showMessage(
+                        "حساب الطالب موقوف حاليًا. تواصل مع إدارة مسار التمريض."
+                    );
+
+                }
+
+
+                else if (
+                    error.message ===
+                    "NOT_STUDENT"
+                ) {
+
+                    showMessage(
+                        "هذا الحساب ليس حساب طالب."
+                    );
+
+                }
+
+
+                else if (
+                    error.message ===
+                    "USER_SUBSCRIPTION_MISMATCH"
+                ) {
+
+                    showMessage(
+                        "بيانات الحساب والاشتراك غير متطابقة."
+                    );
+
+                }
+
+
+                else if (
+                    error.message ===
+                    "USER_UID_MISMATCH"
+                ) {
+
+                    showMessage(
+                        "حدث خطأ أمني أثناء التحقق من الحساب."
+                    );
+
+                }
+
+
+                else {
+
+                    showMessage(
+                        "حدث خطأ أثناء تسجيل الدخول. حاول مرة أخرى."
+                    );
+
+                }
+
+
+            } finally {
+
+                loginButton.disabled =
+                    false;
+
+                if (
+                    loginButton.textContent !==
+                    "تم تسجيل الدخول ✓"
+                ) {
+
+                    loginButton.textContent =
+                        "تسجيل الدخول";
+
+                }
+
+            }
+
+        }
+    );
+
 </script>
 
 
