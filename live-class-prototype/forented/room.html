@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 
-<html
-    lang="ar"
-    dir="rtl"
->
+<html lang="ar" dir="rtl">
 
 <head>
 
@@ -20,354 +17,490 @@
 
     <link
         rel="stylesheet"
-        href="./style.css"
+        href="style.css"
     >
 
 </head>
 
 <body>
 
-    <header class="room-header">
+<div class="container">
 
-        <strong>
-            🎥 المحاضرة المباشرة
-        </strong>
+    <div class="card">
 
-        <span id="roomName">
-            —
-        </span>
+        <h1>
+            🎥 Live Room
+        </h1>
 
-    </header>
+        <div id="roomInfo">
+            جاري التحميل...
+        </div>
+
+        <div class="status">
+
+            حالة الاتصال:
+
+            <strong id="connection">
+                ...
+            </strong>
+
+        </div>
+
+    </div>
 
 
-    <main class="room">
+    <div class="card">
 
-        <section
-            id="videoGrid"
-            class="video-grid"
+        <h2>
+            الفيديو
+        </h2>
+
+        <div
+            id="videos"
+            class="participants"
+        ></div>
+
+    </div>
+
+
+    <div class="card">
+
+        <button id="toggleMic">
+            🎤 المايك
+        </button>
+
+        <button id="toggleCamera">
+            📷 الكاميرا
+        </button>
+
+        <button
+            id="leaveRoom"
+            class="danger"
         >
+            🚪 مغادرة
+        </button>
 
-            <div class="loading">
-                جاري الاتصال...
-            </div>
+        <button
+            id="endRoom"
+            class="danger"
+            style="display:none;"
+        >
+            ⛔ إنهاء المحاضرة
+        </button>
 
-        </section>
+    </div>
 
-
-        <section class="controls">
-
-            <button
-                id="micButton"
-            >
-                🎙️ المايك
-            </button>
-
-
-            <button
-                id="cameraButton"
-            >
-                📹 الكاميرا
-            </button>
+</div>
 
 
-            <button
-                id="leaveButton"
-                class="danger"
-            >
-                🚪 مغادرة
-            </button>
+<script type="module">
 
-        </section>
-
-    </main>
+import {
+    Room,
+    RoomEvent,
+    Track
+} from
+    "https://cdn.jsdelivr.net/npm/livekit-client@2.22.1/+esm";
 
 
-    <script type="module">
-
-        import {
-            Room,
-            RoomEvent,
-            Track
-        } from
-        "https://cdn.jsdelivr.net/npm/livekit-client@2.15.0/+esm";
+const API =
+    "http://localhost:3000";
 
 
-        const API_URL =
-            "http://localhost:3000";
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
 
 
-        const params =
-            new URLSearchParams(
-                window.location.search
-            );
+const roomName =
+    params.get("room");
 
 
-        const roomName =
-            params.get("room");
+const token =
+    params.get("token");
 
 
-        const role =
-            params.get("role") ||
-            "student";
+const role =
+    params.get("role") ||
+    "student";
 
 
-        const roomLabel =
-            document.getElementById(
-                "roomName"
-            );
+const livekitUrl =
+    "ws://localhost:7880";
 
 
-        const videoGrid =
-            document.getElementById(
-                "videoGrid"
-            );
+const videos =
+    document.getElementById(
+        "videos"
+    );
 
 
-        roomLabel.textContent =
-            roomName || "—";
+const connection =
+    document.getElementById(
+        "connection"
+    );
 
 
-        if (!roomName) {
-
-            videoGrid.innerHTML =
-                "❌ لم يتم تحديد الغرفة.";
-
-            throw new Error(
-                "roomName missing"
-            );
-
-        }
+const roomInfo =
+    document.getElementById(
+        "roomInfo"
+    );
 
 
-        /*
-         * الحصول على Token
-         */
+const room =
+    new Room({
 
-        let token;
+        adaptiveStream:
+            true,
 
+        dynacast:
+            true
 
-        if (
-            role === "teacher"
-        ) {
-
-            const saved =
-                sessionStorage.getItem(
-                    "liveClass"
-                );
+    });
 
 
-            if (!saved) {
+if (
+    !roomName ||
+    !token
+) {
 
-                throw new Error(
-                    "Teacher session missing"
-                );
+    roomInfo.textContent =
+        "بيانات الغرفة غير موجودة.";
+
+    throw new Error(
+        "Missing room/token"
+    );
+
+}
+
+
+roomInfo.innerHTML = `
+    <strong>
+        ${roomName}
+    </strong>
+    <br>
+    الدور:
+    ${role === "teacher"
+        ? "المدرس"
+        : "الطالب"}
+`;
+
+
+/* =========================================================
+   Track Rendering
+========================================================= */
+
+function addTrack(
+    track,
+    participant
+) {
+
+    if (
+        track.kind !==
+        Track.Kind.Video
+    ) {
+
+        return;
+
+    }
+
+
+    const element =
+        track.attach();
+
+
+    element.autoplay =
+        true;
+
+    element.playsInline =
+        true;
+
+    element.style.width =
+        "100%";
+
+
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+
+
+    wrapper.className =
+        "participant";
+
+
+    const title =
+        document.createElement(
+            "div"
+        );
+
+
+    title.textContent =
+        participant.name ||
+        participant.identity;
+
+
+    wrapper.appendChild(
+        title
+    );
+
+
+    wrapper.appendChild(
+        element
+    );
+
+
+    videos.appendChild(
+        wrapper
+    );
+
+}
+
+
+function removeTrack(
+    track
+) {
+
+    track.detach()
+        .forEach(
+            element =>
+                element.remove()
+        );
+
+}
+
+
+/* =========================================================
+   Existing Participants
+========================================================= */
+
+function attachParticipant(
+    participant
+) {
+
+    participant
+        .trackPublications
+        .forEach(
+            publication => {
+
+                if (
+                    publication.isSubscribed &&
+                    publication.track
+                ) {
+
+                    addTrack(
+                        publication.track,
+                        participant
+                    );
+
+                }
 
             }
+        );
+
+}
 
 
-            const data =
-                JSON.parse(
-                    saved
-                );
+/* =========================================================
+   Events
+========================================================= */
 
+room.on(
+    RoomEvent.TrackSubscribed,
+    (
+        track,
+        publication,
+        participant
+    ) => {
 
-            token =
-                data.token;
-
-        } else {
-
-            const name =
-                prompt(
-                    "اكتب اسمك"
-                ) ||
-                "Student";
-
-
-            const response =
-                await fetch(
-                    `${API_URL}/api/join-room`,
-                    {
-
-                        method:
-                            "POST",
-
-                        headers: {
-
-                            "Content-Type":
-                                "application/json"
-
-                        },
-
-                        body:
-                            JSON.stringify({
-
-                                roomName,
-
-                                participantName:
-                                    name
-
-                            })
-
-                    }
-                );
-
-
-            const data =
-                await response.json();
-
-
-            if (!data.success) {
-
-                throw new Error(
-                    data.error
-                );
-
-            }
-
-
-            token =
-                data.token;
-
-        }
-
-
-        /*
-         * الاتصال بـ LiveKit
-         */
-
-        const saved =
-            sessionStorage.getItem(
-                "liveClass"
-            );
-
-
-        let livekitUrl;
-
-
-        if (role === "teacher") {
-
-            livekitUrl =
-                JSON.parse(
-                    saved
-                ).livekitUrl;
-
-        } else {
-
-            const response =
-                await fetch(
-                    `${API_URL}/api/join-room`,
-                    {
-
-                        method:
-                            "POST",
-
-                        headers: {
-
-                            "Content-Type":
-                                "application/json"
-
-                        },
-
-                        body:
-                            JSON.stringify({
-
-                                roomName,
-
-                                participantName:
-                                    "Student"
-
-                            })
-
-                    }
-                );
-
-
-            const data =
-                await response.json();
-
-
-            livekitUrl =
-                data.livekitUrl;
-
-        }
-
-
-        const room =
-            new Room({
-
-                adaptiveStream: true,
-
-                dynacast: true
-
-            });
-
-
-        /*
-         * إضافة Participant
-         */
-
-        function addParticipant(
+        addTrack(
+            track,
             participant
-        ) {
+        );
 
-            const container =
-                document.createElement(
-                    "div"
-                );
-
-            container.className =
-                "participant";
-
-            container.dataset.identity =
-                participant.identity;
+    }
+);
 
 
-            const title =
-                document.createElement(
-                    "div"
-                );
+room.on(
+    RoomEvent.TrackUnsubscribed,
+    (
+        track
+    ) => {
 
-            title.className =
-                "participant-name";
+        removeTrack(
+            track
+        );
 
-            title.textContent =
-                participant.name ||
-                participant.identity;
-
-
-            container.appendChild(
-                title
-            );
+    }
+);
 
 
-            videoGrid.appendChild(
-                container
-            );
+room.on(
+    RoomEvent.ParticipantConnected,
+    participant => {
 
-
+        attachParticipant(
             participant
-                .trackPublications
-                .forEach(
-                    publication => {
+        );
 
-                        attachTrack(
-                            publication,
-                            container
-                        );
-
-                    }
-                );
-
-        }
+    }
+);
 
 
-        function attachTrack(
-            publication,
-            container
-        ) {
+room.on(
+    RoomEvent.ParticipantDisconnected,
+    participant => {
+
+        console.log(
+            "Participant left:",
+            participant.identity
+        );
+
+    }
+);
+
+
+room.on(
+    RoomEvent.Connected,
+    () => {
+
+        connection.textContent =
+            "متصل";
+
+    }
+);
+
+
+room.on(
+    RoomEvent.Disconnected,
+    () => {
+
+        connection.textContent =
+            "انقطع الاتصال";
+
+    }
+);
+
+
+/* =========================================================
+   Connect
+========================================================= */
+
+await room.connect(
+    livekitUrl,
+    token
+);
+
+
+/* =========================================================
+   Publish Camera + Mic
+========================================================= */
+
+await room.localParticipant
+    .setMicrophoneEnabled(
+        true
+    );
+
+
+await room.localParticipant
+    .setCameraEnabled(
+        true
+    );
+
+
+attachParticipant(
+    room.localParticipant
+);
+
+
+/* =========================================================
+   Buttons
+========================================================= */
+
+document
+    .getElementById(
+        "toggleMic"
+    )
+    .onclick =
+    async () => {
+
+        const enabled =
+            !room
+                .localParticipant
+                .isMicrophoneEnabled;
+
+
+        await room.localParticipant
+            .setMicrophoneEnabled(
+                enabled
+            );
+
+    };
+
+
+document
+    .getElementById(
+        "toggleCamera"
+    )
+    .onclick =
+    async () => {
+
+        const enabled =
+            !room
+                .localParticipant
+                .isCameraEnabled;
+
+
+        await room.localParticipant
+            .setCameraEnabled(
+                enabled
+            );
+
+    };
+
+
+document
+    .getElementById(
+        "leaveRoom"
+    )
+    .onclick =
+    async () => {
+
+        await room.disconnect();
+
+        window.location.href =
+            "index.html";
+
+    };
+
+
+/* =========================================================
+   Teacher Controls
+========================================================= */
+
+if (
+    role === "teacher"
+) {
+
+    const endButton =
+        document.getElementById(
+            "endRoom"
+        );
+
+
+    endButton.style.display =
+        "block";
+
+
+    endButton.onclick =
+        async () => {
 
             if (
-                !publication.track
+                !confirm(
+                    "إنهاء المحاضرة؟"
+                )
             ) {
 
                 return;
@@ -375,216 +508,38 @@
             }
 
 
-            const track =
-                publication.track;
+            await fetch(
+                API +
+                "/api/end-room",
+                {
 
+                    method:
+                        "POST",
 
-            const element =
-                track.attach();
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
 
+                    body:
+                        JSON.stringify({
 
-            element.classList.add(
-                "media"
-            );
+                            roomName
 
-
-            container.appendChild(
-                element
-            );
-
-        }
-
-
-        /*
-         * Participant joined
-         */
-
-        room.on(
-            RoomEvent.ParticipantConnected,
-            participant => {
-
-                addParticipant(
-                    participant
-                );
-
-            }
-        );
-
-
-        /*
-         * Track subscribed
-         */
-
-        room.on(
-            RoomEvent.TrackSubscribed,
-            (
-                track,
-                publication,
-                participant
-            ) => {
-
-                let container =
-                    document.querySelector(
-                        `[data-identity="${CSS.escape(
-                            participant.identity
-                        )}"]`
-                    );
-
-
-                if (!container) {
-
-                    addParticipant(
-                        participant
-                    );
-
-                    container =
-                        document.querySelector(
-                            `[data-identity="${CSS.escape(
-                                participant.identity
-                            )}"]`
-                        );
-
-                }
-
-
-                attachTrack(
-                    publication,
-                    container
-                );
-
-            }
-        );
-
-
-        /*
-         * Participant left
-         */
-
-        room.on(
-            RoomEvent.ParticipantDisconnected,
-            participant => {
-
-                const element =
-                    document.querySelector(
-                        `[data-identity="${CSS.escape(
-                            participant.identity
-                        )}"]`
-                    );
-
-
-                if (element) {
-
-                    element.remove();
-
-                }
-
-            }
-        );
-
-
-        /*
-         * الاتصال
-         */
-
-        await room.connect(
-            livekitUrl,
-            token
-        );
-
-
-        /*
-         * نشر كاميرا وميكروفون المدرس
-         */
-
-        if (
-            role === "teacher"
-        ) {
-
-            await room.localParticipant
-                .enableCameraAndMicrophone();
-
-        }
-
-
-        /*
-         * إضافة المشاركين الموجودين
-         */
-
-        room.remoteParticipants
-            .forEach(
-                participant => {
-
-                    addParticipant(
-                        participant
-                    );
+                        })
 
                 }
             );
 
 
-        /*
-         * أزرار التحكم
-         */
+            window.location.href =
+                "recordings.html";
 
-        document
-            .getElementById(
-                "micButton"
-            )
-            .onclick =
-            async () => {
+        };
 
-                const enabled =
-                    room
-                        .localParticipant
-                        .isMicrophoneEnabled;
+}
 
-
-                await room
-                    .localParticipant
-                    .setMicrophoneEnabled(
-                        !enabled
-                    );
-
-            };
-
-
-        document
-            .getElementById(
-                "cameraButton"
-            )
-            .onclick =
-            async () => {
-
-                const enabled =
-                    room
-                        .localParticipant
-                        .isCameraEnabled;
-
-
-                await room
-                    .localParticipant
-                    .setCameraEnabled(
-                        !enabled
-                    );
-
-            };
-
-
-        document
-            .getElementById(
-                "leaveButton"
-            )
-            .onclick =
-            async () => {
-
-                await room.disconnect();
-
-                window.location.href =
-                    "./index.html";
-
-            };
-
-    </script>
+</script>
 
 </body>
 
