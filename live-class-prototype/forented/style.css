@@ -248,3 +248,70 @@ button:disabled {
     }
 
 }
+.recording {
+    background: #132934;
+
+    border:
+        1px solid
+        #29424e;
+
+    border-radius: 14px;
+
+    padding: 18px;
+
+    margin-top: 15px;
+}
+
+.recording h3 {
+    margin-top: 0;
+
+    margin-bottom: 10px;
+}
+
+.recording p {
+    color: #9eb0ba;
+
+    font-size: 13px;
+
+    line-height: 1.8;
+}
+
+.watch {
+    display: inline-block;
+
+    margin-top: 10px;
+
+    padding:
+        10px 15px;
+
+    border-radius: 8px;
+
+    background: #087ea4;
+
+    color: white;
+
+    text-decoration: none;
+}
+
+.processing {
+    margin-top: 12px;
+
+    color: #e5c76b;
+
+    font-size: 12px;
+}
+
+.empty,
+.error {
+    padding: 40px 20px;
+
+    text-align: center;
+
+    color: #9eb0ba;
+
+    line-height: 2;
+}
+
+.error {
+    color: #ff8f8f;
+}
