@@ -10,443 +10,1220 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>المدرسون | مسار التمريض</title>
+    <title>
+        إدارة المعلمين | مسار التمريض
+    </title>
 
     <link
         rel="stylesheet"
         href="../src/admin/admin.css"
     >
 
+    <style>
+
+        .teachers-toolbar {
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+
+        }
+
+
+        .teachers-search {
+
+            flex: 1;
+            min-width: 220px;
+
+        }
+
+
+        .teachers-search input {
+
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px 15px;
+            border: 1px solid #dbe5ec;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 15px;
+            outline: none;
+
+        }
+
+
+        .teachers-search input:focus {
+
+            border-color: #087ea4;
+
+        }
+
+
+        .primary-button {
+
+            border: none;
+            background: #087ea4;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: bold;
+
+        }
+
+
+        .primary-button:hover {
+
+            opacity: 0.92;
+
+        }
+
+
+        .teacher-table-wrapper {
+
+            overflow-x: auto;
+
+        }
+
+
+        .teacher-table {
+
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+            min-width: 850px;
+
+        }
+
+
+        .teacher-table th {
+
+            padding: 13px;
+            border-bottom: 1px solid #e5edf3;
+            background: #f8fbfd;
+            white-space: nowrap;
+
+        }
+
+
+        .teacher-table td {
+
+            padding: 13px;
+            border-bottom: 1px solid #edf1f4;
+            vertical-align: middle;
+
+        }
+
+
+        .teacher-name {
+
+            font-weight: bold;
+
+        }
+
+
+        .teacher-email {
+
+            direction: ltr;
+            text-align: right;
+            font-size: 14px;
+
+        }
+
+
+        .stage-tags,
+        .subject-tags {
+
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+
+        }
+
+
+        .tag {
+
+            display: inline-block;
+            padding: 5px 8px;
+            border-radius: 7px;
+            background: #eef7fa;
+            color: #087ea4;
+            font-size: 12px;
+            white-space: nowrap;
+
+        }
+
+
+        .status-badge {
+
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+
+        }
+
+
+        .status-active {
+
+            background: #e9f8f0;
+            color: #16794c;
+
+        }
+
+
+        .status-inactive {
+
+            background: #fdecec;
+            color: #b42318;
+
+        }
+
+
+        .action-buttons {
+
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+
+        }
+
+
+        .action-button {
+
+            border: none;
+            padding: 8px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+
+        }
+
+
+        .edit-button {
+
+            background: #eef5ff;
+            color: #155eef;
+
+        }
+
+
+        .toggle-button {
+
+            background: #fff6e5;
+            color: #9a6700;
+
+        }
+
+
+        .empty-state-box {
+
+            text-align: center;
+            padding: 35px 15px;
+            color: #68737d;
+
+        }
+
+
+        /* =====================================================
+           Modal
+        ===================================================== */
+
+        .modal-overlay {
+
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 9999;
+
+        }
+
+
+        .modal-overlay.show {
+
+            display: flex;
+
+        }
+
+
+        .teacher-modal {
+
+            width: min(700px, 100%);
+            max-height: 90vh;
+            overflow-y: auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+
+        }
+
+
+        .modal-header {
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            border-bottom: 1px solid #edf1f4;
+
+        }
+
+
+        .modal-header h2 {
+
+            margin: 0;
+            font-size: 20px;
+
+        }
+
+
+        .close-modal {
+
+            border: none;
+            background: transparent;
+            font-size: 25px;
+            cursor: pointer;
+            color: #68737d;
+
+        }
+
+
+        .modal-body {
+
+            padding: 20px;
+
+        }
+
+
+        .form-group {
+
+            margin-bottom: 18px;
+
+        }
+
+
+        .form-group label {
+
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+
+        }
+
+
+        .form-group input {
+
+            width: 100%;
+            box-sizing: border-box;
+            padding: 11px 13px;
+            border: 1px solid #dbe5ec;
+            border-radius: 9px;
+            font-family: inherit;
+            font-size: 15px;
+            outline: none;
+
+        }
+
+
+        .form-group input:focus {
+
+            border-color: #087ea4;
+
+        }
+
+
+        .checkbox-grid {
+
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+
+        }
+
+
+        .checkbox-item {
+
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            border: 1px solid #e3ebf0;
+            border-radius: 9px;
+            cursor: pointer;
+            background: #fbfdfe;
+
+        }
+
+
+        .checkbox-item:hover {
+
+            background: #f4f9fb;
+
+        }
+
+
+        .checkbox-item input {
+
+            width: auto;
+
+        }
+
+
+        .form-help {
+
+            color: #68737d;
+            font-size: 13px;
+            margin-top: 6px;
+
+        }
+
+
+        .modal-footer {
+
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 18px 20px;
+            border-top: 1px solid #edf1f4;
+            flex-wrap: wrap;
+
+        }
+
+
+        .secondary-button {
+
+            border: 1px solid #dbe5ec;
+            background: white;
+            color: #344054;
+            padding: 11px 18px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+
+        }
+
+
+        .danger-message {
+
+            color: #b42318;
+            font-size: 13px;
+            margin-top: 10px;
+
+        }
+
+
+        .loading {
+
+            text-align: center;
+            padding: 35px;
+            color: #68737d;
+
+        }
+
+
+        .toast {
+
+            position: fixed;
+            left: 20px;
+            bottom: 20px;
+            z-index: 10000;
+            max-width: 360px;
+            padding: 13px 17px;
+            border-radius: 10px;
+            background: #16794c;
+            color: white;
+            font-weight: bold;
+            display: none;
+
+        }
+
+
+        .toast.error {
+
+            background: #b42318;
+
+        }
+
+
+        .toast.show {
+
+            display: block;
+
+        }
+
+    </style>
+
 </head>
 
+
 <body>
+
 
 <div id="adminApp"></div>
 
 
-<script type="module">
+<!-- =========================================================
+     Teacher Modal
+========================================================== -->
 
-    import { protectAdminPage }
-        from "../src/admin/auth-guard.js";
+<div
+    id="teacherModal"
+    class="modal-overlay"
+>
 
-    import { createAdminLayout }
-        from "../src/admin/layout.js";
+    <div class="teacher-modal">
 
-    import { db }
-        from "../src/firebase/init.js";
+        <div class="modal-header">
 
-    import {
-        collection,
-        query,
-        where,
-        getDocs
-    } from
-        "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+            <h2 id="modalTitle">
+                إضافة معلم
+            </h2>
 
+            <button
+                type="button"
+                id="closeModalButton"
+                class="close-modal"
+            >
+                ×
+            </button>
 
-    try {
-
-        const admin =
-            await protectAdminPage();
-
-
-        createAdminLayout(
-            admin.data
-        );
+        </div>
 
 
-        document.getElementById(
-            "pageTitle"
-        ).textContent =
-            "إدارة المدرسين";
+        <form id="teacherForm">
 
+            <div class="modal-body">
 
-        const content =
-            document.getElementById(
-                "pageContent"
-            );
-
-
-        content.innerHTML = `
-
-            <div class="admin-page-intro">
-
-                <div>
-
-                    <h2>
-                        👨‍🏫 المدرسون
-                    </h2>
-
-                    <p>
-                        إدارة حسابات المدرسين المسجلين
-                        في منصة مسار التمريض.
-                    </p>
-
-                </div>
-
-                <button
-                    class="primary-button"
-                    id="addTeacherButton"
+                <input
+                    type="hidden"
+                    id="teacherId"
                 >
-                    + إضافة مدرس
-                </button>
-
-            </div>
 
 
-            <div class="admin-stats-grid">
+                <!-- الاسم -->
 
-                <div class="admin-mini-card">
+                <div class="form-group">
 
-                    <span>
-                        👨‍🏫
-                    </span>
-
-                    <div>
-
-                        <small>
-                            إجمالي المدرسين
-                        </small>
-
-                        <strong id="teachersCount">
-                            —
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="admin-mini-card">
-
-                    <span>
-                        🟢
-                    </span>
-
-                    <div>
-
-                        <small>
-                            المدرسون النشطون
-                        </small>
-
-                        <strong id="activeTeachersCount">
-                            —
-                        </strong>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="panel">
-
-                <div class="panel-header">
-
-                    <h2>
-                        قائمة المدرسين
-                    </h2>
+                    <label for="teacherName">
+                        اسم المعلم
+                    </label>
 
                     <input
-                        id="teacherSearch"
-                        class="admin-search"
-                        type="search"
-                        placeholder="ابحث باسم المدرس..."
+                        type="text"
+                        id="teacherName"
+                        placeholder="مثال: Dr.Nurhan"
+                        required
                     >
 
                 </div>
 
 
+                <!-- البريد -->
+
+                <div class="form-group">
+
+                    <label for="teacherEmail">
+                        البريد الإلكتروني
+                    </label>
+
+                    <input
+                        type="email"
+                        id="teacherEmail"
+                        placeholder="teacher@example.com"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- كلمة المرور -->
+
                 <div
-                    id="teachersContainer"
-                    class="admin-list"
+                    class="form-group"
+                    id="passwordGroup"
                 >
 
-                    <div class="admin-loading">
-                        ⏳ جاري تحميل المدرسين...
+                    <label for="teacherPassword">
+                        كلمة المرور
+                    </label>
+
+                    <input
+                        type="password"
+                        id="teacherPassword"
+                        placeholder="كلمة المرور الأولية"
+                        minlength="6"
+                    >
+
+                    <div class="form-help">
+
+                        تستخدم عند إنشاء حساب المعلم لأول مرة.
+
                     </div>
 
                 </div>
 
+
+                <!-- المراحل -->
+
+                <div class="form-group">
+
+                    <label>
+                        المراحل التي يدرسها المعلم
+                    </label>
+
+                    <div
+                        id="stagesContainer"
+                        class="checkbox-grid"
+                    >
+
+                        جاري تحميل المراحل...
+
+                    </div>
+
+                    <div class="form-help">
+
+                        يمكنك اختيار أكثر من مرحلة.
+
+                    </div>
+
+                </div>
+
+
+                <!-- المواد -->
+
+                <div class="form-group">
+
+                    <label>
+                        المواد التي يدرسها المعلم
+                    </label>
+
+                    <div
+                        id="subjectsContainer"
+                        class="checkbox-grid"
+                    >
+
+                        جاري تحميل المواد...
+
+                    </div>
+
+                    <div class="form-help">
+
+                        يمكنك اختيار أكثر من مادة.
+
+                    </div>
+
+                </div>
+
+
+                <!-- الحالة -->
+
+                <div class="form-group">
+
+                    <label>
+
+                        حالة الحساب
+
+                    </label>
+
+
+                    <label
+                        class="checkbox-item"
+                        style="width:max-content;"
+                    >
+
+                        <input
+                            type="checkbox"
+                            id="teacherActive"
+                            checked
+                        >
+
+                        <span>
+                            الحساب نشط
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <div
+                    id="modalError"
+                    class="danger-message"
+                ></div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    id="cancelModalButton"
+                    class="secondary-button"
+                >
+                    إلغاء
+                </button>
+
+                <button
+                    type="submit"
+                    id="saveTeacherButton"
+                    class="primary-button"
+                >
+                    إنشاء المعلم
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<div
+    id="toast"
+    class="toast"
+></div>
+
+
+<script type="module">
+
+    import {
+        protectAdminPage
+    } from "../src/admin/auth-guard.js";
+
+    import {
+        createAdminLayout
+    } from "../src/admin/layout.js";
+
+    import {
+        db
+    } from "../src/firebase/init.js";
+
+    import {
+        collection,
+        getDocs,
+        doc,
+        updateDoc,
+        serverTimestamp
+    } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+    // =====================================================
+    // Protect Page
+    // =====================================================
+
+    const admin =
+        await protectAdminPage();
+
+
+    // =====================================================
+    // Layout
+    // =====================================================
+
+    createAdminLayout(admin.data);
+
+
+    document.getElementById("pageTitle").textContent =
+        "إدارة المعلمين";
+
+
+    document.getElementById("pageContent").innerHTML = `
+
+        <div class="teachers-toolbar">
+
+            <div class="teachers-search">
+
+                <input
+                    type="search"
+                    id="teacherSearch"
+                    placeholder="🔎 البحث باسم المعلم أو البريد الإلكتروني..."
+                >
+
+            </div>
+
+
+            <button
+                type="button"
+                id="addTeacherButton"
+                class="primary-button"
+            >
+                ＋ إضافة معلم
+            </button>
+
+        </div>
+
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <h2>
+                    المعلمون
+                </h2>
+
+            </div>
+
+
+            <div id="teachersContainer">
+
+                <div class="loading">
+                    جاري تحميل المعلمين...
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    // =====================================================
+    // Elements
+    // =====================================================
+
+    const teachersContainer =
+        document.getElementById(
+            "teachersContainer"
+        );
+
+
+    const teacherSearch =
+        document.getElementById(
+            "teacherSearch"
+        );
+
+
+    const addTeacherButton =
+        document.getElementById(
+            "addTeacherButton"
+        );
+
+
+    const teacherModal =
+        document.getElementById(
+            "teacherModal"
+        );
+
+
+    const closeModalButton =
+        document.getElementById(
+            "closeModalButton"
+        );
+
+
+    const cancelModalButton =
+        document.getElementById(
+            "cancelModalButton"
+        );
+
+
+    const teacherForm =
+        document.getElementById(
+            "teacherForm"
+        );
+
+
+    const teacherId =
+        document.getElementById(
+            "teacherId"
+        );
+
+
+    const teacherName =
+        document.getElementById(
+            "teacherName"
+        );
+
+
+    const teacherEmail =
+        document.getElementById(
+            "teacherEmail"
+        );
+
+
+    const teacherPassword =
+        document.getElementById(
+            "teacherPassword"
+        );
+
+
+    const passwordGroup =
+        document.getElementById(
+            "passwordGroup"
+        );
+
+
+    const teacherActive =
+        document.getElementById(
+            "teacherActive"
+        );
+
+
+    const stagesContainer =
+        document.getElementById(
+            "stagesContainer"
+        );
+
+
+    const subjectsContainer =
+        document.getElementById(
+            "subjectsContainer"
+        );
+
+
+    const modalTitle =
+        document.getElementById(
+            "modalTitle"
+        );
+
+
+    const saveTeacherButton =
+        document.getElementById(
+            "saveTeacherButton"
+        );
+
+
+    const modalError =
+        document.getElementById(
+            "modalError"
+        );
+
+
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
+
+    // =====================================================
+    // State
+    // =====================================================
+
+    let teachers = [];
+
+    let stages = [];
+
+    let subjects = [];
+
+
+    // =====================================================
+    // Load Stages
+    // =====================================================
+
+    async function loadStages() {
+
+        const snapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "stages"
+                )
+            );
+
+
+        stages =
+            snapshot.docs.map(
+                item => ({
+                    id: item.id,
+                    ...item.data()
+                })
+            );
+
+
+        stages.sort(
+            (a, b) =>
+                getStageOrder(a.id) -
+                getStageOrder(b.id)
+        );
+
+
+        renderStages();
+
+    }
+
+
+    // =====================================================
+    // Stage Order
+    // =====================================================
+
+    function getStageOrder(id) {
+
+        const order = {
+
+            "stage-1": 1,
+            "stage-2": 2,
+            "stage-3": 3,
+            "stage-4": 4,
+            "stage-5": 5
+
+        };
+
+
+        return order[id] || 999;
+
+    }
+
+
+    // =====================================================
+    // Stage Name
+    // =====================================================
+
+    function getStageName(stage) {
+
+        return (
+            stage.name ||
+            stage.title ||
+            getDefaultStageName(stage.id)
+        );
+
+    }
+
+
+    function getDefaultStageName(id) {
+
+        const names = {
+
+            "stage-1":
+                "الصف الأول الثانوي التمريض",
+
+            "stage-2":
+                "الصف الثاني الثانوي التمريض",
+
+            "stage-3":
+                "الصف الثالث الثانوي التمريض",
+
+            "stage-4":
+                "الصف الأول المعهد",
+
+            "stage-5":
+                "الصف الثاني المعهد"
+
+        };
+
+
+        return names[id] || id;
+
+    }
+
+
+    // =====================================================
+    // Render Stages
+    // =====================================================
+
+    function renderStages(selected = []) {
+
+        if (stages.length === 0) {
+
+            stagesContainer.innerHTML =
+                "لا توجد مراحل.";
+
+            return;
+
+        }
+
+
+        stagesContainer.innerHTML =
+            stages.map(stage => `
+
+                <label class="checkbox-item">
+
+                    <input
+                        type="checkbox"
+                        name="stageIds"
+                        value="${escapeHtml(stage.id)}"
+                        ${selected.includes(stage.id) ? "checked" : ""}
+                    >
+
+                    <span>
+                        ${escapeHtml(
+                            getStageName(stage)
+                        )}
+                    </span>
+
+                </label>
+
+            `).join("");
+
+    }
+
+
+    // =====================================================
+    // Load Subjects
+    // =====================================================
+
+    async function loadSubjects() {
+
+        const snapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "subjects"
+                )
+            );
+
+
+        subjects =
+            snapshot.docs.map(
+                item => ({
+                    id: item.id,
+                    ...item.data()
+                })
+            );
+
+
+        subjects.sort(
+            (a, b) => {
+
+                const nameA =
+                    String(
+                        a.name ||
+                        a.title ||
+                        a.id
+                    );
+
+
+                const nameB =
+                    String(
+                        b.name ||
+                        b.title ||
+                        b.id
+                    );
+
+
+                return nameA.localeCompare(
+                    nameB,
+                    "ar"
+                );
+
+            }
+        );
+
+
+        renderSubjects();
+
+    }
+
+
+    // =====================================================
+    // Render Subjects
+    // =====================================================
+
+    function renderSubjects(selected = []) {
+
+        if (subjects.length === 0) {
+
+            subjectsContainer.innerHTML =
+                "لا توجد مواد.";
+
+            return;
+
+        }
+
+
+        subjectsContainer.innerHTML =
+            subjects.map(subject => `
+
+                <label class="checkbox-item">
+
+                    <input
+                        type="checkbox"
+                        name="subjectIds"
+                        value="${escapeHtml(subject.id)}"
+                        ${selected.includes(subject.id) ? "checked" : ""}
+                    >
+
+                    <span>
+                        ${escapeHtml(
+                            subject.name ||
+                            subject.title ||
+                            subject.id
+                        )}
+                    </span>
+
+                </label>
+
+            `).join("");
+
+    }
+
+
+    // =====================================================
+    // Load Teachers
+    // =====================================================
+
+    async function loadTeachers() {
+
+        teachersContainer.innerHTML = `
+
+            <div class="loading">
+                جاري تحميل المعلمين...
             </div>
 
         `;
 
 
-        const container =
-            document.getElementById(
-                "teachersContainer"
-            );
+        try {
 
-
-        const search =
-            document.getElementById(
-                "teacherSearch"
-            );
-
-
-        let teachers = [];
-
-
-        // =================================================
-        // تحميل المدرسين من users
-        // =================================================
-
-        const teachersQuery =
-            query(
-
-                collection(
-                    db,
-                    "users"
-                ),
-
-                where(
-                    "role",
-                    "==",
-                    "teacher"
-                )
-
-            );
-
-
-        const snapshot =
-            await getDocs(
-                teachersQuery
-            );
-
-
-        teachers =
-            snapshot.docs
-                .map(
-                    item => ({
-                        id: item.id,
-                        ...item.data()
-                    })
-                );
-
-
-        updateStats();
-
-
-        render();
-
-
-        search.addEventListener(
-            "input",
-            render
-        );
-
-
-        function updateStats() {
-
-            const total =
-                teachers.length;
-
-
-            const active =
-                teachers.filter(
-                    teacher =>
-                        teacher.isActive !== false
-                ).length;
-
-
-            document.getElementById(
-                "teachersCount"
-            ).textContent =
-                total;
-
-
-            document.getElementById(
-                "activeTeachersCount"
-            ).textContent =
-                active;
-
-        }
-
-
-        function render() {
-
-            const value =
-                search.value
-                    .trim()
-                    .toLowerCase();
-
-
-            const filtered =
-                teachers.filter(
-                    teacher => {
-
-                        const name =
-                            String(
-                                teacher.name ||
-                                teacher.displayName ||
-                                ""
-                            ).toLowerCase();
-
-
-                        const email =
-                            String(
-                                teacher.email ||
-                                ""
-                            ).toLowerCase();
-
-
-                        const username =
-                            String(
-                                teacher.username ||
-                                ""
-                            ).toLowerCase();
-
-
-                        return (
-                            !value ||
-                            name.includes(value) ||
-                            email.includes(value) ||
-                            username.includes(value)
-                        );
-
-                    }
-                );
-
-
-            if (!filtered.length) {
-
-                container.innerHTML = `
-
-                    <div class="admin-empty">
-
-                        👨‍🏫
-
-                        <br><br>
-
-                        ${
-                            teachers.length
-                                ? "لا توجد نتائج مطابقة للبحث."
-                                : "لا يوجد مدرسون مسجلون حاليًا."
-                        }
-
-                    </div>
-
-                `;
-
-                return;
-
-            }
-
-
-            container.innerHTML =
-                filtered
-                    .map(
-                        teacher =>
-                            teacherCard(
-                                teacher
-                            )
+            const snapshot =
+                await getDocs(
+                    collection(
+                        db,
+                        "users"
                     )
-                    .join("");
-
-        }
+                );
 
 
-        function teacherCard(
-            teacher
-        ) {
-
-            const name =
-                teacher.name ||
-                teacher.displayName ||
-                "مدرس بدون اسم";
-
-
-            const email =
-                teacher.email ||
-                "لا يوجد بريد إلكتروني";
-
-
-            const username =
-                teacher.username ||
-                "—";
+            teachers =
+                snapshot.docs
+                    .map(
+                        item => ({
+                            id: item.id,
+                            ...item.data()
+                        })
+                    )
+                    .filter(
+                        user =>
+                            user.role === "teacher"
+                    );
 
 
-            const subject =
-                teacher.subject ||
-                teacher.subjectName ||
-                "غير محدد";
+            renderTeachers();
+
+        } catch (error) {
+
+            console.error(
+                "Load teachers error:",
+                error
+            );
 
 
-            const isActive =
-                teacher.isActive !== false;
+            teachersContainer.innerHTML = `
 
+                <div class="empty-state-box">
 
-            return `
+                    🔴 فشل تحميل المعلمين
 
-                <div class="admin-list-card">
+                    <br><br>
 
-                    <div class="admin-list-avatar">
-                        👨‍🏫
-                    </div>
-
-
-                    <div class="admin-list-info">
-
-                        <h3>
-                            ${escapeHtml(name)}
-                        </h3>
-
-                        <p>
-                            المادة:
-                            ${escapeHtml(subject)}
-                        </p>
-
-                        <small>
-                            البريد:
-                            ${escapeHtml(email)}
-                        </small>
-
-                    </div>
-
-
-                    <div class="admin-list-meta">
-
-                        <span
-                            class="
-                                admin-status
-                                ${
-                                    isActive
-                                        ? "admin-status-active"
-                                        : "admin-status-disabled"
-                                }
-                        "
-                        >
-
-                            ${
-                                isActive
-                                    ? "نشط"
-                                    : "غير نشط"
-                            }
-
-                        </span>
-
-                        <small>
-                            المستخدم:
-                            ${escapeHtml(username)}
-                        </small>
-
-                    </div>
-
-
-                    <div class="admin-list-actions">
-
-                        <button
-                            class="secondary-button"
-                            data-teacher-id="${escapeHtml(
-                                teacher.id
-                            )}"
-                        >
-                            عرض
-                        </button>
-
-                    </div>
+                    ${escapeHtml(
+                        error.message
+                    )}
 
                 </div>
 
@@ -454,84 +1231,1095 @@
 
         }
 
+    }
 
-        document
-            .getElementById(
-                "addTeacherButton"
-            )
-            .addEventListener(
-                "click",
-                () => {
 
-                    alert(
-                        "سيتم ربط إضافة المدرس بإنشاء حساب المستخدم بعد تثبيت نظام حسابات المدرسين."
+    // =====================================================
+    // Render Teachers
+    // =====================================================
+
+    function renderTeachers() {
+
+        const search =
+            teacherSearch.value
+                .trim()
+                .toLowerCase();
+
+
+        const filtered =
+            teachers.filter(
+                teacher => {
+
+                    const name =
+                        String(
+                            teacher.name || ""
+                        ).toLowerCase();
+
+
+                    const email =
+                        String(
+                            teacher.email || ""
+                        ).toLowerCase();
+
+
+                    return (
+                        !search ||
+                        name.includes(search) ||
+                        email.includes(search)
                     );
 
                 }
             );
 
 
-    } catch (error) {
+        if (filtered.length === 0) {
 
-        console.error(
-            "Admin teachers error:",
-            error
-        );
+            teachersContainer.innerHTML = `
+
+                <div class="empty-state-box">
+
+                    👨‍🏫
+
+                    <br><br>
+
+                    ${
+                        search
+                        ? "لا يوجد معلم يطابق البحث."
+                        : "لا يوجد معلمون حاليًا."
+                    }
+
+                </div>
+
+            `;
+
+            return;
+
+        }
 
 
-        document.getElementById(
-            "pageContent"
-        ).innerHTML = `
+        teachersContainer.innerHTML = `
 
-            <div class="admin-error">
+            <div class="teacher-table-wrapper">
 
-                ⚠️ حدث خطأ أثناء تحميل المدرسين.
+                <table class="teacher-table">
 
-                <br><br>
+                    <thead>
 
-                ${escapeHtml(
-                    error?.message ||
-                    "حدث خطأ غير معروف."
-                )}
+                        <tr>
+
+                            <th>
+                                المعلم
+                            </th>
+
+                            <th>
+                                البريد
+                            </th>
+
+                            <th>
+                                المراحل
+                            </th>
+
+                            <th>
+                                المواد
+                            </th>
+
+                            <th>
+                                الحالة
+                            </th>
+
+                            <th>
+                                الإجراءات
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        ${filtered.map(
+                            teacher => {
+
+                                const stageIds =
+                                    Array.isArray(
+                                        teacher.stageIds
+                                    )
+                                    ? teacher.stageIds
+                                    : [];
+
+
+                                const subjectIds =
+                                    Array.isArray(
+                                        teacher.subjectIds
+                                    )
+                                    ? teacher.subjectIds
+                                    : [];
+
+
+                                return `
+
+                                    <tr>
+
+                                        <td>
+
+                                            <div class="teacher-name">
+
+                                                👨‍🏫
+
+                                                ${escapeHtml(
+                                                    teacher.name ||
+                                                    "بدون اسم"
+                                                )}
+
+                                            </div>
+
+                                        </td>
+
+
+                                        <td>
+
+                                            <div class="teacher-email">
+
+                                                ${escapeHtml(
+                                                    teacher.email ||
+                                                    "—"
+                                                )}
+
+                                            </div>
+
+                                        </td>
+
+
+                                        <td>
+
+                                            <div class="stage-tags">
+
+                                                ${
+                                                    stageIds.length
+                                                    ?
+                                                    stageIds.map(
+                                                        id => `
+
+                                                            <span class="tag">
+
+                                                                ${escapeHtml(
+                                                                    getStageLabelById(id)
+                                                                )}
+
+                                                            </span>
+
+                                                        `
+                                                    ).join("")
+                                                    :
+                                                    "—"
+                                                }
+
+                                            </div>
+
+                                        </td>
+
+
+                                        <td>
+
+                                            <div class="subject-tags">
+
+                                                ${
+                                                    subjectIds.length
+                                                    ?
+                                                    subjectIds.map(
+                                                        id => `
+
+                                                            <span class="tag">
+
+                                                                ${escapeHtml(
+                                                                    getSubjectLabelById(id)
+                                                                )}
+
+                                                            </span>
+
+                                                        `
+                                                    ).join("")
+                                                    :
+                                                    "—"
+                                                }
+
+                                            </div>
+
+                                        </td>
+
+
+                                        <td>
+
+                                            ${
+                                                teacher.isActive === true
+
+                                                ?
+
+                                                `
+                                                    <span class="status-badge status-active">
+                                                        🟢 نشط
+                                                    </span>
+                                                `
+
+                                                :
+
+                                                `
+                                                    <span class="status-badge status-inactive">
+                                                        🔴 متوقف
+                                                    </span>
+                                                `
+                                            }
+
+                                        </td>
+
+
+                                        <td>
+
+                                            <div class="action-buttons">
+
+                                                <button
+                                                    type="button"
+                                                    class="action-button edit-button"
+                                                    data-action="edit"
+                                                    data-id="${escapeHtml(
+                                                        teacher.id
+                                                    )}"
+                                                >
+                                                    ✏️ تعديل
+                                                </button>
+
+
+                                                <button
+                                                    type="button"
+                                                    class="action-button toggle-button"
+                                                    data-action="toggle"
+                                                    data-id="${escapeHtml(
+                                                        teacher.id
+                                                    )}"
+                                                >
+
+                                                    ${
+                                                        teacher.isActive === true
+                                                        ? "🔴 تعطيل"
+                                                        : "🟢 تفعيل"
+                                                    }
+
+                                                </button>
+
+                                            </div>
+
+                                        </td>
+
+                                    </tr>
+
+                                `;
+
+                            }
+                        ).join("")}
+
+                    </tbody>
+
+                </table>
 
             </div>
 
         `;
 
+
+        bindTeacherActions();
+
     }
 
 
-    function escapeHtml(
-        value
-    ) {
+    // =====================================================
+    // Stage Label
+    // =====================================================
 
-        return String(
-            value ?? ""
-        )
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-        .replaceAll(
-            "'",
-            "&#039;"
+    function getStageLabelById(id) {
+
+        const stage =
+            stages.find(
+                item => item.id === id
+            );
+
+
+        return stage
+            ? getStageName(stage)
+            : id;
+
+    }
+
+
+    // =====================================================
+    // Subject Label
+    // =====================================================
+
+    function getSubjectLabelById(id) {
+
+        const subject =
+            subjects.find(
+                item => item.id === id
+            );
+
+
+        return subject
+            ? (
+                subject.name ||
+                subject.title ||
+                subject.id
+            )
+            : id;
+
+    }
+
+
+    // =====================================================
+    // Teacher Actions
+    // =====================================================
+
+    function bindTeacherActions() {
+
+        document
+            .querySelectorAll(
+                "[data-action='edit']"
+            )
+            .forEach(
+                button => {
+
+                    button.addEventListener(
+                        "click",
+                        () => {
+
+                            const id =
+                                button.dataset.id;
+
+
+                            openEditTeacher(id);
+
+                        }
+                    );
+
+                }
+            );
+
+
+        document
+            .querySelectorAll(
+                "[data-action='toggle']"
+            )
+            .forEach(
+                button => {
+
+                    button.addEventListener(
+                        "click",
+                        () => {
+
+                            const id =
+                                button.dataset.id;
+
+
+                            toggleTeacher(id);
+
+                        }
+                    );
+
+                }
+            );
+
+    }
+
+
+    // =====================================================
+    // Open Add Modal
+    // =====================================================
+
+    function openAddTeacher() {
+
+        teacherForm.reset();
+
+        teacherId.value = "";
+
+        teacherActive.checked = true;
+
+        teacherEmail.disabled = false;
+
+        passwordGroup.style.display =
+            "block";
+
+
+        teacherPassword.required =
+            true;
+
+
+        modalTitle.textContent =
+            "إضافة معلم";
+
+
+        saveTeacherButton.textContent =
+            "إنشاء المعلم";
+
+
+        modalError.textContent = "";
+
+
+        renderStages([]);
+
+        renderSubjects([]);
+
+
+        teacherModal.classList.add(
+            "show"
+        );
+
+
+        teacherName.focus();
+
+    }
+
+
+    // =====================================================
+    // Open Edit Modal
+    // =====================================================
+
+    function openEditTeacher(id) {
+
+        const teacher =
+            teachers.find(
+                item => item.id === id
+            );
+
+
+        if (!teacher) {
+
+            return;
+
+        }
+
+
+        teacherId.value =
+            teacher.id;
+
+
+        teacherName.value =
+            teacher.name || "";
+
+
+        teacherEmail.value =
+            teacher.email || "";
+
+
+        teacherEmail.disabled =
+            true;
+
+
+        teacherActive.checked =
+            teacher.isActive === true;
+
+
+        teacherPassword.value =
+            "";
+
+
+        teacherPassword.required =
+            false;
+
+
+        passwordGroup.style.display =
+            "none";
+
+
+        modalTitle.textContent =
+            "تعديل بيانات المعلم";
+
+
+        saveTeacherButton.textContent =
+            "حفظ التعديلات";
+
+
+        modalError.textContent = "";
+
+
+        renderStages(
+            Array.isArray(
+                teacher.stageIds
+            )
+            ? teacher.stageIds
+            : []
+        );
+
+
+        renderSubjects(
+            Array.isArray(
+                teacher.subjectIds
+            )
+            ? teacher.subjectIds
+            : []
+        );
+
+
+        teacherModal.classList.add(
+            "show"
         );
 
     }
 
+
+    // =====================================================
+    // Close Modal
+    // =====================================================
+
+    function closeModal() {
+
+        teacherModal.classList.remove(
+            "show"
+        );
+
+
+        modalError.textContent = "";
+
+    }
+
+
+    // =====================================================
+    // Get Selected IDs
+    // =====================================================
+
+    function getSelectedValues(
+        selector
+    ) {
+
+        return Array.from(
+            document.querySelectorAll(
+                selector + ":checked"
+            )
+        ).map(
+            input =>
+                input.value
+        );
+
+    }
+
+
+    // =====================================================
+    // Submit Teacher
+    // =====================================================
+
+    teacherForm.addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+
+            modalError.textContent = "";
+
+
+            const name =
+                teacherName.value.trim();
+
+
+            const email =
+                teacherEmail.value.trim();
+
+
+            const password =
+                teacherPassword.value;
+
+
+            const active =
+                teacherActive.checked;
+
+
+            const selectedStageIds =
+                getSelectedValues(
+                    "input[name='stageIds']"
+                );
+
+
+            const selectedSubjectIds =
+                getSelectedValues(
+                    "input[name='subjectIds']"
+                );
+
+
+            if (!name) {
+
+                modalError.textContent =
+                    "من فضلك اكتب اسم المعلم.";
+
+                return;
+
+            }
+
+
+            if (!email) {
+
+                modalError.textContent =
+                    "من فضلك اكتب البريد الإلكتروني.";
+
+                return;
+
+            }
+
+
+            if (
+                !teacherId.value &&
+                password.length < 6
+            ) {
+
+                modalError.textContent =
+                    "كلمة المرور يجب أن تكون 6 أحرف على الأقل.";
+
+                return;
+
+            }
+
+
+            if (
+                selectedStageIds.length === 0
+            ) {
+
+                modalError.textContent =
+                    "اختر مرحلة واحدة على الأقل.";
+
+                return;
+
+            }
+
+
+            if (
+                selectedSubjectIds.length === 0
+            ) {
+
+                modalError.textContent =
+                    "اختر مادة واحدة على الأقل.";
+
+                return;
+
+            }
+
+
+            saveTeacherButton.disabled =
+                true;
+
+
+            saveTeacherButton.textContent =
+                teacherId.value
+                ? "جاري الحفظ..."
+                : "جاري إنشاء الحساب...";
+
+
+            try {
+
+                // =================================================
+                // Edit Existing Teacher
+                // =================================================
+
+                if (teacherId.value) {
+
+                    const teacherRef =
+                        doc(
+                            db,
+                            "users",
+                            teacherId.value
+                        );
+
+
+                    await updateDoc(
+                        teacherRef,
+                        {
+
+                            name,
+
+                            stageIds:
+                                selectedStageIds,
+
+                            subjectIds:
+                                selectedSubjectIds,
+
+                            isActive:
+                                active,
+
+                            updatedAt:
+                                serverTimestamp()
+
+                        }
+                    );
+
+
+                    showToast(
+                        "تم تحديث بيانات المعلم بنجاح."
+                    );
+
+                }
+
+                // =================================================
+                // Create New Teacher
+                // =================================================
+
+                else {
+
+                    /*
+                     * مهم:
+                     * إنشاء Firebase Auth User يجب أن يتم
+                     * من Backend / Firebase Admin SDK.
+                     *
+                     * لا نستخدم:
+                     *
+                     * createUserWithEmailAndPassword()
+                     *
+                     * هنا حتى لا تتغير جلسة الأدمن.
+                     */
+
+
+                    const response =
+                        await fetch(
+                            "/api/admin/create-teacher",
+                            {
+
+                                method: "POST",
+
+                                headers: {
+
+                                    "Content-Type":
+                                        "application/json"
+
+                                },
+
+                                body:
+                                    JSON.stringify({
+
+                                        name,
+
+                                        email,
+
+                                        password,
+
+                                        stageIds:
+                                            selectedStageIds,
+
+                                        subjectIds:
+                                            selectedSubjectIds,
+
+                                        isActive:
+                                            active
+
+                                    })
+
+                            }
+                        );
+
+
+                    const result =
+                        await response.json();
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            result.message ||
+                            "فشل إنشاء حساب المعلم."
+                        );
+
+                    }
+
+
+                    showToast(
+                        "تم إنشاء حساب المعلم بنجاح."
+                    );
+
+                }
+
+
+                closeModal();
+
+                await loadTeachers();
+
+            } catch (error) {
+
+                console.error(
+                    "Teacher save error:",
+                    error
+                );
+
+
+                modalError.textContent =
+                    error.message ||
+                    "حدث خطأ أثناء حفظ بيانات المعلم.";
+
+            } finally {
+
+                saveTeacherButton.disabled =
+                    false;
+
+
+                saveTeacherButton.textContent =
+                    teacherId.value
+                    ? "حفظ التعديلات"
+                    : "إنشاء المعلم";
+
+            }
+
+        }
+    );
+
+
+    // =====================================================
+    // Toggle Teacher
+    // =====================================================
+
+    async function toggleTeacher(id) {
+
+        const teacher =
+            teachers.find(
+                item => item.id === id
+            );
+
+
+        if (!teacher) {
+
+            return;
+
+        }
+
+
+        const newStatus =
+            teacher.isActive !== true;
+
+
+        const actionText =
+            newStatus
+            ? "تفعيل"
+            : "تعطيل";
+
+
+        const confirmed =
+            confirm(
+                `هل تريد ${actionText} حساب المعلم "${teacher.name || ""}"؟`
+            );
+
+
+        if (!confirmed) {
+
+            return;
+
+        }
+
+
+        try {
+
+            await updateDoc(
+                doc(
+                    db,
+                    "users",
+                    id
+                ),
+                {
+
+                    isActive:
+                        newStatus,
+
+                    updatedAt:
+                        serverTimestamp()
+
+                }
+            );
+
+
+            showToast(
+                newStatus
+                ? "تم تفعيل المعلم."
+                : "تم تعطيل المعلم."
+            );
+
+
+            await loadTeachers();
+
+        } catch (error) {
+
+            console.error(
+                "Toggle teacher error:",
+                error
+            );
+
+
+            showToast(
+                error.message ||
+                "فشل تغيير حالة المعلم.",
+                true
+            );
+
+        }
+
+    }
+
+
+    // =====================================================
+    // Events
+    // =====================================================
+
+    addTeacherButton.addEventListener(
+        "click",
+        openAddTeacher
+    );
+
+
+    closeModalButton.addEventListener(
+        "click",
+        closeModal
+    );
+
+
+    cancelModalButton.addEventListener(
+        "click",
+        closeModal
+    );
+
+
+    teacherSearch.addEventListener(
+        "input",
+        renderTeachers
+    );
+
+
+    teacherModal.addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target ===
+                teacherModal
+            ) {
+
+                closeModal();
+
+            }
+
+        }
+    );
+
+
+    // =====================================================
+    // Toast
+    // =====================================================
+
+    let toastTimer = null;
+
+
+    function showToast(
+        message,
+        isError = false
+    ) {
+
+        clearTimeout(
+            toastTimer
+        );
+
+
+        toast.textContent =
+            message;
+
+
+        toast.classList.toggle(
+            "error",
+            isError
+        );
+
+
+        toast.classList.add(
+            "show"
+        );
+
+
+        toastTimer =
+            setTimeout(
+                () => {
+
+                    toast.classList.remove(
+                        "show"
+                    );
+
+                },
+                3500
+            );
+
+    }
+
+
+    // =====================================================
+    // Escape HTML
+    // =====================================================
+
+    function escapeHtml(value) {
+
+        return String(value ?? "")
+            .replaceAll(
+                "&",
+                "&amp;"
+            )
+            .replaceAll(
+                "<",
+                "&lt;"
+            )
+            .replaceAll(
+                ">",
+                "&gt;"
+            )
+            .replaceAll(
+                '"',
+                "&quot;"
+            )
+            .replaceAll(
+                "'",
+                "&#039;"
+            );
+
+    }
+
+
+    // =====================================================
+    // Initialize
+    // =====================================================
+
+    async function initialize() {
+
+        try {
+
+            await Promise.all([
+
+                loadStages(),
+
+                loadSubjects(),
+
+                loadTeachers()
+
+            ]);
+
+        } catch (error) {
+
+            console.error(
+                "Teachers page initialization error:",
+                error
+            );
+
+
+            showToast(
+                error.message ||
+                "حدث خطأ أثناء تحميل الصفحة.",
+                true
+            );
+
+        }
+
+    }
+
+
+    initialize();
+
 </script>
 
+
 </body>
+
 </html>
