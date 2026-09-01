@@ -752,9 +752,11 @@
 
                     </div>
 
-                    <div class="empty">
-                        سيتم احتساب تقدمك تلقائيًا
-                        مع إضافة المحاضرات والاختبارات.
+                    <div
+                        id="studentProgress"
+                        class="empty"
+                    >
+                        ⏳ جاري حساب تقدمك الدراسي...
                     </div>
 
                 </div>
@@ -914,30 +916,50 @@
 
         // =================================================
         // 2. Exams
+        // متوافق مع exams.html و exam.html
+        // ولا يعتمد على getCollection("exams")
+        // حتى يطابق Firestore Rules الحالية
         // =================================================
 
         try {
 
-            const exams =
-                await getCollection(
-                    "exams"
+            const examsQuery =
+                query(
+
+                    collection(
+                        db,
+                        "exams"
+                    ),
+
+                    where(
+                        "isPublished",
+                        "==",
+                        true
+                    ),
+
+                    where(
+                        "stageId",
+                        "==",
+                        student.stageId
+                    )
+
                 );
 
 
-            const available =
-                exams
-                    .filter(
-                        exam => {
+            const examsSnapshot =
+                await getDocs(
+                    examsQuery
+                );
 
-                            return (
-                                !exam.stageId ||
-                                exam.stageId ===
-                                student.stageId
-                            );
 
-                        }
-                    )
-                    .slice(0, 5);
+            const exams =
+                examsSnapshot.docs
+                    .map(
+                        item => ({
+                            id: item.id,
+                            ...item.data()
+                        })
+                    );
 
 
             const box =
@@ -946,7 +968,7 @@
                 );
 
 
-            if (!available.length) {
+            if (!exams.length) {
 
                 box.innerHTML = `
 
@@ -965,7 +987,8 @@
             } else {
 
                 box.innerHTML =
-                    available
+                    exams
+                        .slice(0, 5)
                         .map(
                             exam => `
 
@@ -989,11 +1012,28 @@
 
                                         <div class="item-meta">
 
+                                            📚
                                             ${escapeHtml(
                                                 exam.subject ||
                                                 exam.subjectId ||
-                                                "اختبار"
+                                                "غير محدد"
                                             )}
+
+                                            ${
+                                                exam.duration ||
+                                                exam.durationMinutes
+                                                    ? `
+                                                        <br>
+
+                                                        ⏱️
+                                                        ${Number(
+                                                            exam.duration ||
+                                                            exam.durationMinutes
+                                                        )}
+                                                        دقيقة
+                                                    `
+                                                    : ""
+                                            }
 
                                         </div>
 
@@ -1034,6 +1074,425 @@
                 </div>
 
             `;
+
+        }
+
+
+        // =================================================
+        // 2.5. Student Progress
+        // يعتمد على examResults الخاصة بالطالب
+        // =================================================
+
+        try {
+
+            const resultsQuery =
+                query(
+
+                    collection(
+                        db,
+                        "examResults"
+                    ),
+
+                    where(
+                        "studentId",
+                        "==",
+                        student.id
+                    )
+
+                );
+
+
+            const resultsSnapshot =
+                await getDocs(
+                    resultsQuery
+                );
+
+
+            const results =
+                resultsSnapshot.docs
+                    .map(
+                        item => ({
+                            id: item.id,
+                            ...item.data()
+                        })
+                    );
+
+
+            const progressBox =
+                document.getElementById(
+                    "studentProgress"
+                );
+
+
+            // ---------------------------------------------
+            // الاختبارات المنشورة الخاصة بمرحلة الطالب
+            // ---------------------------------------------
+
+            const examsQuery =
+                query(
+
+                    collection(
+                        db,
+                        "exams"
+                    ),
+
+                    where(
+                        "isPublished",
+                        "==",
+                        true
+                    ),
+
+                    where(
+                        "stageId",
+                        "==",
+                        student.stageId
+                    )
+
+                );
+
+
+            const examsSnapshot =
+                await getDocs(
+                    examsQuery
+                );
+
+
+            const totalExams =
+                examsSnapshot.size;
+
+
+            // ---------------------------------------------
+            // IDs الاختبارات المتاحة
+            // ---------------------------------------------
+
+            const availableExamIds =
+                new Set(
+                    examsSnapshot.docs.map(
+                        item => item.id
+                    )
+                );
+
+
+            // ---------------------------------------------
+            // نتائج الطالب الخاصة بالاختبارات الحالية
+            // ---------------------------------------------
+
+            const completedResults =
+                results.filter(
+                    result =>
+                        availableExamIds.has(
+                            result.examId
+                        )
+                );
+
+
+            // ---------------------------------------------
+            // منع تكرار نفس الاختبار
+            // ---------------------------------------------
+
+            const uniqueExamIds =
+                new Set();
+
+
+            const completed =
+                completedResults.filter(
+                    result => {
+
+                        if (
+                            !result.examId ||
+                            uniqueExamIds.has(
+                                result.examId
+                            )
+                        ) {
+
+                            return false;
+
+                        }
+
+
+                        uniqueExamIds.add(
+                            result.examId
+                        );
+
+
+                        return true;
+
+                    }
+                );
+
+
+            // ---------------------------------------------
+            // عدد الاختبارات المكتملة
+            // ---------------------------------------------
+
+            const completedCount =
+                completed.length;
+
+
+            // ---------------------------------------------
+            // نسبة الإنجاز
+            // ---------------------------------------------
+
+            const progressPercentage =
+                totalExams
+                    ? Math.min(
+                        100,
+                        Number(
+                            (
+                                completedCount /
+                                totalExams *
+                                100
+                            ).toFixed(0)
+                        )
+                    )
+                    : 0;
+
+
+            // ---------------------------------------------
+            // متوسط الدرجات
+            // ---------------------------------------------
+
+            let averagePercentage =
+                0;
+
+
+            if (completed.length) {
+
+                const totalPercentage =
+                    completed.reduce(
+                        (
+                            sum,
+                            result
+                        ) =>
+                            sum +
+                            Number(
+                                result.percentage ||
+                                0
+                            ),
+                        0
+                    );
+
+
+                averagePercentage =
+                    Number(
+                        (
+                            totalPercentage /
+                            completed.length
+                        ).toFixed(1)
+                    );
+
+            }
+
+
+            // ---------------------------------------------
+            // عرض التقدم
+            // ---------------------------------------------
+
+            progressBox.className =
+                "";
+
+
+            progressBox.style.cssText = `
+                padding:0;
+                text-align:right;
+                color:#243746;
+                font-size:12px;
+                line-height:1.8;
+            `;
+
+
+            progressBox.innerHTML = `
+
+                <div
+                    style="
+                        display:grid;
+                        grid-template-columns:
+                            repeat(3,1fr);
+                        gap:10px;
+                        margin-bottom:15px;
+                    "
+                >
+
+                    <div
+                        style="
+                            background:#f4f9fb;
+                            border-radius:10px;
+                            padding:12px;
+                            text-align:center;
+                        "
+                    >
+
+                        <div
+                            style="
+                                color:#82919d;
+                                font-size:10px;
+                                margin-bottom:5px;
+                            "
+                        >
+                            الاختبارات
+                        </div>
+
+                        <strong
+                            style="
+                                font-size:17px;
+                                color:#087ea4;
+                            "
+                        >
+                            ${completedCount}/${totalExams}
+                        </strong>
+
+                    </div>
+
+
+                    <div
+                        style="
+                            background:#f4f9fb;
+                            border-radius:10px;
+                            padding:12px;
+                            text-align:center;
+                        "
+                    >
+
+                        <div
+                            style="
+                                color:#82919d;
+                                font-size:10px;
+                                margin-bottom:5px;
+                            "
+                        >
+                            الإنجاز
+                        </div>
+
+                        <strong
+                            style="
+                                font-size:17px;
+                                color:#087ea4;
+                            "
+                        >
+                            ${progressPercentage}%
+                        </strong>
+
+                    </div>
+
+
+                    <div
+                        style="
+                            background:#f4f9fb;
+                            border-radius:10px;
+                            padding:12px;
+                            text-align:center;
+                        "
+                    >
+
+                        <div
+                            style="
+                                color:#82919d;
+                                font-size:10px;
+                                margin-bottom:5px;
+                            "
+                        >
+                            متوسط الدرجات
+                        </div>
+
+                        <strong
+                            style="
+                                font-size:17px;
+                                color:#16834f;
+                            "
+                        >
+                            ${averagePercentage}%
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    style="
+                        background:#edf2f5;
+                        height:9px;
+                        border-radius:20px;
+                        overflow:hidden;
+                        margin-bottom:9px;
+                    "
+                >
+
+                    <div
+                        style="
+                            width:${progressPercentage}%;
+                            height:100%;
+                            background:#087ea4;
+                            border-radius:20px;
+                            transition:width .3s ease;
+                        "
+                    ></div>
+
+                </div>
+
+
+                <div
+                    style="
+                        color:#71808d;
+                        font-size:11px;
+                        text-align:center;
+                    "
+                >
+
+                    ${
+                        totalExams === 0
+                            ? "لا توجد اختبارات منشورة لمرحلتك حاليًا."
+                            : completedCount === 0
+                                ? "ابدأ أول اختبار لك لبدء احتساب تقدمك."
+                                : completedCount >= totalExams
+                                    ? "🎉 أحسنت! أديت جميع الاختبارات المتاحة."
+                                    : `أكملت ${completedCount} من ${totalExams} اختبارات متاحة.`
+                    }
+
+                </div>
+
+            `;
+
+
+        } catch (error) {
+
+            console.error(
+                "Dashboard progress error:",
+                error
+            );
+
+
+            const progressBox =
+                document.getElementById(
+                    "studentProgress"
+                );
+
+
+            if (progressBox) {
+
+                progressBox.className =
+                    "empty";
+
+
+                progressBox.style.cssText =
+                    "";
+
+
+                progressBox.innerHTML = `
+
+                    ⚠️
+
+                    <br>
+
+                    ${escapeHtml(
+                        studentErrorMessage(
+                            error
+                        )
+                    )}
+
+                `;
+
+            }
 
         }
 
