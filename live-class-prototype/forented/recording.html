@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 
-<html
-    lang="ar"
-    dir="rtl"
->
+<html lang="ar" dir="rtl">
 
 <head>
 
@@ -15,47 +12,49 @@
     >
 
     <title>
-        تسجيلات المحاضرات
+        Recordings
     </title>
 
     <link
         rel="stylesheet"
-        href="./style.css"
+        href="style.css"
     >
 
 </head>
 
 <body>
 
-<main class="container">
+<div class="container">
 
     <div class="card">
 
         <h1>
-            🎥 تسجيلات المحاضرات
+            🎬 التسجيلات
         </h1>
 
-        <p class="muted">
-            المحاضرات المسجلة تلقائيًا
+        <p>
+            التسجيلات التي انتهى رفعها.
         </p>
 
-
-        <div
-            id="recordings"
+        <button
+            id="refresh"
         >
-
-            جاري تحميل التسجيلات...
-
-        </div>
+            تحديث
+        </button>
 
     </div>
 
-</main>
+
+    <div
+        id="recordings"
+    ></div>
+
+</div>
 
 
 <script>
 
-const API_URL =
+const API =
     "http://localhost:3000";
 
 
@@ -67,11 +66,20 @@ async function loadRecordings() {
         );
 
 
+    container.innerHTML =
+        `
+            <div class="card">
+                جاري تحميل التسجيلات...
+            </div>
+        `;
+
+
     try {
 
         const response =
             await fetch(
-                `${API_URL}/api/recordings`
+                API +
+                "/api/recordings"
             );
 
 
@@ -80,33 +88,15 @@ async function loadRecordings() {
 
 
         if (
-            !data.success
-        ) {
-
-            throw new Error(
-                "Failed to load"
-            );
-
-        }
-
-
-        if (
             !data.recordings.length
         ) {
 
-            container.innerHTML = `
-
-                <div class="empty">
-
-                    🎬
-
-                    <br><br>
-
-                    لا توجد تسجيلات حتى الآن.
-
-                </div>
-
-            `;
+            container.innerHTML =
+                `
+                    <div class="card">
+                        لا توجد تسجيلات حتى الآن.
+                    </div>
+                `;
 
             return;
 
@@ -118,69 +108,24 @@ async function loadRecordings() {
                 .map(
                     recording => `
 
-                        <div class="recording">
+                        <div class="card">
 
                             <h3>
-
-                                🎥
-                                ${escapeHtml(
-                                    recording.roomName
-                                )}
-
+                                ${recording.filename}
                             </h3>
 
+                            <video
+                                controls
+                                preload="metadata"
+                                src="${API}${recording.url}"
+                            ></video>
 
                             <p>
-
-                                الحالة:
-                                ${recording.status}
-
-                            </p>
-
-
-                            <p>
-
-                                ${new Date(
-                                    recording.endedAt
-                                ).toLocaleString(
-                                    "ar-EG"
+                                الحجم:
+                                ${formatBytes(
+                                    recording.size
                                 )}
-
                             </p>
-
-
-                            ${
-                                recording.recordingUrl
-                                ?
-                                `
-
-                                <a
-                                    href="${escapeAttribute(
-                                        recording.recordingUrl
-                                    )}"
-                                    target="_blank"
-                                    rel="noopener"
-                                    class="watch"
-                                >
-
-                                    ▶️ مشاهدة التسجيل
-
-                                </a>
-
-                                `
-                                :
-                                `
-
-                                <div class="processing">
-
-                                    ⏳
-                                    التسجيل تم إنهاؤه،
-                                    لكن رابط الملف لم يظهر بعد.
-
-                                </div>
-
-                                `
-                            }
 
                         </div>
 
@@ -191,80 +136,70 @@ async function loadRecordings() {
 
     } catch (error) {
 
-        console.error(error);
-
-
-        container.innerHTML = `
-
-            <div class="error">
-
-                ❌
-
-                حدث خطأ أثناء تحميل التسجيلات.
-
-            </div>
-
-        `;
+        container.innerHTML =
+            `
+                <div class="card">
+                    حدث خطأ:
+                    ${error.message}
+                </div>
+            `;
 
     }
 
 }
 
 
-function escapeHtml(
-    value
+function formatBytes(
+    bytes
 ) {
 
-    return String(
-        value || ""
-    )
-    .replaceAll(
-        "&",
-        "&amp;"
-    )
-    .replaceAll(
-        "<",
-        "&lt;"
-    )
-    .replaceAll(
-        ">",
-        "&gt;"
-    )
-    .replaceAll(
-        '"',
-        "&quot;"
-    )
-    .replaceAll(
-        "'",
-        "&#039;"
-    );
+    if (
+        !bytes
+    ) {
+
+        return "0 B";
+
+    }
+
+
+    const units =
+        [
+            "B",
+            "KB",
+            "MB",
+            "GB"
+        ];
+
+
+    const index =
+        Math.floor(
+            Math.log(bytes) /
+            Math.log(1024)
+        );
+
+
+    return (
+        bytes /
+        Math.pow(
+            1024,
+            index
+        )
+    ).toFixed(2)
+    + " "
+    + units[index];
 
 }
 
 
-function escapeAttribute(
-    value
-) {
-
-    return escapeHtml(
-        value
-    );
-
-}
+document
+    .getElementById(
+        "refresh"
+    )
+    .onclick =
+    loadRecordings;
 
 
 loadRecordings();
-
-
-/*
- * تحديث الصفحة تلقائيًا
- * كل 10 ثواني.
- */
-
-setInterval(
-    loadRecordings,
-    10000
-);
 
 </script>
 
