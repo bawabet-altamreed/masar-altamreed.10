@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html
+    lang="ar"
+    dir="rtl"
+>
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        تسجيلات المحاضرات
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="./style.css"
+    >
+
+</head>
+
+<body>
+
+<main class="container">
+
+    <div class="card">
+
+        <h1>
+            🎥 تسجيلات المحاضرات
+        </h1>
+
+        <p class="muted">
+            المحاضرات المسجلة تلقائيًا
+        </p>
+
+
+        <div
+            id="recordings"
+        >
+
+            جاري تحميل التسجيلات...
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<script>
+
+const API_URL =
+    "http://localhost:3000";
+
+
+async function loadRecordings() {
+
+    const container =
+        document.getElementById(
+            "recordings"
+        );
+
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_URL}/api/recordings`
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            !data.success
+        ) {
+
+            throw new Error(
+                "Failed to load"
+            );
+
+        }
+
+
+        if (
+            !data.recordings.length
+        ) {
+
+            container.innerHTML = `
+
+                <div class="empty">
+
+                    🎬
+
+                    <br><br>
+
+                    لا توجد تسجيلات حتى الآن.
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        container.innerHTML =
+            data.recordings
+                .map(
+                    recording => `
+
+                        <div class="recording">
+
+                            <h3>
+
+                                🎥
+                                ${escapeHtml(
+                                    recording.roomName
+                                )}
+
+                            </h3>
+
+
+                            <p>
+
+                                الحالة:
+                                ${recording.status}
+
+                            </p>
+
+
+                            <p>
+
+                                ${new Date(
+                                    recording.endedAt
+                                ).toLocaleString(
+                                    "ar-EG"
+                                )}
+
+                            </p>
+
+
+                            ${
+                                recording.recordingUrl
+                                ?
+                                `
+
+                                <a
+                                    href="${escapeAttribute(
+                                        recording.recordingUrl
+                                    )}"
+                                    target="_blank"
+                                    rel="noopener"
+                                    class="watch"
+                                >
+
+                                    ▶️ مشاهدة التسجيل
+
+                                </a>
+
+                                `
+                                :
+                                `
+
+                                <div class="processing">
+
+                                    ⏳
+                                    التسجيل تم إنهاؤه،
+                                    لكن رابط الملف لم يظهر بعد.
+
+                                </div>
+
+                                `
+                            }
+
+                        </div>
+
+                    `
+                )
+                .join("");
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        container.innerHTML = `
+
+            <div class="error">
+
+                ❌
+
+                حدث خطأ أثناء تحميل التسجيلات.
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+function escapeHtml(
+    value
+) {
+
+    return String(
+        value || ""
+    )
+    .replaceAll(
+        "&",
+        "&amp;"
+    )
+    .replaceAll(
+        "<",
+        "&lt;"
+    )
+    .replaceAll(
+        ">",
+        "&gt;"
+    )
+    .replaceAll(
+        '"',
+        "&quot;"
+    )
+    .replaceAll(
+        "'",
+        "&#039;"
+    );
+
+}
+
+
+function escapeAttribute(
+    value
+) {
+
+    return escapeHtml(
+        value
+    );
+
+}
+
+
+loadRecordings();
+
+
+/*
+ * تحديث الصفحة تلقائيًا
+ * كل 10 ثواني.
+ */
+
+setInterval(
+    loadRecordings,
+    10000
+);
+
+</script>
+
+</body>
+
+</html>
