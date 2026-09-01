@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+    Live Class Prototype
+</title>
+
+<link
+    rel="stylesheet"
+    href="style.css"
+>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>
+            🎥 المحاضرة المباشرة
+        </h1>
+
+        <p>
+            Prototype - مسار التمريض
+        </p>
+
+
+        <input
+            id="name"
+            placeholder="اكتب اسمك"
+        >
+
+
+        <input
+            id="room"
+            value="nursing-class-1"
+            placeholder="اسم الغرفة"
+        >
+
+
+        <select id="role">
+
+            <option value="student">
+                طالب
+            </option>
+
+            <option value="teacher">
+                مدرس
+            </option>
+
+        </select>
+
+
+        <button id="join">
+
+            دخول المحاضرة
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+document
+    .getElementById("join")
+    .addEventListener(
+        "click",
+        () => {
+
+            const name =
+                document
+                .getElementById("name")
+                .value
+                .trim();
+
+
+            const room =
+                document
+                .getElementById("room")
+                .value
+                .trim();
+
+
+            const role =
+                document
+                .getElementById("role")
+                .value;
+
+
+            if (!name) {
+
+                alert(
+                    "اكتب اسمك أولًا."
+                );
+
+                return;
+
+            }
+
+
+            const params =
+                new URLSearchParams({
+
+                    name,
+
+                    room,
+
+                    role
+
+                });
+
+
+            window.location.href =
+                `room.html?${params}`;
+
+        }
+    );
+
+</script>
+
+</body>
+
+</html>
