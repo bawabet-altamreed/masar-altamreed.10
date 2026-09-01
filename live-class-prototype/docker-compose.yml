@@ -2,12 +2,12 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: liveclass-redis
+    container_name: nursing-live-redis
     restart: unless-stopped
 
   livekit:
     image: livekit/livekit-server:latest
-    container_name: liveclass-livekit
+    container_name: nursing-live-livekit
     restart: unless-stopped
 
     command: --dev
@@ -25,13 +25,14 @@ services:
 
   egress:
     image: livekit/egress:latest
-    container_name: liveclass-egress
+    container_name: nursing-live-egress
     restart: unless-stopped
 
     cap_add:
       - SYS_ADMIN
 
     environment:
+
       EGRESS_CONFIG_BODY: |
         log_level: info
 
@@ -40,8 +41,18 @@ services:
 
         ws_url: ws://livekit:7880
 
+        insecure: true
+
         redis:
           address: redis:6379
+
+        s3:
+          access_key: ${S3_ACCESS_KEY}
+          secret: ${S3_SECRET_KEY}
+          region: ${S3_REGION}
+          bucket: ${S3_BUCKET}
+          endpoint: ${S3_ENDPOINT}
+          force_path_style: true
 
     depends_on:
       - livekit
