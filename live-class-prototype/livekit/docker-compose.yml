@@ -5,6 +5,30 @@ services:
     container_name: nursing-live-redis
     restart: unless-stopped
 
+
+  minio:
+    image: minio/minio:latest
+    container_name: nursing-live-minio
+    restart: unless-stopped
+
+    command:
+      - server
+      - /data
+      - --console-address
+      - ":9001"
+
+    environment:
+      MINIO_ROOT_USER: prototype
+      MINIO_ROOT_PASSWORD: prototype-secret
+
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+
+    volumes:
+      - minio_data:/data
+
+
   livekit:
     image: livekit/livekit-server:latest
     container_name: nursing-live-livekit
@@ -22,6 +46,7 @@ services:
 
     depends_on:
       - redis
+
 
   egress:
     image: livekit/egress:latest
@@ -47,14 +72,19 @@ services:
           address: redis:6379
 
         s3:
-          access_key: ${S3_ACCESS_KEY}
-          secret: ${S3_SECRET_KEY}
-          region: ${S3_REGION}
-          bucket: ${S3_BUCKET}
-          endpoint: ${S3_ENDPOINT}
+          access_key: prototype
+          secret: prototype-secret
+          region: us-east-1
+          bucket: recordings
+          endpoint: http://minio:9000
           force_path_style: true
 
     depends_on:
       - livekit
       - redis
+      - minio
 
+
+volumes:
+
+  minio_data:
