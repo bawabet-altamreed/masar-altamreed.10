@@ -1,244 +1,1148 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-
-<head>
-
-<meta charset="UTF-8">
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">
 
 <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
 >
 
-<title>حسابي | مسار التمريض</title>
+<title>
+    حسابي | مسار التمريض
+</title>
 
 <style>
 
-body {
-    margin: 0;
-    font-family: Arial, Tahoma, sans-serif;
-    background: #f3f8fb;
-}
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
 
-.page {
-    padding: 25px;
-}
+    body {
+        font-family:
+            Arial,
+            Tahoma,
+            sans-serif;
 
-.panel {
-    max-width: 700px;
-    background: white;
-    border-radius: 15px;
-    border: 1px solid #e3edf2;
-    padding: 22px;
-}
+        background: #f3f8fb;
 
-.field {
-    padding: 14px 0;
-    border-bottom: 1px solid #edf1f4;
-}
+        color: #17324a;
 
-.label {
-    color: #71808d;
-    font-size: 11px;
-    margin-bottom: 6px;
-}
+        min-height: 100vh;
+    }
 
-.value {
-    font-weight: bold;
-}
+
+    /* =====================================================
+       Profile Page
+    ===================================================== */
+
+    .profile-page {
+        padding: 25px;
+    }
+
+
+    /* =====================================================
+       Profile Hero
+    ===================================================== */
+
+    .profile-hero {
+        background:
+            linear-gradient(
+                135deg,
+                #087ea4,
+                #075f7c
+            );
+
+        color: white;
+
+        border-radius: 20px;
+
+        padding: 28px;
+
+        margin-bottom: 18px;
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 20px;
+
+        box-shadow:
+            0 8px 25px
+            rgba(8,126,164,.12);
+    }
+
+    .profile-avatar {
+        width: 78px;
+
+        height: 78px;
+
+        min-width: 78px;
+
+        border-radius: 50%;
+
+        background:
+            rgba(255,255,255,.18);
+
+        border:
+            2px solid
+            rgba(255,255,255,.4);
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        font-size: 30px;
+
+        font-weight: bold;
+    }
+
+    .profile-hero-info h2 {
+        font-size: 22px;
+
+        margin-bottom: 7px;
+
+        line-height: 1.5;
+    }
+
+    .profile-hero-info p {
+        font-size: 12px;
+
+        opacity: .9;
+
+        line-height: 1.8;
+    }
+
+
+    /* =====================================================
+       Grid
+    ===================================================== */
+
+    .profile-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+
+        gap: 16px;
+
+        margin-bottom: 18px;
+    }
+
+
+    /* =====================================================
+       Card
+    ===================================================== */
+
+    .profile-card {
+        background: white;
+
+        border:
+            1px solid
+            #e4edf2;
+
+        border-radius: 17px;
+
+        overflow: hidden;
+    }
+
+    .profile-card-header {
+        padding: 17px 18px;
+
+        border-bottom:
+            1px solid
+            #edf1f4;
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 9px;
+    }
+
+    .profile-card-header .icon {
+        width: 34px;
+
+        height: 34px;
+
+        border-radius: 9px;
+
+        background: #eef8fb;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        font-size: 17px;
+    }
+
+    .profile-card-header h3 {
+        font-size: 15px;
+    }
+
+    .profile-card-body {
+        padding: 18px;
+    }
+
+
+    /* =====================================================
+       Information Rows
+    ===================================================== */
+
+    .info-list {
+        display: grid;
+
+        gap: 12px;
+    }
+
+    .info-row {
+        display: flex;
+
+        justify-content:
+            space-between;
+
+        align-items: center;
+
+        gap: 15px;
+
+        padding-bottom: 12px;
+
+        border-bottom:
+            1px solid
+            #edf1f4;
+    }
+
+    .info-row:last-child {
+        padding-bottom: 0;
+
+        border-bottom: none;
+    }
+
+    .info-label {
+        color: #8795a0;
+
+        font-size: 11px;
+    }
+
+    .info-value {
+        color: #17324a;
+
+        font-size: 12px;
+
+        font-weight: bold;
+
+        text-align: left;
+
+        word-break: break-word;
+    }
+
+
+    /* =====================================================
+       Subscription
+    ===================================================== */
+
+    .subscription-status {
+        display: inline-flex;
+
+        align-items: center;
+
+        gap: 6px;
+
+        background: #eaf8f1;
+
+        color: #16834f;
+
+        padding: 6px 9px;
+
+        border-radius: 8px;
+
+        font-size: 10px;
+
+        font-weight: bold;
+    }
+
+    .subscription-status::before {
+        content: "";
+
+        width: 6px;
+
+        height: 6px;
+
+        border-radius: 50%;
+
+        background: #16834f;
+    }
+
+
+    /* =====================================================
+       Stats
+    ===================================================== */
+
+    .profile-stats {
+        display: grid;
+
+        grid-template-columns:
+            repeat(
+                3,
+                minmax(0, 1fr)
+            );
+
+        gap: 12px;
+    }
+
+    .profile-stat {
+        background: #f8fbfc;
+
+        border:
+            1px solid
+            #edf2f5;
+
+        border-radius: 12px;
+
+        padding: 15px;
+
+        text-align: center;
+    }
+
+    .profile-stat span {
+        display: block;
+
+        color: #8795a0;
+
+        font-size: 10px;
+
+        margin-bottom: 7px;
+    }
+
+    .profile-stat strong {
+        display: block;
+
+        color: #087ea4;
+
+        font-size: 21px;
+    }
+
+
+    /* =====================================================
+       Actions
+    ===================================================== */
+
+    .profile-actions {
+        background: white;
+
+        border:
+            1px solid
+            #e4edf2;
+
+        border-radius: 17px;
+
+        padding: 18px;
+
+        display: flex;
+
+        flex-wrap: wrap;
+
+        gap: 10px;
+    }
+
+    .profile-button {
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        min-height: 42px;
+
+        padding:
+            0 18px;
+
+        border: none;
+
+        border-radius: 9px;
+
+        background: #087ea4;
+
+        color: white;
+
+        text-decoration: none;
+
+        font-family: inherit;
+
+        font-size: 11px;
+
+        font-weight: bold;
+
+        cursor: pointer;
+    }
+
+    .profile-button:hover {
+        background: #075f7c;
+    }
+
+    .profile-button.secondary {
+        background: #eef8fb;
+
+        color: #087ea4;
+    }
+
+    .profile-button.secondary:hover {
+        background: #dff1f6;
+    }
+
+    .profile-button.danger {
+        background: #fff1f1;
+
+        color: #b42318;
+    }
+
+    .profile-button.danger:hover {
+        background: #ffe4e4;
+    }
+
+
+    /* =====================================================
+       Loading / Error
+    ===================================================== */
+
+    .state-box {
+        background: white;
+
+        border:
+            1px solid
+            #e4edf2;
+
+        border-radius: 15px;
+
+        padding: 45px 20px;
+
+        text-align: center;
+
+        color: #8795a0;
+
+        font-size: 13px;
+
+        line-height: 2;
+    }
+
+    .error-box {
+        background: #fff1f1;
+
+        border-color: #ffd5d5;
+
+        color: #b42318;
+    }
+
+
+    /* =====================================================
+       Responsive
+    ===================================================== */
+
+    @media (max-width: 750px) {
+
+        .profile-page {
+            padding: 15px;
+        }
+
+        .profile-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .profile-hero {
+            padding: 22px;
+
+            align-items: flex-start;
+        }
+
+        .profile-avatar {
+            width: 65px;
+
+            height: 65px;
+
+            min-width: 65px;
+
+            font-size: 25px;
+        }
+
+        .profile-hero-info h2 {
+            font-size: 19px;
+        }
+
+    }
+
+    @media (max-width: 500px) {
+
+        .profile-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .profile-actions {
+            flex-direction: column;
+        }
+
+        .profile-button {
+            width: 100%;
+        }
+
+        .info-row {
+            align-items: flex-start;
+
+            flex-direction: column;
+
+            gap: 5px;
+        }
+
+        .info-value {
+            text-align: right;
+        }
+
+    }
 
 </style>
 
-</head>
+</head><body><div id="studentApp"></div><script type="module">
 
-<body>
-
-<div id="studentApp"></div>
-
-<script type="module">
-
-import {
-    protectStudentPage,
-    createStudentLayout,
-    escapeHtml,
-    formatDate,
-    studentErrorMessage
-} from "../src/student/student.js";
+    import {
+        protectStudentPage,
+        createStudentLayout,
+        escapeHtml,
+        formatDate,
+        studentErrorMessage,
+        logoutStudent
+    } from "../src/student/student.js";
 
 
-try {
-
-    const {
-        student,
-        subscription
-    } =
-        await protectStudentPage();
+    import {
+        db
+    } from "../src/firebase/init.js";
 
 
-    createStudentLayout(
-        student,
-        "profile"
-    );
+    import {
+        collection,
+        query,
+        where,
+        getDocs
+    } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-    document.getElementById(
-        "studentPageTitle"
-    ).textContent =
-        "حسابي";
+    /* =====================================================
+       State
+    ===================================================== */
+
+    let student = null;
+
+    let subscription = null;
 
 
-    document.getElementById(
-        "studentPageContent"
-    ).innerHTML = `
+    /* =====================================================
+       Start
+    ===================================================== */
 
-    <div class="page">
+    try {
 
-        <div class="panel">
-
-            <h2>
-                👤 بيانات الحساب
-            </h2>
+        const result =
+            await protectStudentPage();
 
 
-            <div class="field">
+        student =
+            result.student;
 
-                <div class="label">
-                    اسم الطالب
+
+        subscription =
+            result.subscription;
+
+
+        createStudentLayout(
+            student,
+            "profile"
+        );
+
+
+        document.getElementById(
+            "studentPageTitle"
+        ).textContent =
+            "حسابي";
+
+
+        const content =
+            document.getElementById(
+                "studentPageContent"
+            );
+
+
+        content.innerHTML = `
+
+            <div class="profile-page">
+
+                <div class="profile-hero">
+
+                    <div class="profile-avatar">
+
+                        ${escapeHtml(
+                            getInitial(
+                                student.name ||
+                                student.displayName ||
+                                "ط"
+                            )
+                        )}
+
+                    </div>
+
+
+                    <div class="profile-hero-info">
+
+                        <h2>
+
+                            ${escapeHtml(
+                                student.name ||
+                                student.displayName ||
+                                "الطالب"
+                            )}
+
+                        </h2>
+
+
+                        <p>
+
+                            👨‍🎓 طالب في مسار التمريض
+
+                            <br>
+
+                            المرحلة:
+                            ${escapeHtml(
+                                student.stageId ||
+                                "غير محددة"
+                            )}
+
+                        </p>
+
+                    </div>
+
                 </div>
 
-                <div class="value">
-                    ${escapeHtml(
-                        student.name ||
-                        "—"
-                    )}
+
+                <div class="profile-grid">
+
+                    <section class="profile-card">
+
+                        <div class="profile-card-header">
+
+                            <div class="icon">
+                                👤
+                            </div>
+
+                            <h3>
+                                البيانات الشخصية
+                            </h3>
+
+                        </div>
+
+
+                        <div class="profile-card-body">
+
+                            <div class="info-list">
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        الاسم
+                                    </span>
+
+                                    <span class="info-value">
+
+                                        ${escapeHtml(
+                                            student.name ||
+                                            student.displayName ||
+                                            "—"
+                                        )}
+
+                                    </span>
+
+                                </div>
+
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        البريد الإلكتروني
+                                    </span>
+
+                                    <span class="info-value">
+
+                                        ${escapeHtml(
+                                            student.email ||
+                                            "غير متاح"
+                                        )}
+
+                                    </span>
+
+                                </div>
+
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        المرحلة الدراسية
+                                    </span>
+
+                                    <span class="info-value">
+
+                                        ${escapeHtml(
+                                            student.stageId ||
+                                            "—"
+                                        )}
+
+                                    </span>
+
+                                </div>
+
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        اسم المستخدم
+                                    </span>
+
+                                    <span class="info-value">
+
+                                        ${escapeHtml(
+                                            student.username ||
+                                            "—"
+                                        )}
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                    <section class="profile-card">
+
+                        <div class="profile-card-header">
+
+                            <div class="icon">
+                                🎫
+                            </div>
+
+                            <h3>
+                                الاشتراك
+                            </h3>
+
+                        </div>
+
+
+                        <div class="profile-card-body">
+
+                            <div class="info-list">
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        كود الاشتراك
+                                    </span>
+
+                                    <span class="info-value">
+
+                                        ${escapeHtml(
+                                            subscription?.id ||
+                                            student.subscriptionCode ||
+                                            student.username ||
+                                            "—"
+                                        )}
+
+                                    </span>
+
+                                </div>
+
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        الحالة
+                                    </span>
+
+                                    <span class="info-value">
+
+                                        <span
+                                            class="subscription-status"
+                                        >
+                                            الاشتراك فعال
+                                        </span>
+
+                                    </span>
+
+                                </div>
+
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        بداية الاشتراك
+                                    </span>
+
+                                    <span class="info-value">
+
+                                        ${formatDate(
+                                            subscription?.startDate
+                                        )}
+
+                                    </span>
+
+                                </div>
+
+
+                                <div class="info-row">
+
+                                    <span class="info-label">
+                                        نهاية الاشتراك
+                                    </span>
+
+                                    <span class="info-value">
+
+                                        ${formatDate(
+                                            subscription?.endDate
+                                        )}
+
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+
+                <section class="profile-card"
+                    style="margin-bottom:18px;"
+                >
+
+                    <div class="profile-card-header">
+
+                        <div class="icon">
+                            📊
+                        </div>
+
+                        <h3>
+                            ملخص الأداء
+                        </h3>
+
+                    </div>
+
+
+                    <div class="profile-card-body">
+
+                        <div
+                            id="profileStats"
+                            class="profile-stats"
+                        >
+
+                            <div class="profile-stat">
+
+                                <span>
+                                    الاختبارات
+                                </span>
+
+                                <strong>
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div class="profile-stat">
+
+                                <span>
+                                    متوسط النسبة
+                                </span>
+
+                                <strong>
+                                    —
+                                </strong>
+
+                            </div>
+
+
+                            <div class="profile-stat">
+
+                                <span>
+                                    أعلى نسبة
+                                </span>
+
+                                <strong>
+                                    —
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <div class="profile-actions">
+
+                    <a
+                        href="exams.html"
+                        class="profile-button"
+                    >
+                        📝 الاختبارات
+                    </a>
+
+
+                    <a
+                        href="leaderboard.html"
+                        class="profile-button secondary"
+                    >
+                        🏆 الترتيب
+                    </a>
+
+
+                    <a
+                        href="dashboard.html"
+                        class="profile-button secondary"
+                    >
+                        🏠 الرئيسية
+                    </a>
+
+
+                    <button
+                        id="profileLogout"
+                        class="profile-button danger"
+                    >
+                        🚪 تسجيل الخروج
+                    </button>
+
                 </div>
 
             </div>
 
+        `;
 
-            <div class="field">
 
-                <div class="label">
-                    كود الاشتراك
-                </div>
+        document.getElementById(
+            "profileLogout"
+        ).addEventListener(
+            "click",
+            logoutStudent
+        );
+
+
+        await loadPerformance();
+
+
+    } catch (error) {
+
+        console.error(
+            "Student profile error:",
+            error
+        );
+
+
+        const app =
+            document.getElementById(
+                "studentApp"
+            );
+
+
+        app.innerHTML = `
+
+            <div
+                style="
+                    padding:30px;
+                    font-family:Arial,Tahoma,sans-serif;
+                    background:#f3f8fb;
+                    min-height:100vh;
+                "
+            >
 
                 <div
-                    class="value"
-                    dir="ltr"
+                    class="
+                        state-box
+                        error-box
+                    "
                 >
+
+                    ⚠️
+
+                    <br>
+
                     ${escapeHtml(
-                        student.subscriptionCode ||
-                        student.username ||
-                        "—"
+                        studentErrorMessage(
+                            error
+                        )
                     )}
+
                 </div>
 
             </div>
 
+        `;
 
-            <div class="field">
+    }
 
-                <div class="label">
-                    المرحلة
-                </div>
 
-                <div class="value">
-                    ${escapeHtml(
-                        student.stageId ||
-                        "—"
-                    )}
-                </div>
+    /* =====================================================
+       Load Performance
+    ===================================================== */
+
+    async function loadPerformance() {
+
+        const stats =
+            document.getElementById(
+                "profileStats"
+            );
+
+
+        if (!stats) {
+            return;
+        }
+
+
+        const resultsQuery =
+            query(
+                collection(
+                    db,
+                    "examResults"
+                ),
+                where(
+                    "studentId",
+                    "==",
+                    student.id
+                )
+            );
+
+
+        const snapshot =
+            await getDocs(
+                resultsQuery
+            );
+
+
+        const results =
+            snapshot.docs.map(
+                item => item.data()
+            );
+
+
+        const count =
+            results.length;
+
+
+        const average =
+            count
+                ? (
+                    results.reduce(
+                        (
+                            total,
+                            result
+                        ) =>
+                            total +
+                            Number(
+                                result.percentage ||
+                                0
+                            ),
+                        0
+                    ) / count
+                ).toFixed(1)
+                : "0";
+
+
+        const highest =
+            count
+                ? Math.max(
+                    ...results.map(
+                        result =>
+                            Number(
+                                result.percentage ||
+                                0
+                            )
+                    )
+                ).toFixed(1)
+                : "0";
+
+
+        stats.innerHTML = `
+
+            <div class="profile-stat">
+
+                <span>
+                    الاختبارات
+                </span>
+
+                <strong>
+                    ${count}
+                </strong>
 
             </div>
 
 
-            <div class="field">
+            <div class="profile-stat">
 
-                <div class="label">
-                    رقم الهاتف
-                </div>
+                <span>
+                    متوسط النسبة
+                </span>
 
-                <div class="value">
-                    ${escapeHtml(
-                        student.phone ||
-                        "—"
-                    )}
-                </div>
+                <strong>
+                    ${average}%
+                </strong>
 
             </div>
 
 
-            <div class="field">
+            <div class="profile-stat">
 
-                <div class="label">
-                    حالة الحساب
-                </div>
+                <span>
+                    أعلى نسبة
+                </span>
 
-                <div class="value">
-                    نشط
-                </div>
-
-            </div>
-
-
-            <div class="field">
-
-                <div class="label">
-                    حالة الاشتراك
-                </div>
-
-                <div class="value">
-                    نشط
-                </div>
+                <strong>
+                    ${highest}%
+                </strong>
 
             </div>
 
+        `;
 
-            <div class="field">
-
-                <div class="label">
-                    بداية الاشتراك
-                </div>
-
-                <div class="value">
-                    ${formatDate(
-                        subscription.startDate
-                    )}
-                </div>
-
-            </div>
+    }
 
 
-            <div class="field">
+    /* =====================================================
+       Helpers
+    ===================================================== */
 
-                <div class="label">
-                    نهاية الاشتراك
-                </div>
+    function getInitial(
+        name
+    ) {
 
-                <div class="value">
-                    ${formatDate(
-                        subscription.endDate
-                    )}
-                </div>
+        const value =
+            String(
+                name ||
+                "ط"
+            ).trim();
 
-            </div>
 
-        </div>
+        return value
+            ? value.charAt(0)
+            : "ط";
 
-    </div>
+    }
 
-    `;
-
-} catch (error) {
-
-    console.error(
-        "Profile Error:",
-        error
-    );
-
-}
-
-</script>
-
-</body>
-</html>
+</script></body></html>
