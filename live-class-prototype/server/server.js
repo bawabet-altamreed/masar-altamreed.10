@@ -148,6 +148,9 @@ app.post(
                      *
                      * التسجيل يبدأ تلقائيًا
                      * مع إنشاء الغرفة.
+                     *
+                     * إعدادات التخزين موجودة
+                     * داخل egress.yaml
                      */
 
                     egress: {
@@ -167,30 +170,7 @@ app.post(
                                     fileType: "MP4",
 
                                     filepath:
-                                        `recordings/${roomName}.mp4`,
-
-                                    s3: {
-
-                                        accessKey:
-                                            process.env.S3_ACCESS_KEY,
-
-                                        secret:
-                                            process.env.S3_SECRET,
-
-                                        bucket:
-                                            process.env.S3_BUCKET,
-
-                                        region:
-                                            process.env.S3_REGION,
-
-                                        endpoint:
-                                            process.env.S3_ENDPOINT || "",
-
-                                        forcePathStyle:
-                                            process.env.S3_FORCE_PATH_STYLE ===
-                                            "true"
-
-                                    }
+                                        `recordings/${roomName}.mp4`
 
                                 }
 
