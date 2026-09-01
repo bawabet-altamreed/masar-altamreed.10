@@ -2,59 +2,70 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: livekit-redis
+
+    container_name:
+      live-class-redis
+
     restart: unless-stopped
-    command: redis-server --appendonly yes
-    volumes:
-      - redis-data:/data
-    networks:
-      - livekit
+
+    ports:
+      - "6379:6379"
 
 
   livekit:
-    image: livekit/livekit-server:latest
-    container_name: livekit-server
+    image:
+      livekit/livekit-server:latest
+
+    container_name:
+      live-class-livekit
+
     restart: unless-stopped
-    command: --config /etc/livekit.yaml
+
+    depends_on:
+      - redis
+
     ports:
       - "7880:7880"
       - "7881:7881"
-      - "50000-50100:50000-50100/udp"
+      - "7882:7882/udp"
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
     volumes:
       - ./livekit.yaml:/etc/livekit.yaml:ro
-    depends_on:
-      - redis
-    networks:
-      - livekit
+
+    command:
+      - "--config"
+      - "/etc/livekit.yaml"
 
 
   egress:
-    image: livekit/egress:latest
-    container_name: livekit-egress
+    image:
+      livekit/egress:latest
+
+    container_name:
+      live-class-egress
+
     restart: unless-stopped
+
+    depends_on:
+      - livekit
+      - redis
 
     cap_add:
       - SYS_ADMIN
 
-    environment:
-      EGRESS_CONFIG_FILE: /etc/egress.yaml
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
     volumes:
       - ./egress.yaml:/etc/egress.yaml:ro
       - ../recordings:/out
 
-    depends_on:
-      - livekit
-      - redis
+    environment:
+      EGRESS_CONFIG_FILE:
+        /etc/egress.yaml
 
-    networks:
-      - livekit
-
-
-networks:
-  livekit:
-    driver: bridge
-
-
-volumes:
-  redis-data:
+    ports:
+      - "8081:8081"
