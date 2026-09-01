@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+حسابي | بوابة التمريض
+</title>
+
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    font-family:
+        Arial,
+        Tahoma,
+        sans-serif;
+
+    background: #f1f5f9;
+
+}
+
+
+header {
+
+    height: 75px;
+
+    background: white;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 25px;
+
+    border-bottom:
+        1px solid #e2e8f0;
+
+}
+
+
+.system {
+
+    display: flex;
+
+    min-height:
+        calc(100vh - 75px);
+
+}
+
+
+.sidebar {
+
+    width: 250px;
+
+    background: #0f172a;
+
+    padding: 20px;
+
+}
+
+
+.sidebar a {
+
+    display: block;
+
+    color: #cbd5e1;
+
+    text-decoration: none;
+
+    padding: 13px;
+
+    border-radius: 10px;
+
+    margin-bottom: 8px;
+
+}
+
+
+.sidebar a.active,
+.sidebar a:hover {
+
+    background: #1e293b;
+
+    color: white;
+
+}
+
+
+main {
+
+    flex: 1;
+
+    padding: 30px;
+
+}
+
+
+.profile-card {
+
+    max-width: 700px;
+
+    background: white;
+
+    border-radius: 20px;
+
+    padding: 30px;
+
+    border: 1px solid #e2e8f0;
+
+}
+
+
+.avatar {
+
+    width: 90px;
+    height: 90px;
+
+    border-radius: 50%;
+
+    background: #0f766e;
+
+    color: white;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 35px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.info {
+
+    padding: 15px 0;
+
+    border-bottom:
+        1px solid #e2e8f0;
+
+}
+
+
+.info:last-child {
+
+    border-bottom: 0;
+
+}
+
+
+.info span {
+
+    display: block;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+    margin-bottom: 5px;
+
+}
+
+
+.info strong {
+
+    font-size: 17px;
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <strong>
+        🩺 بوابة التمريض
+    </strong>
+
+    <strong id="name">
+        المعلم
+    </strong>
+
+</header>
+
+
+<div class="system">
+
+
+<aside class="sidebar">
+
+    <a href="./dashboard.html">
+        🏠 الرئيسية
+    </a>
+
+    <a href="./lectures.html">
+        🎥 المحاضرات
+    </a>
+
+    <a href="./exams.html">
+        📝 الاختبارات
+    </a>
+
+    <a
+        href="./profile.html"
+        class="active"
+    >
+        👤 حسابي
+    </a>
+
+</aside>
+
+
+<main>
+
+    <h1>
+        حسابي
+    </h1>
+
+    <p style="color:#64748b">
+        بيانات حساب المعلم
+    </p>
+
+
+    <div
+        class="profile-card"
+        id="profile"
+    >
+
+        جاري تحميل البيانات...
+
+    </div>
+
+</main>
+
+
+</div>
+
+
+<script type="module">
+
+import {
+    auth,
+    db
+} from "../src/firebase/firebase-config.js";
+
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+    doc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+onAuthStateChanged(
+    auth,
+    async user => {
+
+        if (!user) {
+
+            location.href =
+                "./login.html";
+
+            return;
+        }
+
+
+        try {
+
+            const snap =
+                await getDoc(
+                    doc(
+                        db,
+                        "users",
+                        user.uid
+                    )
+                );
+
+
+            if (!snap.exists()) {
+
+                location.href =
+                    "./login.html";
+
+                return;
+            }
+
+
+            const teacher =
+                snap.data();
+
+
+            if (
+                teacher.role !== "teacher"
+            ) {
+
+                location.href =
+                    "./login.html";
+
+                return;
+            }
+
+
+            const name =
+                teacher.name ||
+                teacher.fullName ||
+                "المعلم";
+
+
+            document
+                .getElementById("name")
+                .textContent =
+                    name;
+
+
+            document
+                .getElementById("profile")
+                .innerHTML = `
+
+                    <div class="avatar">
+
+                        ${escapeHtml(
+                            name.charAt(0)
+                        )}
+
+                    </div>
+
+
+                    <div class="info">
+
+                        <span>
+                            الاسم
+                        </span>
+
+                        <strong>
+                            ${escapeHtml(name)}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info">
+
+                        <span>
+                            البريد الإلكتروني
+                        </span>
+
+                        <strong>
+                            ${escapeHtml(
+                                user.email || ""
+                            )}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info">
+
+                        <span>
+                            نوع الحساب
+                        </span>
+
+                        <strong>
+                            معلم
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info">
+
+                        <span>
+                            حالة الحساب
+                        </span>
+
+                        <strong>
+                            ${
+                                teacher.isActive === false
+                                    ? "غير مفعل"
+                                    : "نشط ✅"
+                            }
+                        </strong>
+
+                    </div>
+
+                `;
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            document
+                .getElementById("profile")
+                .textContent =
+                    "حدث خطأ أثناء تحميل البيانات.";
+
+        }
+
+    }
+);
+
+
+function escapeHtml(value) {
+
+    return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+</script>
+
+</body>
+
+</html>
