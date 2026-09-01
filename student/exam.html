@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        الاختبار | بوابة التمريض
+    </title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Tahoma, sans-serif;
+            background: #f4f8fa;
+            color: #243746;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #087ea4;
+            color: white;
+            padding: 18px;
+            box-shadow: 0 3px 15px rgba(0,0,0,.08);
+        }
+
+        .header-inner {
+            width: min(1000px, 100%);
+            margin: auto;
+        }
+
+        .header h1 {
+            font-size: 21px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 12px;
+            opacity: .9;
+        }
+
+        .container {
+            width: min(1000px, 100%);
+            margin: 22px auto;
+            padding: 0 15px;
+        }
+
+        .exam-header {
+            background: white;
+            border: 1px solid #e2ebf0;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 17px;
+        }
+
+        .exam-header h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: #17324a;
+        }
+
+        .exam-description {
+            color: #71808d;
+            font-size: 12px;
+            line-height: 1.8;
+            margin-bottom: 14px;
+        }
+
+        .exam-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .exam-meta span {
+            background: #f3f7f9;
+            color: #60717e;
+            border-radius: 8px;
+            padding: 7px 10px;
+            font-size: 10px;
+        }
+
+        .timer-box {
+            position: sticky;
+            top: 10px;
+            z-index: 10;
+            background: white;
+            border: 1px solid #e2ebf0;
+            border-radius: 12px;
+            padding: 13px 16px;
+            margin-bottom: 17px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 18px rgba(20,70,90,.07);
+        }
+
+        .timer-label {
+            font-size: 11px;
+            color: #71808d;
+        }
+
+        .timer {
+            font-size: 22px;
+            font-weight: bold;
+            color: #087ea4;
+            direction: ltr;
+        }
+
+        .timer.warning {
+            color: #b7791f;
+        }
+
+        .timer.danger {
+            color: #b42318;
+        }
+
+        .question-card {
+            background: white;
+            border: 1px solid #e2ebf0;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .question-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #eaf7fb;
+            color: #087ea4;
+            font-size: 11px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .question-text {
+            font-size: 15px;
+            line-height: 1.9;
+            font-weight: bold;
+            color: #17324a;
+            margin-bottom: 16px;
+        }
+
+        .options {
+            display: grid;
+            gap: 9px;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            border: 1px solid #dfe8ed;
+            border-radius: 10px;
+            padding: 12px;
+            cursor: pointer;
+            transition: .15s;
+        }
+
+        .option:hover {
+            background: #f7fbfc;
+            border-color: #b9dbe5;
+        }
+
+        .option input {
+            margin-top: 4px;
+            accent-color: #087ea4;
+        }
+
+        .option-text {
+            font-size: 12px;
+            line-height: 1.7;
+            flex: 1;
+        }
+
+        .submit-area {
+            background: white;
+            border: 1px solid #e2ebf0;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .submit-button {
+            width: 100%;
+            max-width: 400px;
+            border: none;
+            border-radius: 10px;
+            padding: 13px;
+            background: #087ea4;
+            color: white;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .submit-button:hover {
+            background: #076d8e;
+        }
+
+        .submit-button:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            background: white;
+            border: 1px solid #e2ebf0;
+            border-radius: 15px;
+            padding: 45px 20px;
+            text-align: center;
+            color: #71808d;
+            line-height: 2;
+        }
+
+        .error-box {
+            background: #fff1f1;
+            border: 1px solid #ffd7d7;
+            color: #b42318;
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+            font-size: 12px;
+            line-height: 2;
+        }
+
+        .result-box {
+            background: white;
+            border: 1px solid #e2ebf0;
+            border-radius: 15px;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .result-icon {
+            font-size: 45px;
+            margin-bottom: 12px;
+        }
+
+        .result-box h2 {
+            color: #17324a;
+            margin-bottom: 12px;
+        }
+
+        .result-score {
+            font-size: 28px;
+            font-weight: bold;
+            color: #087ea4;
+            margin: 12px 0;
+        }
+
+        .result-details {
+            color: #71808d;
+            font-size: 12px;
+            line-height: 2;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 11px 18px;
+            border-radius: 9px;
+            background: #087ea4;
+            color: white;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+
+            .timer-box {
+                padding: 11px 13px;
+            }
+
+            .timer {
+                font-size: 19px;
+            }
+
+            .question-card {
+                padding: 16px;
+            }
+
+            .question-text {
+                font-size: 14px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<header class="header">
+
+    <div class="header-inner">
+
+        <h1>
+            بوابة التمريض
+        </h1>
+
+        <p>
+            الاختبارات الإلكترونية
+        </p>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <div id="examContainer">
+
+        <div class="loading">
+            ⏳ جاري تحميل الاختبار...
+        </div>
+
+    </div>
+
+</main>
+
+
+<script type="module">
+
+    import {
+        auth,
+        db
+    } from "../src/firebase/init.js";
+
+
+    import {
+        onAuthStateChanged
+    } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+    import {
+        doc,
+        getDoc,
+        collection,
+        addDoc,
+        query,
+        where,
+        getDocs,
+        serverTimestamp
+    } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+    // =====================================================
+    // State
+    // =====================================================
+
+    let currentUser = null;
+
+    let studentData = null;
+
+    let exam = null;
+
+    let questions = [];
+
+    let submitted = false;
+
+    let timerInterval = null;
+
+    let remainingSeconds = 0;
+
+
+    const examContainer =
+        document.getElementById(
+            "examContainer"
+        );
+
+
+    // =====================================================
+    // Get Exam ID
+    // =====================================================
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const examId =
+        params.get("id");
+
+
+    if (!examId) {
+
+        examContainer.innerHTML = `
+
+            <div class="error-box">
+
+                ⚠️ لم يتم تحديد الاختبار.
+
+                <br>
+
+                يرجى العودة إلى صفحة الاختبارات.
+
+                <br>
+
+                <a
+                    class="back-button"
+                    href="exams.html"
+                >
+                    العودة للاختبارات
+                </a>
+
+            </div>
+
+        `;
+
+    } else {
+
+        start();
+
+    }
+
+
+    // =====================================================
+    // Start
+    // =====================================================
+
+    function start() {
+
+        onAuthStateChanged(
+            auth,
+            async user => {
+
+                if (!user) {
+
+                    window.location.href =
+                        "../login.html";
+
+                    return;
+
+                }
+
+
+                currentUser =
+                    user;
+
+
+                try {
+
+                    await loadStudent();
+
+                    await loadExam();
+
+                    await checkPreviousResult();
+
+                } catch (error) {
+
+                    console.error(
+                        "Student exam error:",
+                        error
+                    );
+
+
+                    examContainer.innerHTML = `
+
+                        <div class="error-box">
+
+                            ⚠️
+
+                            ${escapeHtml(
+                                error.message ||
+                                "تعذر تحميل الاختبار."
+                            )}
+
+                        </div>
+
+                    `;
+
+                }
+
+            }
+        );
+
+    }
+
+
+    // =====================================================
+    // Load Student
+    // =====================================================
+
+    async function loadStudent() {
+
+        const snapshot =
+            await getDoc(
+                doc(
+                    db,
+                    "users",
+                    currentUser.uid
+                )
+            );
+
+
+        if (!snapshot.exists()) {
+
+            throw new Error(
+                "بيانات الطالب غير موجودة."
+            );
+
+        }
+
+
+        studentData =
+            snapshot.data();
+
+
+        if (
+            studentData.role !==
+            "student"
+        ) {
+
+            throw new Error(
+                "هذا الحساب ليس حساب طالب."
+            );
+
+        }
+
+
+        if (
+            studentData.isActive !==
+            true
+        ) {
+
+            throw new Error(
+                "هذا الحساب غير نشط."
+            );
+
+        }
+
+    }
+
+
+    // =====================================================
+    // Load Exam
+    // =====================================================
+
+    async function loadExam() {
+
+        const snapshot =
+            await getDoc(
+                doc(
+                    db,
+                    "exams",
+                    examId
+                )
+            );
+
+
+        if (!snapshot.exists()) {
+
+            throw new Error(
+                "الاختبار غير موجود."
+            );
+
+        }
+
+
+        exam = {
+            id: snapshot.id,
+            ...snapshot.data()
+        };
+
+
+        // التأكد أن الاختبار منشور
+        if (
+            exam.isPublished !== true
+        ) {
+
+            throw new Error(
+                "هذا الاختبار غير متاح حاليًا."
+            );
+
+        }
+
+
+        // التأكد من المرحلة
+        if (
+            String(exam.stageId) !==
+            String(studentData.stageId)
+        ) {
+
+            throw new Error(
+                "هذا الاختبار غير مخصص لمرحلتك الدراسية."
+            );
+
+        }
+
+
+        questions =
+            Array.isArray(
+                exam.questions
+            )
+                ? exam.questions
+                : [];
+
+
+        if (!questions.length) {
+
+            throw new Error(
+                "هذا الاختبار لا يحتوي على أسئلة."
+            );
+
+        }
+
+    }
+
+
+    // =====================================================
+    // Check Previous Result
+    // =====================================================
+
+    async function checkPreviousResult() {
+
+        const previousQuery =
+            query(
+                collection(
+                    db,
+                    "examResults"
+                ),
+                where(
+                    "examId",
+                    "==",
+                    examId
+                ),
+                where(
+                    "studentId",
+                    "==",
+                    currentUser.uid
+                )
+            );
+
+
+        const snapshot =
+            await getDocs(
+                previousQuery
+            );
+
+
+        if (!snapshot.empty) {
+
+            const previous =
+                snapshot.docs[0].data();
+
+
+            renderPreviousResult(
+                previous
+            );
+
+
+            return;
+
+        }
+
+
+        renderExam();
+
+        startTimer();
+
+    }
+
+
+    // =====================================================
+    // Render Exam
+    // =====================================================
+
+    function renderExam() {
+
+        const title =
+            escapeHtml(
+                exam.title ||
+                exam.name ||
+                "اختبار"
+            );
+
+
+        const description =
+            escapeHtml(
+                exam.description ||
+                ""
+            );
+
+
+        const subject =
+            escapeHtml(
+                exam.subject ||
+                exam.subjectId ||
+                "غير محدد"
+            );
+
+
+        const duration =
+            Number(
+                exam.duration ||
+                exam.durationMinutes ||
+                0
+            );
+
+
+        examContainer.innerHTML = `
+
+            <section class="exam-header">
+
+                <h2>
+                    ${title}
+                </h2>
+
+                ${
+                    description
+                        ? `
+                            <div class="exam-description">
+                                ${description}
+                            </div>
+                        `
+                        : ""
+                }
+
+
+                <div class="exam-meta">
+
+                    <span>
+                        📚 ${subject}
+                    </span>
+
+                    <span>
+                        📋 ${questions.length} سؤال
+                    </span>
+
+                    ${
+                        duration
+                            ? `
+                                <span>
+                                    ⏱️ ${duration} دقيقة
+                                </span>
+                            `
+                            : ""
+                    }
+
+                    <span>
+                        👨‍🎓
+                        ${escapeHtml(
+                            studentData.name ||
+                            studentData.displayName ||
+                            "الطالب"
+                        )}
+                    </span>
+
+                </div>
+
+            </section>
+
+
+            <div class="timer-box">
+
+                <span class="timer-label">
+                    ⏱️ الوقت المتبقي
+                </span>
+
+                <span
+                    id="timer"
+                    class="timer"
+                >
+                    ${
+                        duration
+                            ? formatTime(
+                                duration * 60
+                            )
+                            : "∞"
+                    }
+                </span>
+
+            </div>
+
+
+            <div id="questionsContainer">
+
+                ${questions
+                    .map(
+                        (question, index) =>
+                            renderQuestion(
+                                question,
+                                index
+                            )
+                    )
+                    .join("")
+                }
+
+            </div>
+
+
+            <div class="submit-area">
+
+                <p style="
+                    color:#71808d;
+                    font-size:11px;
+                    margin-bottom:13px;
+                    line-height:1.8;
+                ">
+
+                    تأكد من مراجعة إجاباتك قبل التسليم.
+
+                </p>
+
+
+                <button
+                    id="submitButton"
+                    class="submit-button"
+                >
+                    ✅ تسليم الاختبار
+                </button>
+
+            </div>
+
+        `;
+
+
+        document
+            .getElementById(
+                "submitButton"
+            )
+            .addEventListener(
+                "click",
+                () => submitExam(
+                    "manual"
+                )
+            );
+
+    }
+
+
+    // =====================================================
+    // Render Question
+    // =====================================================
+
+    function renderQuestion(
+        question,
+        index
+    ) {
+
+        const text =
+            question.question ||
+            question.text ||
+            question.title ||
+            "";
+
+
+        const options =
+            Array.isArray(
+                question.options
+            )
+                ? question.options
+                : [];
+
+
+        return `
+
+            <div
+                class="question-card"
+                data-question="${index}"
+            >
+
+                <span class="question-number">
+                    ${index + 1}
+                </span>
+
+
+                <div class="question-text">
+
+                    ${escapeHtml(
+                        text
+                    )}
+
+                </div>
+
+
+                <div class="options">
+
+                    ${
+                        options.length
+                            ? options
+                                .map(
+                                    (
+                                        option,
+                                        optionIndex
+                                    ) => `
+
+                                        <label class="option">
+
+                                            <input
+                                                type="radio"
+                                                name="question-${index}"
+                                                value="${escapeAttribute(
+                                                    optionIndex
+                                                )}"
+                                            >
+
+                                            <span class="option-text">
+
+                                                ${escapeHtml(
+                                                    getOptionText(
+                                                        option
+                                                    )
+                                                )}
+
+                                            </span>
+
+                                        </label>
+
+                                    `
+                                )
+                                .join("")
+                            : `
+                                <div
+                                    style="
+                                        color:#b42318;
+                                        font-size:11px;
+                                    "
+                                >
+                                    لا توجد اختيارات لهذا السؤال.
+                                </div>
+                            `
+                    }
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+
+    // =====================================================
+    // Submit Exam
+    // =====================================================
+
+    async function submitExam(
+        reason
+    ) {
+
+        if (submitted) {
+            return;
+        }
+
+
+        const button =
+            document.getElementById(
+                "submitButton"
+            );
+
+
+        if (reason === "manual") {
+
+            const confirmed =
+                window.confirm(
+                    "هل أنت متأكد من تسليم الاختبار؟"
+                );
+
+
+            if (!confirmed) {
+                return;
+            }
+
+        }
+
+
+        submitted = true;
+
+
+        if (button) {
+
+            button.disabled = true;
+
+            button.textContent =
+                "⏳ جاري حفظ النتيجة...";
+
+        }
+
+
+        stopTimer();
+
+
+        try {
+
+            const result =
+                calculateResult();
+
+
+            const resultData = {
+
+                examId:
+                    exam.id,
+
+                examTitle:
+                    exam.title ||
+                    exam.name ||
+                    "اختبار",
+
+                subject:
+                    exam.subject ||
+                    exam.subjectId ||
+                    null,
+
+                stageId:
+                    exam.stageId ||
+                    studentData.stageId ||
+                    null,
+
+                studentId:
+                    currentUser.uid,
+
+                studentName:
+                    studentData.name ||
+                    studentData.displayName ||
+                    currentUser.email ||
+                    "طالب",
+
+                score:
+                    result.score,
+
+                total:
+                    result.total,
+
+                percentage:
+                    result.percentage,
+
+                correctAnswers:
+                    result.correctAnswers,
+
+                wrongAnswers:
+                    result.wrongAnswers,
+
+                unanswered:
+                    result.unanswered,
+
+                submitReason:
+                    reason === "timeout"
+                        ? "timeout"
+                        : "manual",
+
+                submittedAt:
+                    serverTimestamp()
+
+            };
+
+
+            await addDoc(
+                collection(
+                    db,
+                    "examResults"
+                ),
+                resultData
+            );
+
+
+            renderResult(
+                result
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Submit exam error:",
+                error
+            );
+
+
+            submitted = false;
+
+
+            if (button) {
+
+                button.disabled = false;
+
+                button.textContent =
+                    "✅ تسليم الاختبار";
+
+            }
+
+
+            alert(
+                "حدث خطأ أثناء حفظ النتيجة: " +
+                error.message
+            );
+
+        }
+
+    }
+
+
+    // =====================================================
+    // Calculate Result
+    // =====================================================
+
+    function calculateResult() {
+
+        let score = 0;
+
+        let correctAnswers = 0;
+
+        let wrongAnswers = 0;
+
+        let unanswered = 0;
+
+
+        questions.forEach(
+            (
+                question,
+                index
+            ) => {
+
+                const selected =
+                    document.querySelector(
+                        `input[name="question-${index}"]:checked`
+                    );
+
+
+                if (!selected) {
+
+                    unanswered++;
+
+                    return;
+
+                }
+
+
+                const selectedIndex =
+                    Number(
+                        selected.value
+                    );
+
+
+                const correctIndex =
+                    getCorrectAnswerIndex(
+                        question
+                    );
+
+
+                if (
+                    selectedIndex ===
+                    correctIndex
+                ) {
+
+                    score++;
+
+                    correctAnswers++;
+
+                } else {
+
+                    wrongAnswers++;
+
+                }
+
+            }
+        );
+
+
+        const total =
+            questions.length;
+
+
+        const percentage =
+            total
+                ? Number(
+                    (
+                        score /
+                        total *
+                        100
+                    ).toFixed(2)
+                )
+                : 0;
+
+
+        return {
+
+            score,
+
+            total,
+
+            percentage,
+
+            correctAnswers,
+
+            wrongAnswers,
+
+            unanswered
+
+        };
+
+    }
+
+
+    // =====================================================
+    // Correct Answer
+    // =====================================================
+
+    function getCorrectAnswerIndex(
+        question
+    ) {
+
+        if (
+            typeof question.correctAnswer ===
+            "number"
+        ) {
+
+            return question.correctAnswer;
+
+        }
+
+
+        if (
+            typeof question.correctIndex ===
+            "number"
+        ) {
+
+            return question.correctIndex;
+
+        }
+
+
+        if (
+            typeof question.answer ===
+            "number"
+        ) {
+
+            return question.answer;
+
+        }
+
+
+        const correct =
+            question.correctAnswer;
+
+
+        if (
+            typeof correct ===
+            "string"
+        ) {
+
+            const options =
+                Array.isArray(
+                    question.options
+                )
+                    ? question.options
+                    : [];
+
+
+            const index =
+                options.findIndex(
+                    option =>
+                        String(
+                            getOptionText(
+                                option
+                            )
+                        ) ===
+                        correct
+                );
+
+
+            if (index !== -1) {
+
+                return index;
+
+            }
+
+
+            const numeric =
+                Number(
+                    correct
+                );
+
+
+            if (
+                Number.isInteger(
+                    numeric
+                )
+            ) {
+
+                return numeric;
+
+            }
+
+        }
+
+
+        return -1;
+
+    }
+
+
+    // =====================================================
+    // Option Text
+    // =====================================================
+
+    function getOptionText(
+        option
+    ) {
+
+        if (
+            typeof option ===
+            "string"
+        ) {
+
+            return option;
+
+        }
+
+
+        if (
+            option &&
+            typeof option ===
+            "object"
+        ) {
+
+            return (
+                option.text ??
+                option.label ??
+                option.value ??
+                ""
+            );
+
+        }
+
+
+        return String(
+            option ??
+            ""
+        );
+
+    }
+
+
+    // =====================================================
+    // Timer
+    // =====================================================
+
+    function startTimer() {
+
+        const duration =
+            Number(
+                exam.duration ||
+                exam.durationMinutes ||
+                0
+            );
+
+
+        if (!duration) {
+
+            return;
+
+        }
+
+
+        remainingSeconds =
+            duration * 60;
+
+
+        updateTimer();
+
+
+        timerInterval =
+            setInterval(
+                () => {
+
+                    remainingSeconds--;
+
+                    updateTimer();
+
+
+                    if (
+                        remainingSeconds <=
+                        0
+                    ) {
+
+                        stopTimer();
+
+                        submitExam(
+                            "timeout"
+                        );
+
+                    }
+
+                },
+                1000
+            );
+
+    }
+
+
+    function updateTimer() {
+
+        const timer =
+            document.getElementById(
+                "timer"
+            );
+
+
+        if (!timer) {
+            return;
+        }
+
+
+        timer.textContent =
+            formatTime(
+                Math.max(
+                    0,
+                    remainingSeconds
+                )
+            );
+
+
+        timer.classList.remove(
+            "warning",
+            "danger"
+        );
+
+
+        if (
+            remainingSeconds <=
+            60
+        ) {
+
+            timer.classList.add(
+                "danger"
+            );
+
+        } else if (
+            remainingSeconds <=
+            300
+        ) {
+
+            timer.classList.add(
+                "warning"
+            );
+
+        }
+
+    }
+
+
+    function stopTimer() {
+
+        if (
+            timerInterval
+        ) {
+
+            clearInterval(
+                timerInterval
+            );
+
+            timerInterval =
+                null;
+
+        }
+
+    }
+
+
+    function formatTime(
+        seconds
+    ) {
+
+        const minutes =
+            Math.floor(
+                seconds / 60
+            );
+
+
+        const remaining =
+            seconds % 60;
+
+
+        return (
+            String(minutes).padStart(
+                2,
+                "0"
+            ) +
+            ":" +
+            String(remaining).padStart(
+                2,
+                "0"
+            )
+        );
+
+    }
+
+
+    // =====================================================
+    // Render Result
+    // =====================================================
+
+    function renderResult(
+        result
+    ) {
+
+        examContainer.innerHTML = `
+
+            <div class="result-box">
+
+                <div class="result-icon">
+                    🎉
+                </div>
+
+                <h2>
+                    تم تسليم الاختبار بنجاح
+                </h2>
+
+                <div class="result-score">
+                    ${result.score}
+                    /
+                    ${result.total}
+                </div>
+
+                <div class="result-details">
+
+                    النسبة:
+                    <strong>
+                        ${result.percentage}%
+                    </strong>
+
+                    <br>
+
+                    الإجابات الصحيحة:
+                    ${result.correctAnswers}
+
+                    <br>
+
+                    الإجابات الخاطئة:
+                    ${result.wrongAnswers}
+
+                    <br>
+
+                    بدون إجابة:
+                    ${result.unanswered}
+
+                </div>
+
+
+                <a
+                    class="back-button"
+                    href="exams.html"
+                >
+                    العودة إلى الاختبارات
+                </a>
+
+            </div>
+
+        `;
+
+    }
+
+
+    // =====================================================
+    // Previous Result
+    // =====================================================
+
+    function renderPreviousResult(
+        result
+    ) {
+
+        examContainer.innerHTML = `
+
+            <div class="result-box">
+
+                <div class="result-icon">
+                    📊
+                </div>
+
+                <h2>
+                    لقد أديت هذا الاختبار بالفعل
+                </h2>
+
+                <div class="result-score">
+
+                    ${Number(
+                        result.score || 0
+                    )}
+
+                    /
+
+                    ${Number(
+                        result.total || 0
+                    )}
+
+                </div>
+
+                <div class="result-details">
+
+                    النسبة:
+                    <strong>
+                        ${Number(
+                            result.percentage || 0
+                        )}%
+                    </strong>
+
+                    <br>
+
+                    الإجابات الصحيحة:
+                    ${Number(
+                        result.correctAnswers || 0
+                    )}
+
+                    <br>
+
+                    الإجابات الخاطئة:
+                    ${Number(
+                        result.wrongAnswers || 0
+                    )}
+
+                    <br>
+
+                    بدون إجابة:
+                    ${Number(
+                        result.unanswered || 0
+                    )}
+
+                </div>
+
+
+                <a
+                    class="back-button"
+                    href="exams.html"
+                >
+                    العودة إلى الاختبارات
+                </a>
+
+            </div>
+
+        `;
+
+    }
+
+
+    // =====================================================
+    // Helpers
+    // =====================================================
+
+    function escapeHtml(
+        value
+    ) {
+
+        return String(
+            value ??
+            ""
+        )
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    function escapeAttribute(
+        value
+    ) {
+
+        return escapeHtml(
+            value
+        );
+
+    }
+
+
+    window.addEventListener(
+        "beforeunload",
+        event => {
+
+            if (
+                exam &&
+                !submitted &&
+                timerInterval
+            ) {
+
+                event.preventDefault();
+
+                event.returnValue = "";
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+
+</html>
