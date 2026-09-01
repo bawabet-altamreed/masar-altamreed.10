@@ -1,304 +1,419 @@
 <!DOCTYPE html>
 
-<html lang="ar" dir="rtl">
+<html
+    lang="ar"
+    dir="rtl"
+>
 
 <head>
 
-<meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
-
-<title>
-    غرفة المحاضرة
-</title>
-
-<style>
-
-* {
-    box-sizing: border-box;
-}
-
-body {
-
-    margin: 0;
-
-    background: #101820;
-
-    color: white;
-
-    font-family:
-        Arial,
-        Tahoma,
-        sans-serif;
-
-}
-
-.header {
-
-    height: 65px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    padding: 0 20px;
-
-    background: #17232d;
-
-}
-
-.room {
-
-    padding: 15px;
-
-}
-
-.video-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(
-                280px,
-                1fr
-            )
-        );
-
-    gap: 15px;
-
-}
-
-.video-box {
-
-    position: relative;
-
-    min-height: 250px;
-
-    background: #202c36;
-
-    border-radius: 15px;
-
-    overflow: hidden;
-
-}
-
-video {
-
-    width: 100%;
-
-    height: 100%;
-
-    object-fit: cover;
-
-}
-
-.label {
-
-    position: absolute;
-
-    bottom: 10px;
-
-    right: 10px;
-
-    background:
-        rgba(0,0,0,.6);
-
-    padding:
-        7px 10px;
-
-    border-radius: 7px;
-
-}
-
-.controls {
-
-    position: fixed;
-
-    bottom: 20px;
-
-    left: 50%;
-
-    transform:
-        translateX(-50%);
-
-    display: flex;
-
-    gap: 10px;
-
-}
-
-.controls button {
-
-    border: 0;
-
-    border-radius: 50%;
-
-    width: 52px;
-
-    height: 52px;
-
-    cursor: pointer;
-
-}
-
-.leave {
-
-    background: #d93025;
-
-    color: white;
-
-}
-
-</style>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Live Room
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="./style.css"
+    >
 
 </head>
 
 <body>
 
-<div class="header">
+    <header class="room-header">
 
-    <strong>
-        🎥 المحاضرة المباشرة
-    </strong>
+        <strong>
+            🎥 المحاضرة المباشرة
+        </strong>
 
-    <span id="participants">
-        0 مشارك
-    </span>
+        <span id="roomName">
+            —
+        </span>
 
-</div>
-
-
-<div class="room">
-
-    <div
-        id="videoGrid"
-        class="video-grid"
-    ></div>
-
-</div>
+    </header>
 
 
-<div class="controls">
+    <main class="room">
 
-    <button id="mic">
-        🎤
-    </button>
+        <section
+            id="videoGrid"
+            class="video-grid"
+        >
 
-    <button id="camera">
-        📷
-    </button>
+            <div class="loading">
+                جاري الاتصال...
+            </div>
 
-    <button id="leave" class="leave">
-        📞
-    </button>
-
-</div>
+        </section>
 
 
-<script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
+        <section class="controls">
 
-<script>
-
-const {
-    Room,
-    RoomEvent,
-    Track
-} = LivekitClient;
+            <button
+                id="micButton"
+            >
+                🎙️ المايك
+            </button>
 
 
-const params =
-    new URLSearchParams(
-        location.search
-    );
+            <button
+                id="cameraButton"
+            >
+                📹 الكاميرا
+            </button>
 
 
-const name =
-    params.get("name");
+            <button
+                id="leaveButton"
+                class="danger"
+            >
+                🚪 مغادرة
+            </button>
 
-const roomName =
-    params.get("room");
+        </section>
 
-const role =
-    params.get("role");
-
-
-const videoGrid =
-    document.getElementById(
-        "videoGrid"
-    );
+    </main>
 
 
-const participants =
-    document.getElementById(
-        "participants"
-    );
+    <script type="module">
+
+        import {
+            Room,
+            RoomEvent,
+            Track
+        } from
+        "https://cdn.jsdelivr.net/npm/livekit-client@2.15.0/+esm";
 
 
-let room;
+        const API_URL =
+            "http://localhost:3000";
 
 
-async function getToken() {
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
 
-    const response =
-        await fetch(
-            "http://localhost:3000/api/token",
-            {
 
-                method: "POST",
+        const roomName =
+            params.get("room");
 
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
 
-                body:
-                    JSON.stringify({
+        const role =
+            params.get("role") ||
+            "student";
 
-                        roomName,
 
-                        identity:
-                            name,
+        const roomLabel =
+            document.getElementById(
+                "roomName"
+            );
 
-                        role
 
-                    })
+        const videoGrid =
+            document.getElementById(
+                "videoGrid"
+            );
+
+
+        roomLabel.textContent =
+            roomName || "—";
+
+
+        if (!roomName) {
+
+            videoGrid.innerHTML =
+                "❌ لم يتم تحديد الغرفة.";
+
+            throw new Error(
+                "roomName missing"
+            );
+
+        }
+
+
+        /*
+         * الحصول على Token
+         */
+
+        let token;
+
+
+        if (
+            role === "teacher"
+        ) {
+
+            const saved =
+                sessionStorage.getItem(
+                    "liveClass"
+                );
+
+
+            if (!saved) {
+
+                throw new Error(
+                    "Teacher session missing"
+                );
+
+            }
+
+
+            const data =
+                JSON.parse(
+                    saved
+                );
+
+
+            token =
+                data.token;
+
+        } else {
+
+            const name =
+                prompt(
+                    "اكتب اسمك"
+                ) ||
+                "Student";
+
+
+            const response =
+                await fetch(
+                    `${API_URL}/api/join-room`,
+                    {
+
+                        method:
+                            "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                roomName,
+
+                                participantName:
+                                    name
+
+                            })
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!data.success) {
+
+                throw new Error(
+                    data.error
+                );
+
+            }
+
+
+            token =
+                data.token;
+
+        }
+
+
+        /*
+         * الاتصال بـ LiveKit
+         */
+
+        const saved =
+            sessionStorage.getItem(
+                "liveClass"
+            );
+
+
+        let livekitUrl;
+
+
+        if (role === "teacher") {
+
+            livekitUrl =
+                JSON.parse(
+                    saved
+                ).livekitUrl;
+
+        } else {
+
+            const response =
+                await fetch(
+                    `${API_URL}/api/join-room`,
+                    {
+
+                        method:
+                            "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                roomName,
+
+                                participantName:
+                                    "Student"
+
+                            })
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            livekitUrl =
+                data.livekitUrl;
+
+        }
+
+
+        const room =
+            new Room({
+
+                adaptiveStream: true,
+
+                dynacast: true
+
+            });
+
+
+        /*
+         * إضافة Participant
+         */
+
+        function addParticipant(
+            participant
+        ) {
+
+            const container =
+                document.createElement(
+                    "div"
+                );
+
+            container.className =
+                "participant";
+
+            container.dataset.identity =
+                participant.identity;
+
+
+            const title =
+                document.createElement(
+                    "div"
+                );
+
+            title.className =
+                "participant-name";
+
+            title.textContent =
+                participant.name ||
+                participant.identity;
+
+
+            container.appendChild(
+                title
+            );
+
+
+            videoGrid.appendChild(
+                container
+            );
+
+
+            participant
+                .trackPublications
+                .forEach(
+                    publication => {
+
+                        attachTrack(
+                            publication,
+                            container
+                        );
+
+                    }
+                );
+
+        }
+
+
+        function attachTrack(
+            publication,
+            container
+        ) {
+
+            if (
+                !publication.track
+            ) {
+
+                return;
+
+            }
+
+
+            const track =
+                publication.track;
+
+
+            const element =
+                track.attach();
+
+
+            element.classList.add(
+                "media"
+            );
+
+
+            container.appendChild(
+                element
+            );
+
+        }
+
+
+        /*
+         * Participant joined
+         */
+
+        room.on(
+            RoomEvent.ParticipantConnected,
+            participant => {
+
+                addParticipant(
+                    participant
+                );
 
             }
         );
 
 
-    if (!response.ok) {
-
-        throw new Error(
-            "فشل الحصول على Token"
-        );
-
-    }
-
-
-    return response.json();
-
-}
-
-
-async function start() {
-
-    try {
-
-        const data =
-            await getToken();
-
-
-        room =
-            new Room();
-
+        /*
+         * Track subscribed
+         */
 
         room.on(
             RoomEvent.TrackSubscribed,
@@ -308,198 +423,168 @@ async function start() {
                 participant
             ) => {
 
+                let container =
+                    document.querySelector(
+                        `[data-identity="${CSS.escape(
+                            participant.identity
+                        )}"]`
+                    );
+
+
+                if (!container) {
+
+                    addParticipant(
+                        participant
+                    );
+
+                    container =
+                        document.querySelector(
+                            `[data-identity="${CSS.escape(
+                                participant.identity
+                            )}"]`
+                        );
+
+                }
+
+
                 attachTrack(
-                    track,
-                    participant
+                    publication,
+                    container
                 );
 
             }
         );
 
 
-        room.on(
-            RoomEvent.TrackUnsubscribed,
-            track => {
+        /*
+         * Participant left
+         */
 
-                track.detach();
+        room.on(
+            RoomEvent.ParticipantDisconnected,
+            participant => {
+
+                const element =
+                    document.querySelector(
+                        `[data-identity="${CSS.escape(
+                            participant.identity
+                        )}"]`
+                    );
+
+
+                if (element) {
+
+                    element.remove();
+
+                }
 
             }
         );
 
 
-        room.on(
-            RoomEvent.ParticipantConnected,
-            updateCount
-        );
-
-
-        room.on(
-            RoomEvent.ParticipantDisconnected,
-            updateCount
-        );
-
+        /*
+         * الاتصال
+         */
 
         await room.connect(
-            data.url,
-            data.token
+            livekitUrl,
+            token
         );
 
 
-        if (role === "teacher") {
+        /*
+         * نشر كاميرا وميكروفون المدرس
+         */
+
+        if (
+            role === "teacher"
+        ) {
 
             await room.localParticipant
-                .setCameraEnabled(true);
-
-            await room.localParticipant
-                .setMicrophoneEnabled(true);
+                .enableCameraAndMicrophone();
 
         }
 
 
-        updateCount();
+        /*
+         * إضافة المشاركين الموجودين
+         */
 
+        room.remoteParticipants
+            .forEach(
+                participant => {
 
-    } catch (error) {
+                    addParticipant(
+                        participant
+                    );
 
-        console.error(
-            error
-        );
-
-        alert(
-            error.message
-        );
-
-    }
-
-}
-
-
-function attachTrack(
-    track,
-    participant
-) {
-
-    const element =
-        track.attach();
-
-
-    const box =
-        document.createElement(
-            "div"
-        );
-
-
-    box.className =
-        "video-box";
-
-
-    box.appendChild(
-        element
-    );
-
-
-    const label =
-        document.createElement(
-            "div"
-        );
-
-
-    label.className =
-        "label";
-
-
-    label.textContent =
-        participant.name ||
-        participant.identity;
-
-
-    box.appendChild(
-        label
-    );
-
-
-    videoGrid.appendChild(
-        box
-    );
-
-}
-
-
-function updateCount() {
-
-    if (!room) return;
-
-
-    const count =
-        room
-        .remoteParticipants
-        .size + 1;
-
-
-    participants.textContent =
-        `${count} مشارك`;
-
-}
-
-
-document
-    .getElementById("mic")
-    .onclick =
-    async () => {
-
-        if (!room) return;
-
-        const enabled =
-            room.localParticipant
-            .isMicrophoneEnabled;
-
-        await room.localParticipant
-            .setMicrophoneEnabled(
-                !enabled
+                }
             );
 
-    };
+
+        /*
+         * أزرار التحكم
+         */
+
+        document
+            .getElementById(
+                "micButton"
+            )
+            .onclick =
+            async () => {
+
+                const enabled =
+                    room
+                        .localParticipant
+                        .isMicrophoneEnabled;
 
 
-document
-    .getElementById("camera")
-    .onclick =
-    async () => {
+                await room
+                    .localParticipant
+                    .setMicrophoneEnabled(
+                        !enabled
+                    );
 
-        if (!room) return;
-
-        const enabled =
-            room.localParticipant
-            .isCameraEnabled;
-
-        await room.localParticipant
-            .setCameraEnabled(
-                !enabled
-            );
-
-    };
+            };
 
 
-document
-    .getElementById("leave")
-    .onclick =
-    async () => {
+        document
+            .getElementById(
+                "cameraButton"
+            )
+            .onclick =
+            async () => {
 
-        if (room) {
-
-            await room.disconnect();
-
-        }
-
-        location.href =
-            "index.html";
-
-    };
+                const enabled =
+                    room
+                        .localParticipant
+                        .isCameraEnabled;
 
 
-start();
+                await room
+                    .localParticipant
+                    .setCameraEnabled(
+                        !enabled
+                    );
 
-</script>
+            };
+
+
+        document
+            .getElementById(
+                "leaveButton"
+            )
+            .onclick =
+            async () => {
+
+                await room.disconnect();
+
+                window.location.href =
+                    "./index.html";
+
+            };
+
+    </script>
 
 </body>
 
