@@ -2,47 +2,29 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: nursing-live-redis
+
     restart: unless-stopped
-
-
-  minio:
-    image: minio/minio:latest
-    container_name: nursing-live-minio
-    restart: unless-stopped
-
-    command:
-      - server
-      - /data
-      - --console-address
-      - ":9001"
-
-    environment:
-      MINIO_ROOT_USER: prototype
-      MINIO_ROOT_PASSWORD: prototype-secret
 
     ports:
-      - "9000:9000"
-      - "9001:9001"
-
-    volumes:
-      - minio_data:/data
+      - "6379:6379"
 
 
   livekit:
     image: livekit/livekit-server:latest
-    container_name: nursing-live-livekit
+
     restart: unless-stopped
 
-    command: --dev
+    command:
+      - "--config"
+      - "/etc/livekit.yaml"
+
+    volumes:
+      - ./livekit.yaml:/etc/livekit.yaml
 
     ports:
       - "7880:7880"
       - "7881:7881"
       - "7882:7882/udp"
-
-    environment:
-      LIVEKIT_KEYS: "devkey: secret"
 
     depends_on:
       - redis
@@ -50,41 +32,15 @@ services:
 
   egress:
     image: livekit/egress:latest
-    container_name: nursing-live-egress
+
     restart: unless-stopped
 
-    cap_add:
-      - SYS_ADMIN
-
     environment:
+      EGRESS_CONFIG_FILE: /etc/egress.yaml
 
-      EGRESS_CONFIG_BODY: |
-        log_level: info
-
-        api_key: devkey
-        api_secret: secret
-
-        ws_url: ws://livekit:7880
-
-        insecure: true
-
-        redis:
-          address: redis:6379
-
-        s3:
-          access_key: prototype
-          secret: prototype-secret
-          region: us-east-1
-          bucket: recordings
-          endpoint: http://minio:9000
-          force_path_style: true
+    volumes:
+      - ./egress.yaml:/etc/egress.yaml
 
     depends_on:
-      - livekit
       - redis
-      - minio
-
-
-volumes:
-
-  minio_data:
+      - livekit
