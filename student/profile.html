@@ -503,6 +503,303 @@
         }
 
     }
+    /* =====================================================
+   Student Layout Fix
+   تنسيق الهيدر والقائمة المشتركة للطالب
+===================================================== */
+
+#studentApp {
+    min-height: 100vh;
+    background: #f3f8fb;
+}
+
+#studentApp,
+#studentApp * {
+    font-family: Arial, Tahoma, sans-serif;
+}
+
+.student-layout {
+    min-height: 100vh;
+    background: #f3f8fb;
+    color: #17324a;
+}
+
+/* ================================
+   Header
+================================ */
+
+.student-header {
+    background: #ffffff;
+    border-bottom: 1px solid #e4edf2;
+    box-shadow: 0 3px 15px rgba(23, 50, 74, .05);
+}
+
+.student-header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 14px 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+/* ================================
+   Brand
+================================ */
+
+.student-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.student-brand-logo {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #087ea4,
+            #075f7c
+        );
+
+    color: #ffffff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 17px;
+    font-weight: bold;
+
+    flex-shrink: 0;
+}
+
+.student-brand-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.student-brand-title {
+    color: #17324a;
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 1.4;
+}
+
+.student-brand-subtitle {
+    color: #82919d;
+    font-size: 9px;
+    line-height: 1.4;
+}
+
+/* ================================
+   Student Info
+================================ */
+
+.student-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.student-user-avatar {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 50%;
+
+    background: #eaf7fb;
+    color: #087ea4;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 15px;
+    font-weight: bold;
+
+    flex-shrink: 0;
+}
+
+.student-user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.student-user-name {
+    color: #17324a;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.student-user-stage {
+    color: #82919d;
+    font-size: 9px;
+}
+
+/* ================================
+   Navigation
+================================ */
+
+.student-nav {
+    background: #ffffff;
+    border-bottom: 1px solid #e4edf2;
+}
+
+.student-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+
+    padding: 0 25px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 4px;
+
+    overflow-x: auto;
+}
+
+.student-nav a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 44px;
+
+    padding: 0 13px;
+
+    color: #71808d;
+
+    text-decoration: none;
+
+    font-size: 10px;
+    font-weight: bold;
+
+    border-bottom: 2px solid transparent;
+
+    white-space: nowrap;
+
+    transition:
+        background .2s ease,
+        color .2s ease,
+        border-color .2s ease;
+}
+
+.student-nav a:hover {
+    color: #087ea4;
+    background: #f5fafc;
+}
+
+.student-nav a.active {
+    color: #087ea4;
+    border-bottom-color: #087ea4;
+}
+
+/* ================================
+   Logout
+================================ */
+
+.student-logout {
+    color: #b42318 !important;
+}
+
+.student-logout:hover {
+    background: #fff1f1 !important;
+    color: #b42318 !important;
+}
+
+/* ================================
+   Main Content
+================================ */
+
+.student-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 25px;
+}
+
+.student-page-header {
+    margin-bottom: 18px;
+}
+
+.student-page-header h1,
+.student-page-header h2 {
+    color: #17324a;
+    font-size: 22px;
+    font-weight: bold;
+    line-height: 1.5;
+}
+
+.student-page-header p {
+    color: #82919d;
+    font-size: 11px;
+    line-height: 1.8;
+}
+
+/* ================================
+   Mobile
+================================ */
+
+@media (max-width: 700px) {
+
+    .student-header-inner {
+        padding: 12px 15px;
+    }
+
+    .student-nav-inner {
+        padding: 0 15px;
+    }
+
+    .student-main {
+        padding: 15px;
+    }
+
+    .student-brand-title {
+        font-size: 13px;
+    }
+
+    .student-brand-subtitle {
+        font-size: 8px;
+    }
+
+    .student-user-info {
+        display: none;
+    }
+
+    .student-nav a {
+        padding: 0 10px;
+        font-size: 9px;
+    }
+
+}
+
+@media (max-width: 430px) {
+
+    .student-brand-logo {
+        width: 38px;
+        height: 38px;
+    }
+
+    .student-brand-title {
+        font-size: 12px;
+    }
+
+    .student-nav a {
+        min-height: 42px;
+        padding: 0 8px;
+        font-size: 8px;
+    }
+
+}
 
 </style>
 
