@@ -1,0 +1,14 @@
+api_key: ${LIVEKIT_API_KEY}
+api_secret: ${LIVEKIT_API_SECRET}
+
+ws_url: ${LIVEKIT_WS_URL}
+
+redis:
+  address: redis:6379
+
+s3:
+  access_key: ${R2_ACCESS_KEY}
+  secret: ${R2_SECRET_KEY}
+  region: ${R2_REGION}
+  endpoint: ${R2_ENDPOINT}
+  bucket: ${R2_BUCKET}
