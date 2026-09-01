@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+الاختبارات | بوابة التمريض
+</title>
+
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    font-family:
+        Arial,
+        Tahoma,
+        sans-serif;
+
+    background: #f1f5f9;
+
+}
+
+
+header {
+
+    height: 75px;
+
+    background: white;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 0 25px;
+
+    border-bottom: 1px solid #e2e8f0;
+
+}
+
+
+.brand {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+}
+
+
+.brand-icon {
+
+    width: 48px;
+    height: 48px;
+
+    border-radius: 14px;
+
+    background: #0f766e;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: white;
+
+    font-size: 24px;
+
+}
+
+
+.system {
+
+    display: flex;
+
+    min-height:
+        calc(100vh - 75px);
+
+}
+
+
+.sidebar {
+
+    width: 250px;
+
+    background: #0f172a;
+
+    color: white;
+
+    padding: 20px;
+
+}
+
+
+.sidebar a {
+
+    display: block;
+
+    padding: 13px;
+
+    color: #cbd5e1;
+
+    text-decoration: none;
+
+    border-radius: 10px;
+
+    margin-bottom: 8px;
+
+}
+
+
+.sidebar a:hover,
+.sidebar a.active {
+
+    background: #1e293b;
+
+    color: white;
+
+}
+
+
+main {
+
+    flex: 1;
+
+    padding: 30px;
+
+}
+
+
+.top {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 25px;
+
+}
+
+
+button {
+
+    border: 0;
+
+    cursor: pointer;
+
+}
+
+
+.create {
+
+    background: #0f766e;
+
+    color: white;
+
+    padding: 13px 18px;
+
+    border-radius: 10px;
+
+    font-weight: bold;
+
+}
+
+
+.grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill,minmax(280px,1fr));
+
+    gap: 20px;
+
+}
+
+
+.card {
+
+    background: white;
+
+    padding: 20px;
+
+    border-radius: 18px;
+
+    border: 1px solid #e2e8f0;
+
+}
+
+
+.card h3 {
+
+    margin-top: 0;
+
+}
+
+
+.card p {
+
+    color: #64748b;
+
+}
+
+
+.empty {
+
+    background: white;
+
+    padding: 50px;
+
+    border-radius: 18px;
+
+    text-align: center;
+
+    color: #64748b;
+
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            🩺
+        </div>
+
+        <div>
+
+            <strong>
+                بوابة التمريض
+            </strong>
+
+            <small style="display:block;color:#64748b">
+                الاختبارات
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <strong id="teacherName">
+        المعلم
+    </strong>
+
+</header>
+
+
+<div class="system">
+
+
+    <aside class="sidebar">
+
+        <a href="./dashboard.html">
+            🏠 الرئيسية
+        </a>
+
+        <a href="./lectures.html">
+            🎥 المحاضرات
+        </a>
+
+        <a
+            href="./exams.html"
+            class="active"
+        >
+            📝 الاختبارات
+        </a>
+
+        <a href="./profile.html">
+            👤 حسابي
+        </a>
+
+    </aside>
+
+
+    <main>
+
+        <div class="top">
+
+            <div>
+
+                <h1>
+                    الاختبارات
+                </h1>
+
+                <p>
+                    إدارة اختبارات الطلاب
+                </p>
+
+            </div>
+
+
+            <button
+                class="create"
+                onclick="createExam()"
+            >
+                ＋ اختبار جديد
+            </button>
+
+        </div>
+
+
+        <div
+            id="exams"
+            class="grid"
+        ></div>
+
+    </main>
+
+</div>
+
+
+<script type="module">
+
+import {
+    auth,
+    db
+} from "../src/firebase/firebase-config.js";
+
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+    collection,
+    query,
+    where,
+    getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+window.createExam = function () {
+
+    alert(
+        "واجهة إنشاء الاختبار هنكملها بعد تثبيت نظام المعلمين الأساسي."
+    );
+
+};
+
+
+onAuthStateChanged(
+    auth,
+    async (user) => {
+
+        if (!user) {
+
+            location.href =
+                "./login.html";
+
+            return;
+        }
+
+
+        const q =
+            query(
+                collection(db, "users"),
+                where(
+                    "__name__",
+                    "==",
+                    user.uid
+                )
+            );
+
+
+        const snap =
+            await getDocs(q);
+
+
+        if (snap.empty) {
+
+            location.href =
+                "./login.html";
+
+            return;
+        }
+
+
+        const teacher =
+            snap.docs[0].data();
+
+
+        if (
+            teacher.role !== "teacher"
+        ) {
+
+            location.href =
+                "./login.html";
+
+            return;
+        }
+
+
+        document
+            .getElementById("teacherName")
+            .textContent =
+                teacher.name ||
+                teacher.fullName ||
+                "المعلم";
+
+
+        loadExams(user.uid);
+
+    }
+);
+
+
+async function loadExams(
+    teacherId
+) {
+
+    const container =
+        document.getElementById(
+            "exams"
+        );
+
+
+    const q =
+        query(
+            collection(db, "exams"),
+            where(
+                "teacherId",
+                "==",
+                teacherId
+            )
+        );
+
+
+    const snap =
+        await getDocs(q);
+
+
+    if (snap.empty) {
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                📝
+
+                <h3>
+                    لا توجد اختبارات
+                </h3>
+
+                <p>
+                    لم تقم بإنشاء أي اختبار حتى الآن.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML = "";
+
+
+    snap.forEach(
+        docSnap => {
+
+            const exam =
+                docSnap.data();
+
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "card";
+
+
+            card.innerHTML = `
+
+                <h3>
+                    ${escapeHtml(
+                        exam.title ||
+                        "اختبار"
+                    )}
+                </h3>
+
+                <p>
+                    المرحلة:
+                    ${escapeHtml(
+                        exam.stageId ||
+                        "غير محددة"
+                    )}
+                </p>
+
+                <p>
+                    الحالة:
+                    ${
+                        exam.isPublished
+                            ? "منشور"
+                            : "غير منشور"
+                    }
+                </p>
+
+            `;
+
+
+            container.appendChild(card);
+
+        }
+    );
+
+}
+
+
+function escapeHtml(value) {
+
+    return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+</script>
+
+</body>
+
+</html>
