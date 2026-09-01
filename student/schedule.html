@@ -723,10 +723,14 @@
                             ).toLowerCase();
 
 
-                        const teacher =
+                        // =================================================
+                        // Schema الجديد:
+                        // teacherId فقط
+                        // =================================================
+
+                        const teacherId =
                             String(
-                                lecture.teacherName ||
-                                lecture.teacher ||
+                                lecture.teacherId ||
                                 ""
                             ).toLowerCase();
 
@@ -735,7 +739,7 @@
                             !search ||
                             title.includes(search) ||
                             subject.includes(search) ||
-                            teacher.includes(search);
+                            teacherId.includes(search);
 
 
                         const status =
@@ -821,9 +825,12 @@
                 "غير محدد";
 
 
-            const teacher =
-                lecture.teacherName ||
-                lecture.teacher ||
+            // =================================================
+            // Schema الجديد:
+            // teacherId فقط
+            // =================================================
+
+            const teacherId =
                 lecture.teacherId ||
                 "غير محدد";
 
@@ -901,7 +908,7 @@
                             <span>
                                 المدرس:
                                 <strong>
-                                    ${escapeHtml(teacher)}
+                                    ${escapeHtml(teacherId)}
                                 </strong>
                             </span>
 
@@ -1000,7 +1007,9 @@
                 lecture.status ===
                 "cancelled"
             ) {
+
                 return "cancelled";
+
             }
 
 
@@ -1008,7 +1017,9 @@
                 lecture.status ===
                 "live"
             ) {
+
                 return "live";
+
             }
 
 
@@ -1016,7 +1027,9 @@
                 lecture.status ===
                 "ended"
             ) {
+
                 return "ended";
+
             }
 
 
@@ -1040,7 +1053,9 @@
                 end &&
                 now > end
             ) {
+
                 return "ended";
+
             }
 
 
@@ -1052,7 +1067,9 @@
                     now <= end
                 )
             ) {
+
                 return "live";
+
             }
 
 
@@ -1115,8 +1132,10 @@
                 typeof value.toDate ===
                 "function"
             ) {
+
                 return value.toDate()
                     .getTime();
+
             }
 
 
@@ -1187,4 +1206,3 @@
 
 </body>
 </html>
-
