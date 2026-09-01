@@ -1,581 +1,595 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">
 
-<head>
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <meta charset="UTF-8">
+<title>
+    الترتيب | مسار التمريض
+</title>
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<style>
 
-    <title>
-        الترتيب | مسار التمريض
-    </title>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
 
-    <style>
+    body {
+        font-family:
+            Arial,
+            Tahoma,
+            sans-serif;
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        background: #f3f8fb;
 
-        body {
-            font-family:
-                Arial,
-                Tahoma,
-                sans-serif;
-
-            background: #f3f8fb;
-
-            color: #17324a;
-        }
+        color: #17324a;
+    }
 
 
-        /* ================================
-           Page
-        ================================= */
+    /* ================================
+       Page
+    ================================= */
 
-        .leaderboard-page {
-            padding: 25px;
-        }
-
-
-        /* ================================
-           Header
-        ================================= */
-
-        .leaderboard-header {
-            background:
-                linear-gradient(
-                    135deg,
-                    #087ea4,
-                    #075f7c
-                );
-
-            color: white;
-
-            border-radius: 18px;
-
-            padding: 25px;
-
-            margin-bottom: 20px;
-        }
-
-        .leaderboard-header h2 {
-            font-size: 22px;
-
-            margin-bottom: 8px;
-
-            line-height: 1.6;
-        }
-
-        .leaderboard-header p {
-            font-size: 13px;
-
-            opacity: .9;
-
-            line-height: 1.8;
-        }
+    .leaderboard-page {
+        padding: 25px;
+        max-width: 1100px;
+        margin: 0 auto;
+    }
 
 
-        /* ================================
-           Filters
-        ================================= */
+    /* ================================
+       Header
+    ================================= */
 
-        .filters {
-            background: white;
+    .leaderboard-header {
+        background:
+            linear-gradient(
+                135deg,
+                #087ea4,
+                #075f7c
+            );
 
-            border:
-                1px solid
-                #e4edf2;
+        color: white;
 
-            border-radius: 15px;
+        border-radius: 18px;
 
-            padding: 18px;
+        padding: 28px;
 
-            margin-bottom: 18px;
+        margin-bottom: 20px;
 
-            display: grid;
+        box-shadow:
+            0 8px 25px
+            rgba(8, 126, 164, .12);
+    }
 
+    .leaderboard-header h2 {
+        font-size: 23px;
+
+        margin-bottom: 8px;
+
+        line-height: 1.6;
+    }
+
+    .leaderboard-header p {
+        font-size: 13px;
+
+        opacity: .92;
+
+        line-height: 1.9;
+    }
+
+
+    /* ================================
+       Privacy Notice
+    ================================= */
+
+    .privacy-box {
+        background: #eef8fb;
+
+        border:
+            1px solid
+            #d8edf3;
+
+        color: #087ea4;
+
+        border-radius: 13px;
+
+        padding: 13px 15px;
+
+        margin-bottom: 18px;
+
+        font-size: 11px;
+
+        line-height: 1.9;
+    }
+
+
+    /* ================================
+       Student Result
+    ================================= */
+
+    .my-rank-card {
+        background: white;
+
+        border:
+            1px solid
+            #e4edf2;
+
+        border-radius: 17px;
+
+        padding: 22px;
+
+        margin-bottom: 18px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 20px;
+
+        flex-wrap: wrap;
+
+        box-shadow:
+            0 5px 18px
+            rgba(23, 50, 74, .04);
+    }
+
+    .my-rank-info {
+        display: flex;
+
+        align-items: center;
+
+        gap: 13px;
+
+        min-width: 200px;
+    }
+
+    .my-rank-avatar {
+        width: 52px;
+
+        height: 52px;
+
+        border-radius: 50%;
+
+        background: #eaf7fb;
+
+        color: #087ea4;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        font-weight: bold;
+
+        font-size: 20px;
+
+        flex-shrink: 0;
+    }
+
+    .my-rank-name {
+        font-weight: bold;
+
+        font-size: 15px;
+
+        margin-bottom: 5px;
+    }
+
+    .my-rank-id {
+        color: #8a98a3;
+
+        font-size: 10px;
+    }
+
+    .my-rank-result {
+        text-align: center;
+
+        min-width: 100px;
+    }
+
+    .my-rank-number {
+        font-size: 27px;
+
+        font-weight: bold;
+
+        color: #087ea4;
+    }
+
+    .my-rank-label {
+        display: block;
+
+        color: #71808d;
+
+        font-size: 10px;
+
+        margin-top: 4px;
+    }
+
+
+    /* ================================
+       Result Grid
+    ================================= */
+
+    .result-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(
+                3,
+                minmax(0, 1fr)
+            );
+
+        gap: 14px;
+
+        margin-bottom: 18px;
+    }
+
+    .result-card {
+        background: white;
+
+        border:
+            1px solid
+            #e4edf2;
+
+        border-radius: 15px;
+
+        padding: 20px;
+
+        text-align: center;
+
+        box-shadow:
+            0 4px 15px
+            rgba(23, 50, 74, .035);
+    }
+
+    .result-icon {
+        width: 42px;
+
+        height: 42px;
+
+        border-radius: 11px;
+
+        background: #eef8fb;
+
+        color: #087ea4;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        margin: 0 auto 10px;
+
+        font-size: 18px;
+    }
+
+    .result-label {
+        color: #82919d;
+
+        font-size: 11px;
+
+        margin-bottom: 7px;
+    }
+
+    .result-value {
+        color: #17324a;
+
+        font-size: 20px;
+
+        font-weight: bold;
+    }
+
+    .result-value.green {
+        color: #16834f;
+    }
+
+
+    /* ================================
+       Exam Cards
+    ================================= */
+
+    .results-section {
+        background: white;
+
+        border:
+            1px solid
+            #e4edf2;
+
+        border-radius: 17px;
+
+        overflow: hidden;
+
+        box-shadow:
+            0 5px 18px
+            rgba(23, 50, 74, .04);
+    }
+
+    .results-header {
+        padding: 18px 20px;
+
+        border-bottom:
+            1px solid
+            #edf1f4;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 10px;
+    }
+
+    .results-header h3 {
+        font-size: 16px;
+    }
+
+    .results-header span {
+        color: #82919d;
+
+        font-size: 10px;
+    }
+
+    .exam-result {
+        padding: 18px 20px;
+
+        border-bottom:
+            1px solid
+            #edf1f4;
+    }
+
+    .exam-result:last-child {
+        border-bottom: none;
+    }
+
+    .exam-result-top {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 15px;
+
+        margin-bottom: 13px;
+    }
+
+    .exam-title {
+        font-size: 14px;
+
+        font-weight: bold;
+
+        color: #17324a;
+
+        margin-bottom: 5px;
+    }
+
+    .exam-subject {
+        color: #82919d;
+
+        font-size: 10px;
+    }
+
+    .rank-badge {
+        min-width: 70px;
+
+        padding: 8px 12px;
+
+        border-radius: 9px;
+
+        background: #eaf7fb;
+
+        color: #087ea4;
+
+        text-align: center;
+
+        font-weight: bold;
+
+        font-size: 13px;
+
+        white-space: nowrap;
+    }
+
+    .rank-badge.gold {
+        background: #fff7d6;
+
+        color: #a47700;
+    }
+
+    .rank-badge.silver {
+        background: #f0f2f4;
+
+        color: #68737d;
+    }
+
+    .rank-badge.bronze {
+        background: #fff0e5;
+
+        color: #a55a22;
+    }
+
+    .exam-details {
+        display: grid;
+
+        grid-template-columns:
+            repeat(
+                3,
+                minmax(0, 1fr)
+            );
+
+        gap: 10px;
+    }
+
+    .exam-detail {
+        background: #f7fafc;
+
+        border-radius: 9px;
+
+        padding: 10px;
+
+        text-align: center;
+    }
+
+    .exam-detail span {
+        display: block;
+
+        color: #82919d;
+
+        font-size: 9px;
+
+        margin-bottom: 5px;
+    }
+
+    .exam-detail strong {
+        display: block;
+
+        color: #17324a;
+
+        font-size: 13px;
+    }
+
+
+    /* ================================
+       States
+    ================================= */
+
+    .state-box {
+        background: white;
+
+        border:
+            1px solid
+            #e4edf2;
+
+        border-radius: 15px;
+
+        padding: 45px 20px;
+
+        text-align: center;
+
+        color: #8795a0;
+
+        font-size: 13px;
+
+        line-height: 2;
+    }
+
+    .error-box {
+        background: #fff1f1;
+
+        border-color: #ffd5d5;
+
+        color: #b42318;
+    }
+
+
+    /* ================================
+       Empty Result
+    ================================= */
+
+    .empty-results {
+        padding: 35px 20px;
+
+        text-align: center;
+
+        color: #8795a0;
+
+        font-size: 13px;
+
+        line-height: 2;
+    }
+
+
+    /* ================================
+       Responsive
+    ================================= */
+
+    @media (max-width: 800px) {
+
+        .result-grid {
             grid-template-columns:
                 repeat(
                     2,
                     minmax(0, 1fr)
                 );
-
-            gap: 12px;
         }
 
-        .filter-group {
-            display: flex;
+    }
 
-            flex-direction: column;
 
-            gap: 7px;
+    @media (max-width: 650px) {
+
+        .leaderboard-page {
+            padding: 15px;
         }
 
-        .filter-group label {
-            font-size: 11px;
-
-            color: #71808d;
-
-            font-weight: bold;
+        .leaderboard-header {
+            padding: 21px;
         }
 
-        .filter-group select {
-            width: 100%;
-
-            height: 42px;
-
-            border:
-                1px solid
-                #dce7ed;
-
-            border-radius: 9px;
-
-            padding: 0 12px;
-
-            background: white;
-
-            color: #17324a;
-
-            outline: none;
-
-            font-family: inherit;
+        .leaderboard-header h2 {
+            font-size: 19px;
         }
-
-        .filter-group select:focus {
-            border-color: #087ea4;
-        }
-
-
-        /* ================================
-           Stats
-        ================================= */
-
-        .leaderboard-stats {
-            display: grid;
-
-            grid-template-columns:
-                repeat(
-                    3,
-                    minmax(0, 1fr)
-                );
-
-            gap: 12px;
-
-            margin-bottom: 18px;
-        }
-
-        .stat {
-            background: white;
-
-            border:
-                1px solid
-                #e4edf2;
-
-            border-radius: 14px;
-
-            padding: 18px;
-
-            text-align: center;
-        }
-
-        .stat span {
-            display: block;
-
-            color: #71808d;
-
-            font-size: 11px;
-
-            margin-bottom: 7px;
-        }
-
-        .stat strong {
-            display: block;
-
-            color: #087ea4;
-
-            font-size: 24px;
-        }
-
-
-        /* ================================
-           Current Student Card
-        ================================= */
 
         .my-rank-card {
-            background: white;
-
-            border:
-                1px solid
-                #e4edf2;
-
-            border-radius: 15px;
-
-            padding: 18px;
-
-            margin-bottom: 18px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            gap: 15px;
-
-            flex-wrap: wrap;
-        }
-
-        .my-rank-info {
-            display: flex;
-
-            align-items: center;
-
-            gap: 12px;
-        }
-
-        .my-rank-avatar {
-            width: 48px;
-
-            height: 48px;
-
-            border-radius: 50%;
-
-            background: #eaf7fb;
-
-            color: #087ea4;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            font-weight: bold;
-
-            font-size: 18px;
-        }
-
-        .my-rank-name {
-            font-weight: bold;
-
-            font-size: 14px;
-
-            margin-bottom: 4px;
-        }
-
-        .my-rank-id {
-            color: #8a98a3;
-
-            font-size: 10px;
+            align-items: flex-start;
         }
 
         .my-rank-result {
-            text-align: center;
+            min-width: 80px;
         }
 
-        .my-rank-number {
-            font-size: 25px;
-
-            font-weight: bold;
-
-            color: #087ea4;
+        .result-grid {
+            grid-template-columns: 1fr;
         }
 
-        .my-rank-label {
-            display: block;
+        .exam-result-top {
+            align-items: flex-start;
 
-            color: #71808d;
-
-            font-size: 10px;
-
-            margin-top: 3px;
+            flex-direction: column;
         }
 
-
-        /* ================================
-           Ranking Card
-        ================================= */
-
-        .ranking-card {
-            background: white;
-
-            border:
-                1px solid
-                #e4edf2;
-
-            border-radius: 17px;
-
-            overflow: hidden;
+        .exam-details {
+            grid-template-columns:
+                1fr 1fr 1fr;
         }
 
-        .ranking-card-header {
-            padding: 18px;
+    }
 
-            border-bottom:
-                1px solid
-                #edf1f4;
 
-            display: flex;
+    @media (max-width: 430px) {
 
-            justify-content:
-                space-between;
-
-            align-items: center;
-
-            gap: 10px;
+        .exam-details {
+            grid-template-columns: 1fr;
         }
 
-        .ranking-card-header h3 {
-            font-size: 16px;
-        }
-
-        .ranking-card-header span {
-            color: #71808d;
-
-            font-size: 11px;
-        }
-
-
-        /* ================================
-           Table
-        ================================= */
-
-        .table-wrapper {
+        .my-rank-info {
             width: 100%;
-
-            overflow-x: auto;
         }
 
-        table {
-            width: 100%;
-
-            border-collapse: collapse;
-
-            min-width: 650px;
+        .my-rank-result {
+            flex: 1;
         }
 
-        th {
-            background: #f7fafc;
+    }
 
-            color: #71808d;
+</style>
 
-            font-size: 11px;
+</head><body><div id="studentApp">جاري تحميل المنصة...
 
-            font-weight: bold;
-
-            padding: 13px 12px;
-
-            text-align: right;
-
-            white-space: nowrap;
-        }
-
-        td {
-            padding: 14px 12px;
-
-            border-top:
-                1px solid
-                #edf1f4;
-
-            font-size: 12px;
-
-            vertical-align: middle;
-        }
-
-        tbody tr:hover {
-            background: #f9fcfd;
-        }
-
-
-        /* ================================
-           Rank
-        ================================= */
-
-        .rank {
-            width: 40px;
-
-            height: 40px;
-
-            border-radius: 10px;
-
-            display: inline-flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            font-weight: bold;
-
-            background: #eef8fb;
-
-            color: #087ea4;
-        }
-
-        .rank.first {
-            background: #fff7d6;
-
-            color: #a47700;
-        }
-
-        .rank.second {
-            background: #f0f2f4;
-
-            color: #68737d;
-        }
-
-        .rank.third {
-            background: #fff0e5;
-
-            color: #a55a22;
-        }
-
-
-        /* ================================
-           Student
-        ================================= */
-
-        .student-name {
-            font-weight: bold;
-
-            color: #17324a;
-
-            margin-bottom: 4px;
-        }
-
-        .student-id {
-            color: #8a98a3;
-
-            font-size: 10px;
-        }
-
-
-        /* ================================
-           Score
-        ================================= */
-
-        .score {
-            font-weight: bold;
-
-            color: #087ea4;
-
-            font-size: 14px;
-        }
-
-        .percentage {
-            font-weight: bold;
-
-            color: #16834f;
-        }
-
-
-        /* ================================
-           Stage
-        ================================= */
-
-        .stage {
-            display: inline-block;
-
-            background: #eef8fb;
-
-            color: #087ea4;
-
-            padding: 5px 8px;
-
-            border-radius: 7px;
-
-            font-size: 10px;
-        }
-
-
-        /* ================================
-           States
-        ================================= */
-
-        .state-box {
-            background: white;
-
-            border:
-                1px solid
-                #e4edf2;
-
-            border-radius: 15px;
-
-            padding: 45px 20px;
-
-            text-align: center;
-
-            color: #8795a0;
-
-            font-size: 13px;
-
-            line-height: 2;
-        }
-
-        .error-box {
-            background: #fff1f1;
-
-            border-color: #ffd5d5;
-
-            color: #b42318;
-        }
-
-
-        /* ================================
-           Responsive
-        ================================= */
-
-        @media (max-width: 700px) {
-
-            .leaderboard-page {
-                padding: 15px;
-            }
-
-            .filters {
-                grid-template-columns: 1fr;
-            }
-
-            .leaderboard-stats {
-                grid-template-columns: 1fr;
-            }
-
-            .leaderboard-header {
-                padding: 20px;
-            }
-
-            .leaderboard-header h2 {
-                font-size: 19px;
-            }
-
-            .my-rank-card {
-                align-items: flex-start;
-            }
-
-        }
-
-    </style>
-
-</head>
-
-
-<body>
-
-<div id="studentApp"></div>
-
-
-<script type="module">
+</div><script type="module">
 
     import {
         protectStudentPage,
         createStudentLayout,
         escapeHtml,
-        studentErrorMessage,
-        getDateValue
+        studentErrorMessage
     } from "../src/student/student.js";
 
 
@@ -586,6 +600,8 @@
 
     import {
         collection,
+        query,
+        where,
         getDocs
     } from
         "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
@@ -597,13 +613,7 @@
 
     let student = null;
 
-    let allResults = [];
-
-    let filteredResults = [];
-
-    let selectedExamId = "";
-
-    let selectedStageId = "";
+    let myResults = [];
 
 
     // =====================================================
@@ -659,80 +669,30 @@
 
             <div class="leaderboard-page">
 
-                <div
-                    class="leaderboard-header"
-                >
+                <div class="leaderboard-header">
 
                     <h2>
-                        🏆 ترتيب الطلاب
+                        🏆 ترتيبي
                     </h2>
 
                     <p>
-                        تابع ترتيب الطلاب في الاختبارات
-                        بناءً على النسبة المئوية ثم الدرجة.
+                        تابع نتائجك ومركزك في الاختبارات
+                        التي شاركت فيها.
                     </p>
 
                 </div>
 
 
-                <div
-                    class="filters"
-                >
+                <div class="privacy-box">
 
-                    <div class="filter-group">
-
-                        <label>
-                            الاختبار
-                        </label>
-
-                        <select
-                            id="examFilter"
-                        >
-
-                            <option value="">
-                                كل الاختبارات
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <div class="filter-group">
-
-                        <label>
-                            المرحلة الدراسية
-                        </label>
-
-                        <select
-                            id="stageFilter"
-                        >
-
-                            <option value="">
-                                كل المراحل
-                            </option>
-
-                        </select>
-
-                    </div>
+                    🔒
+                    هذه الصفحة تعرض نتائجك وترتيبك أنت فقط،
+                    ولا تعرض درجات أو بيانات الطلاب الآخرين.
 
                 </div>
 
 
-                <div
-                    id="leaderboardStats"
-                    class="leaderboard-stats"
-                ></div>
-
-
-                <div
-                    id="myRankContainer"
-                ></div>
-
-
-                <div
-                    id="leaderboardContainer"
-                >
+                <div id="myRankContainer">
 
                     <div class="state-box">
 
@@ -740,7 +700,48 @@
 
                         <br>
 
-                        جاري تحميل الترتيب...
+                        جاري تحميل نتائجك...
+
+                    </div>
+
+                </div>
+
+
+                <div id="resultGrid">
+
+                </div>
+
+
+                <div
+                    id="resultsContainer"
+                    class="results-section"
+                >
+
+                    <div class="results-header">
+
+                        <h3>
+                            📝 نتائج اختباراتك
+                        </h3>
+
+                        <span>
+                            نتائجك الشخصية فقط
+                        </span>
+
+                    </div>
+
+                    <div
+                        id="resultsList"
+                    >
+
+                        <div class="empty-results">
+
+                            ⏳
+
+                            <br>
+
+                            جاري تحميل النتائج...
+
+                        </div>
 
                     </div>
 
@@ -751,9 +752,7 @@
         `;
 
 
-        bindFilters();
-
-        await loadResults();
+        await loadMyResults();
 
 
     } catch (error) {
@@ -763,27 +762,100 @@
             error
         );
 
+
+        const app =
+            document.getElementById(
+                "studentApp"
+            );
+
+
+        if (app) {
+
+            app.innerHTML = `
+
+                <div
+                    class="state-box error-box"
+                    style="
+                        min-height:100vh;
+                        border:none;
+                        border-radius:0;
+                        display:flex;
+                        align-items:center;
+                        justify-content:center;
+                        flex-direction:column;
+                    "
+                >
+
+                    ⚠️
+
+                    <br>
+
+                    حدث خطأ أثناء تحميل صفحة الترتيب.
+
+                    <br><br>
+
+                    ${escapeHtml(
+                        studentErrorMessage(
+                            error
+                        )
+                    )}
+
+                </div>
+
+            `;
+
+        }
+
     }
 
 
     // =====================================================
-    // Load Results
+    // Load Current Student Results
     // =====================================================
 
-    async function loadResults() {
+    async function loadMyResults() {
 
         try {
 
-            const snapshot =
-                await getDocs(
+            /*
+             * مهم جدًا:
+             *
+             * لا نستخدم:
+             *
+             * getDocs(collection(db, "examResults"))
+             *
+             * لأن هذا يحاول قراءة جميع النتائج.
+             *
+             * الطالب مسموح له فقط بقراءة
+             * النتائج التي studentId فيها يساوي UID الخاص به.
+             *
+             * لذلك نستخدم Query على studentId.
+             */
+
+            const resultsQuery =
+                query(
+
                     collection(
                         db,
                         "examResults"
+                    ),
+
+                    where(
+                        "studentId",
+                        "==",
+                        student.id
                     )
+
                 );
 
 
-            allResults =
+            const snapshot =
+                await getDocs(
+                    resultsQuery
+                );
+
+
+            myResults =
                 snapshot.docs
                     .map(
                         item => ({
@@ -794,36 +866,57 @@
                             ...item.data()
 
                         })
-                    )
-                    .filter(
-                        result =>
-                            result.examId &&
-                            result.studentId
                     );
 
 
-            buildFilters();
+            /*
+             * ترتيب النتائج من الأحدث إلى الأقدم.
+             */
 
-            applyFilters();
+            myResults.sort(
+                (
+                    a,
+                    b
+                ) =>
+                    getTimestamp(
+                        b.submittedAt
+                    ) -
+                    getTimestamp(
+                        a.submittedAt
+                    )
+            );
+
+
+            renderMyRank();
+
+            renderSummary();
+
+            renderResults();
 
 
         } catch (error) {
 
             console.error(
-                "Load leaderboard error:",
+                "Load my leaderboard results error:",
                 error
             );
 
 
-            const container =
+            const rankContainer =
                 document.getElementById(
-                    "leaderboardContainer"
+                    "myRankContainer"
                 );
 
 
-            if (container) {
+            const resultsContainer =
+                document.getElementById(
+                    "resultsList"
+                );
 
-                container.innerHTML = `
+
+            if (rankContainer) {
+
+                rankContainer.innerHTML = `
 
                     <div
                         class="
@@ -836,7 +929,7 @@
 
                         <br>
 
-                        حدث خطأ أثناء تحميل الترتيب.
+                        حدث خطأ أثناء تحميل ترتيبك.
 
                         <br><br>
 
@@ -852,176 +945,12 @@
 
             }
 
-        }
 
-    }
+            if (resultsContainer) {
 
-
-    // =====================================================
-    // Build Filters
-    // =====================================================
-
-    function buildFilters() {
-
-        const examSelect =
-            document.getElementById(
-                "examFilter"
-            );
-
-
-        const stageSelect =
-            document.getElementById(
-                "stageFilter"
-            );
-
-
-        if (
-            !examSelect ||
-            !stageSelect
-        ) {
-
-            return;
-
-        }
-
-
-        const examMap =
-            new Map();
-
-
-        const stageMap =
-            new Map();
-
-
-        allResults.forEach(
-            result => {
-
-                if (
-                    result.examId
-                ) {
-
-                    examMap.set(
-                        result.examId,
-                        result.examTitle ||
-                        "اختبار"
-                    );
-
-                }
-
-
-                if (
-                    result.stageId
-                ) {
-
-                    stageMap.set(
-                        result.stageId,
-                        result.stageId
-                    );
-
-                }
+                resultsContainer.innerHTML = "";
 
             }
-        );
-
-
-        examMap.forEach(
-            (
-                title,
-                id
-            ) => {
-
-                const option =
-                    document.createElement(
-                        "option"
-                    );
-
-
-                option.value =
-                    id;
-
-
-                option.textContent =
-                    title;
-
-
-                examSelect.appendChild(
-                    option
-                );
-
-            }
-        );
-
-
-        stageMap.forEach(
-            (
-                stage,
-                id
-            ) => {
-
-                const option =
-                    document.createElement(
-                        "option"
-                    );
-
-
-                option.value =
-                    id;
-
-
-                option.textContent =
-                    stage;
-
-
-                stageSelect.appendChild(
-                    option
-                );
-
-            }
-        );
-
-
-        const params =
-            new URLSearchParams(
-                window.location.search
-            );
-
-
-        const examId =
-            params.get(
-                "examId"
-            );
-
-
-        const stageId =
-            params.get(
-                "stageId"
-            );
-
-
-        if (
-            examId &&
-            examMap.has(examId)
-        ) {
-
-            examSelect.value =
-                examId;
-
-            selectedExamId =
-                examId;
-
-        }
-
-
-        if (
-            stageId &&
-            stageMap.has(stageId)
-        ) {
-
-            stageSelect.value =
-                stageId;
-
-            selectedStageId =
-                stageId;
 
         }
 
@@ -1029,324 +958,7 @@
 
 
     // =====================================================
-    // Filters
-    // =====================================================
-
-    function bindFilters() {
-
-        const examFilter =
-            document.getElementById(
-                "examFilter"
-            );
-
-
-        const stageFilter =
-            document.getElementById(
-                "stageFilter"
-            );
-
-
-        if (examFilter) {
-
-            examFilter.addEventListener(
-                "change",
-                () => {
-
-                    selectedExamId =
-                        examFilter.value;
-
-                    applyFilters();
-
-                }
-            );
-
-        }
-
-
-        if (stageFilter) {
-
-            stageFilter.addEventListener(
-                "change",
-                () => {
-
-                    selectedStageId =
-                        stageFilter.value;
-
-                    applyFilters();
-
-                }
-            );
-
-        }
-
-    }
-
-
-    // =====================================================
-    // Apply Filters
-    // =====================================================
-
-    function applyFilters() {
-
-        filteredResults =
-            allResults.filter(
-                result => {
-
-                    const examMatch =
-                        !selectedExamId ||
-                        result.examId ===
-                        selectedExamId;
-
-
-                    const stageMatch =
-                        !selectedStageId ||
-                        result.stageId ===
-                        selectedStageId;
-
-
-                    return (
-                        examMatch &&
-                        stageMatch
-                    );
-
-                }
-            );
-
-
-        filteredResults.sort(
-            compareResults
-        );
-
-
-        filteredResults =
-            removeDuplicateStudents(
-                filteredResults
-            );
-
-
-        renderStats();
-
-        renderMyRank();
-
-        renderRanking();
-
-    }
-
-
-    // =====================================================
-    // Sort
-    // =====================================================
-
-    function compareResults(
-        a,
-        b
-    ) {
-
-        const percentageA =
-            Number(
-                a.percentage || 0
-            );
-
-
-        const percentageB =
-            Number(
-                b.percentage || 0
-            );
-
-
-        if (
-            percentageB !==
-            percentageA
-        ) {
-
-            return (
-                percentageB -
-                percentageA
-            );
-
-        }
-
-
-        const scoreA =
-            Number(
-                a.score || 0
-            );
-
-
-        const scoreB =
-            Number(
-                b.score || 0
-            );
-
-
-        if (
-            scoreB !==
-            scoreA
-        ) {
-
-            return (
-                scoreB -
-                scoreA
-            );
-
-        }
-
-
-        return (
-            getTimestamp(
-                a.submittedAt
-            ) -
-            getTimestamp(
-                b.submittedAt
-            )
-        );
-
-    }
-
-
-    // =====================================================
-    // Remove Duplicates
-    // =====================================================
-
-    function removeDuplicateStudents(
-        results
-    ) {
-
-        const unique =
-            new Map();
-
-
-        results.forEach(
-            result => {
-
-                const key =
-                    [
-                        result.examId || "",
-                        result.stageId || "",
-                        result.studentId || ""
-                    ].join("_");
-
-
-                if (
-                    !unique.has(key)
-                ) {
-
-                    unique.set(
-                        key,
-                        result
-                    );
-
-                }
-
-            }
-        );
-
-
-        return Array.from(
-            unique.values()
-        );
-
-    }
-
-
-    // =====================================================
-    // Stats
-    // =====================================================
-
-    function renderStats() {
-
-        const container =
-            document.getElementById(
-                "leaderboardStats"
-            );
-
-
-        if (!container) {
-
-            return;
-
-        }
-
-
-        const count =
-            filteredResults.length;
-
-
-        const average =
-            count
-                ? (
-                    filteredResults.reduce(
-                        (
-                            total,
-                            result
-                        ) =>
-                            total +
-                            Number(
-                                result.percentage ||
-                                0
-                            ),
-                        0
-                    ) / count
-                ).toFixed(1)
-                : "0.0";
-
-
-        const highest =
-            count
-                ? Number(
-                    filteredResults[0]
-                        .percentage || 0
-                ).toFixed(2)
-                : "0.00";
-
-
-        container.innerHTML = `
-
-            <div class="stat">
-
-                <span>
-                    عدد الطلاب
-                </span>
-
-                <strong>
-                    ${count}
-                </strong>
-
-            </div>
-
-
-            <div class="stat">
-
-                <span>
-                    أعلى نسبة
-                </span>
-
-                <strong>
-                    ${highest}%
-                </strong>
-
-            </div>
-
-
-            <div class="stat">
-
-                <span>
-                    متوسط النتائج
-                </span>
-
-                <strong>
-                    ${average}%
-                </strong>
-
-            </div>
-
-        `;
-
-    }
-
-
-    // =====================================================
-    // My Rank
+    // Current Rank
     // =====================================================
 
     function renderMyRank() {
@@ -1364,46 +976,82 @@
         }
 
 
-        const myResultIndex =
-            filteredResults.findIndex(
-                result =>
-                    result.studentId ===
-                    student.id
-            );
+        if (!myResults.length) {
 
+            container.innerHTML = `
 
-        if (
-            myResultIndex ===
-            -1
-        ) {
+                <div class="state-box">
 
-            container.innerHTML = "";
+                    🏆
+
+                    <br>
+
+                    لا توجد نتائج اختبارات مسجلة لك حاليًا.
+
+                    <br>
+
+                    عند دخولك أحد الاختبارات
+                    ستظهر نتيجتك وترتيبك هنا.
+
+                </div>
+
+            `;
 
             return;
 
         }
 
 
-        const myResult =
-            filteredResults[
-                myResultIndex
-            ];
+        /*
+         * نعرض أحدث نتيجة.
+         */
+
+        const result =
+            myResults[0];
 
 
         const rank =
-            myResultIndex + 1;
+            getRank(
+                result
+            );
+
+
+        const percentage =
+            getPercentage(
+                result
+            );
+
+
+        const score =
+            Number(
+                result.score || 0
+            );
+
+
+        const total =
+            Number(
+                result.total || 0
+            );
 
 
         const name =
             student.name ||
-            myResult.studentName ||
+            result.studentName ||
             "الطالب";
 
 
         const initial =
             String(
                 name
-            ).charAt(0);
+            ).trim()
+                .charAt(0) ||
+            "ط";
+
+
+        const rankClass =
+            getRankClass(
+                rank
+            );
 
 
         container.innerHTML = `
@@ -1449,15 +1097,26 @@
 
                 <div class="my-rank-result">
 
-                    <div class="my-rank-number">
+                    <div
+                        class="
+                            my-rank-number
+                            ${rankClass}
+                        "
+                    >
 
-                        #${rank}
+                        ${rank
+                            ? "#" +
+                              escapeHtml(
+                                  String(rank)
+                              )
+                            : "—"
+                        }
 
                     </div>
 
                     <span class="my-rank-label">
 
-                        مركزك الحالي
+                        مركزك
 
                     </span>
 
@@ -1468,10 +1127,7 @@
 
                     <div class="my-rank-number">
 
-                        ${Number(
-                            myResult.percentage ||
-                            0
-                        )}%
+                        ${percentage}%
 
                     </div>
 
@@ -1483,6 +1139,23 @@
 
                 </div>
 
+
+                <div class="my-rank-result">
+
+                    <div class="my-rank-number">
+
+                        ${score}/${total}
+
+                    </div>
+
+                    <span class="my-rank-label">
+
+                        الدرجة
+
+                    </span>
+
+                </div>
+
             </div>
 
         `;
@@ -1491,14 +1164,14 @@
 
 
     // =====================================================
-    // Render Ranking
+    // Summary
     // =====================================================
 
-    function renderRanking() {
+    function renderSummary() {
 
         const container =
             document.getElementById(
-                "leaderboardContainer"
+                "resultGrid"
             );
 
 
@@ -1509,117 +1182,95 @@
         }
 
 
-        if (
-            !filteredResults.length
-        ) {
+        if (!myResults.length) {
 
-            container.innerHTML = `
-
-                <div class="state-box">
-
-                    🏆
-
-                    <br>
-
-                    لا توجد نتائج متاحة
-                    للترتيب حاليًا.
-
-                </div>
-
-            `;
+            container.innerHTML = "";
 
             return;
 
         }
 
 
-        const first =
-            filteredResults[0];
+        const count =
+            myResults.length;
 
 
-        const examTitle =
-            first.examTitle ||
-            "كل الاختبارات";
+        const average =
+            myResults.reduce(
+                (
+                    total,
+                    result
+                ) =>
+                    total +
+                    getPercentage(
+                        result
+                    ),
+                0
+            ) / count;
+
+
+        const best =
+            Math.max(
+                ...myResults.map(
+                    result =>
+                        getPercentage(
+                            result
+                        )
+                )
+            );
 
 
         container.innerHTML = `
 
-            <div class="ranking-card">
+            <div class="result-grid">
 
-                <div
-                    class="ranking-card-header"
-                >
+                <div class="result-card">
 
-                    <h3>
-                        🏆 ترتيب الطلاب
-                    </h3>
+                    <div class="result-icon">
+                        📝
+                    </div>
 
-                    <span>
-                        ${escapeHtml(
-                            examTitle
-                        )}
-                    </span>
+                    <div class="result-label">
+                        عدد الاختبارات
+                    </div>
+
+                    <div class="result-value">
+                        ${count}
+                    </div>
 
                 </div>
 
 
-                <div class="table-wrapper">
+                <div class="result-card">
 
-                    <table>
+                    <div class="result-icon">
+                        📊
+                    </div>
 
-                        <thead>
+                    <div class="result-label">
+                        متوسط النسبة
+                    </div>
 
-                            <tr>
+                    <div class="result-value green">
+                        ${average.toFixed(1)}%
+                    </div>
 
-                                <th>
-                                    المركز
-                                </th>
-
-                                <th>
-                                    الطالب
-                                </th>
-
-                                <th>
-                                    المرحلة
-                                </th>
-
-                                <th>
-                                    الاختبار
-                                </th>
-
-                                <th>
-                                    الدرجة
-                                </th>
-
-                                <th>
-                                    النسبة
-                                </th>
-
-                            </tr>
-
-                        </thead>
+                </div>
 
 
-                        <tbody>
+                <div class="result-card">
 
-                            ${
-                                filteredResults
-                                    .map(
-                                        (
-                                            result,
-                                            index
-                                        ) =>
-                                            renderRow(
-                                                result,
-                                                index
-                                            )
-                                    )
-                                    .join("")
-                            }
+                    <div class="result-icon">
+                        🏆
+                    </div>
 
-                        </tbody>
+                    <div class="result-label">
+                        أعلى نسبة
+                    </div>
 
-                    </table>
+                    <div class="result-value green">
+                        ${best.toFixed(1)}%
+                    </div>
 
                 </div>
 
@@ -1631,69 +1282,76 @@
 
 
     // =====================================================
-    // Render Row
+    // Results
     // =====================================================
 
-    function renderRow(
-        result,
-        index
-    ) {
+    function renderResults() {
 
-        const rank =
-            index + 1;
-
-
-        let rankClass =
-            "";
+        const container =
+            document.getElementById(
+                "resultsList"
+            );
 
 
-        if (
-            rank === 1
-        ) {
+        if (!container) {
 
-            rankClass =
-                "first";
-
-        } else if (
-            rank === 2
-        ) {
-
-            rankClass =
-                "second";
-
-        } else if (
-            rank === 3
-        ) {
-
-            rankClass =
-                "third";
+            return;
 
         }
 
 
-        const studentName =
-            result.studentName ||
-            "طالب";
+        if (!myResults.length) {
+
+            container.innerHTML = `
+
+                <div class="empty-results">
+
+                    📝
+
+                    <br>
+
+                    لا توجد نتائج اختبارات مسجلة لك حاليًا.
+
+                </div>
+
+            `;
+
+            return;
+
+        }
 
 
-        const studentId =
-            result.studentId ||
-            "—";
+        container.innerHTML =
+            myResults
+                .map(
+                    result =>
+                        createResultCard(
+                            result
+                        )
+                )
+                .join("");
+
+    }
 
 
-        const stage =
-            result.stageId ||
-            "—";
+    // =====================================================
+    // Result Card
+    // =====================================================
 
+    function createResultCard(
+        result
+    ) {
 
         const examTitle =
             result.examTitle ||
+            result.examName ||
             "اختبار";
 
 
         const subject =
             result.subject ||
-            "";
+            result.subjectId ||
+            "غير محدد";
 
 
         const score =
@@ -1709,155 +1367,271 @@
 
 
         const percentage =
-            Number(
-                result.percentage || 0
+            getPercentage(
+                result
             );
 
 
-        const isCurrentStudent =
-            studentId ===
-            student.id;
+        const rank =
+            getRank(
+                result
+            );
+
+
+        const rankClass =
+            getRankClass(
+                rank
+            );
+
+
+        const rankText =
+            rank
+                ? "#" +
+                  escapeHtml(
+                      String(rank)
+                  )
+                : "غير مسجل";
 
 
         return `
 
-            <tr
-                ${
-                    isCurrentStudent
-                        ? 'style="background:#f0fbfd;"'
-                        : ""
-                }
-            >
+            <div class="exam-result">
 
-                <td>
+                <div class="exam-result-top">
 
-                    <span
+                    <div>
+
+                        <div class="exam-title">
+
+                            ${escapeHtml(
+                                examTitle
+                            )}
+
+                        </div>
+
+                        <div class="exam-subject">
+
+                            📚
+                            ${escapeHtml(
+                                subject
+                            )}
+
+                        </div>
+
+                    </div>
+
+
+                    <div
                         class="
-                            rank
+                            rank-badge
                             ${rankClass}
                         "
                     >
 
-                        ${rank}
+                        ${rankText}
 
-                    </span>
+                    </div>
 
-                </td>
+                </div>
 
 
-                <td>
+                <div class="exam-details">
 
-                    <div
-                        class="student-name"
-                    >
+                    <div class="exam-detail">
 
-                        ${escapeHtml(
-                            studentName
-                        )}
+                        <span>
+                            الدرجة
+                        </span>
 
-                        ${
-                            isCurrentStudent
-                                ? " ⭐"
-                                : ""
-                        }
+                        <strong>
+                            ${score}/${total}
+                        </strong>
 
                     </div>
 
 
-                    <div
-                        class="student-id"
-                    >
+                    <div class="exam-detail">
 
-                        ${escapeHtml(
-                            String(
-                                studentId
-                            )
-                        )}
+                        <span>
+                            النسبة
+                        </span>
 
-                    </div>
-
-                </td>
-
-
-                <td>
-
-                    <span
-                        class="stage"
-                    >
-
-                        ${escapeHtml(
-                            String(
-                                stage
-                            )
-                        )}
-
-                    </span>
-
-                </td>
-
-
-                <td>
-
-                    <div
-                        class="student-name"
-                    >
-
-                        ${escapeHtml(
-                            examTitle
-                        )}
+                        <strong>
+                            ${percentage}%
+                        </strong>
 
                     </div>
 
 
-                    ${
-                        subject
-                            ? `
-                                <div
-                                    class="student-id"
-                                >
+                    <div class="exam-detail">
 
-                                    ${escapeHtml(
-                                        subject
-                                    )}
+                        <span>
+                            المرحلة
+                        </span>
 
-                                </div>
-                            `
-                            : ""
-                    }
+                        <strong>
+                            ${escapeHtml(
+                                String(
+                                    result.stageId ||
+                                    student.stageId ||
+                                    "—"
+                                )
+                            )}
+                        </strong>
 
-                </td>
+                    </div>
 
+                </div>
 
-                <td>
-
-                    <span
-                        class="score"
-                    >
-
-                        ${score}
-                        /
-                        ${total}
-
-                    </span>
-
-                </td>
-
-
-                <td>
-
-                    <span
-                        class="percentage"
-                    >
-
-                        ${percentage}%
-
-                    </span>
-
-                </td>
-
-            </tr>
+            </div>
 
         `;
+
+    }
+
+
+    // =====================================================
+    // Percentage
+    // =====================================================
+
+    function getPercentage(
+        result
+    ) {
+
+        if (
+            result.percentage !==
+            undefined &&
+            result.percentage !==
+            null
+        ) {
+
+            const percentage =
+                Number(
+                    result.percentage
+                );
+
+
+            if (
+                Number.isFinite(
+                    percentage
+                )
+            ) {
+
+                return percentage;
+
+            }
+
+        }
+
+
+        const score =
+            Number(
+                result.score || 0
+            );
+
+
+        const total =
+            Number(
+                result.total || 0
+            );
+
+
+        if (
+            total > 0
+        ) {
+
+            return (
+                score /
+                total
+            ) * 100;
+
+        }
+
+
+        return 0;
+
+    }
+
+
+    // =====================================================
+    // Rank
+    // =====================================================
+
+    function getRank(
+        result
+    ) {
+
+        if (
+            result.rank ===
+            undefined ||
+            result.rank ===
+            null
+        ) {
+
+            return null;
+
+        }
+
+
+        const rank =
+            Number(
+                result.rank
+            );
+
+
+        if (
+            !Number.isFinite(
+                rank
+            ) ||
+            rank <= 0
+        ) {
+
+            return null;
+
+        }
+
+
+        return rank;
+
+    }
+
+
+    // =====================================================
+    // Rank Class
+    // =====================================================
+
+    function getRankClass(
+        rank
+    ) {
+
+        if (
+            rank === 1
+        ) {
+
+            return "gold";
+
+        }
+
+
+        if (
+            rank === 2
+        ) {
+
+            return "silver";
+
+        }
+
+
+        if (
+            rank === 3
+        ) {
+
+            return "bronze";
+
+        }
+
+
+        return "";
 
     }
 
@@ -1888,6 +1662,18 @@
 
 
         if (
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            return value
+                .toDate()
+                .getTime();
+
+        }
+
+
+        if (
             value.seconds !==
             undefined
         ) {
@@ -1902,19 +1688,21 @@
 
 
         const date =
-            getDateValue(
+            new Date(
                 value
             );
 
 
-        return date
-            ? date.getTime()
-            : 0;
+        const time =
+            date.getTime();
+
+
+        return Number.isNaN(
+            time
+        )
+            ? 0
+            : time;
 
     }
 
-</script>
-
-</body>
-
-</html>
+</script></body></html>
