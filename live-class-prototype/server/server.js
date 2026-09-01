@@ -1,6 +1,9 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import {
     AccessToken,
@@ -12,27 +15,83 @@ import {
 } from "livekit-server-sdk";
 
 
-/* =========================================================
-   Environment
-========================================================= */
-
 dotenv.config();
 
 
-const app = express();
+/* =========================================================
+   Paths
+========================================================= */
 
+const __filename =
+    fileURLToPath(import.meta.url);
+
+const __dirname =
+    path.dirname(__filename);
+
+const projectRoot =
+    path.resolve(__dirname, "..");
+
+const recordingsDir =
+    path.join(
+        projectRoot,
+        "recordings"
+    );
+
+
+fs.mkdirSync(
+    recordingsDir,
+    {
+        recursive: true
+    }
+);
+
+
+/* =========================================================
+   App
+========================================================= */
+
+const app =
+    express();
+
+app.use(
+    cors()
+);
+
+
+/*
+ * LiveKit webhook content-type:
+ *
+ * application/webhook+json
+ *
+ * لذلك لازم Express يقبله.
+ */
+app.use(
+    express.json({
+        type: [
+            "application/json",
+            "application/webhook+json"
+        ]
+    })
+);
+
+
+/* =========================================================
+   Config
+========================================================= */
 
 const PORT =
-    Number(process.env.PORT) || 3000;
-
+    Number(
+        process.env.PORT || 3000
+    );
 
 const LIVEKIT_URL =
     process.env.LIVEKIT_URL;
 
+const LIVEKIT_WS_URL =
+    process.env.LIVEKIT_WS_URL;
 
 const LIVEKIT_API_KEY =
     process.env.LIVEKIT_API_KEY;
-
 
 const LIVEKIT_API_SECRET =
     process.env.LIVEKIT_API_SECRET;
@@ -40,25 +99,17 @@ const LIVEKIT_API_SECRET =
 
 if (
     !LIVEKIT_URL ||
+    !LIVEKIT_WS_URL ||
     !LIVEKIT_API_KEY ||
     !LIVEKIT_API_SECRET
 ) {
 
     console.error(
-        "Missing LIVEKIT_URL, LIVEKIT_API_KEY or LIVEKIT_API_SECRET."
+        "Missing LiveKit environment variables."
     );
 
     process.exit(1);
 }
-
-
-/* =========================================================
-   CORS
-========================================================= */
-
-app.use(
-    cors()
-);
 
 
 /* =========================================================
@@ -89,32 +140,141 @@ const webhookReceiver =
 
 
 /* =========================================================
-   Prototype Storage
-=========================================================
-
-   مؤقت فقط.
-
-   لاحقًا:
-   Firestore
-   +
-   Firebase Storage
+   In-memory Prototype State
 ========================================================= */
 
-const recordings = [];
+const rooms =
+    new Map();
+
+const recordings =
+    new Map();
 
 
 /* =========================================================
-   Normal JSON Parser
-=========================================================
+   Helpers
+========================================================= */
 
-   مهم:
-   لا نضع express.json() على الـWebhook.
+function safeFilename(
+    value
+) {
 
-   LiveKit Webhook يحتاج raw body.
+    return String(value)
+        .replace(
+            /[^a-zA-Z0-9._-]/g,
+            "-"
+        );
+
+}
+
+
+function listRecordingFiles() {
+
+    if (
+        !fs.existsSync(
+            recordingsDir
+        )
+    ) {
+
+        return [];
+
+    }
+
+
+    return fs
+        .readdirSync(
+            recordingsDir
+        )
+        .filter(
+            file =>
+                file
+                    .toLowerCase()
+                    .endsWith(".mp4")
+        )
+        .map(
+            file => {
+
+                const fullPath =
+                    path.join(
+                        recordingsDir,
+                        file
+                    );
+
+                const stat =
+                    fs.statSync(
+                        fullPath
+                    );
+
+                return {
+
+                    filename:
+                        file,
+
+                    url:
+                        `/recordings/${encodeURIComponent(file)}`,
+
+                    size:
+                        stat.size,
+
+                    createdAt:
+                        stat.birthtime.toISOString()
+
+                };
+
+            }
+        )
+        .sort(
+            (
+                a,
+                b
+            ) =>
+                new Date(
+                    b.createdAt
+                ) -
+                new Date(
+                    a.createdAt
+                )
+        );
+
+}
+
+
+/* =========================================================
+   Static Frontend
 ========================================================= */
 
 app.use(
-    express.json()
+    "/",
+    express.static(
+        path.join(
+            projectRoot,
+            "frontend"
+        )
+    )
+);
+
+
+app.use(
+    "/recordings",
+    express.static(
+        recordingsDir,
+        {
+            setHeaders(
+                response
+            ) {
+
+                response.setHeader(
+                    "Content-Disposition",
+                    "inline"
+                );
+
+                response.setHeader(
+                    "Accept-Ranges",
+                    "bytes"
+                );
+
+            }
+        }
+    )
 );
 
 
@@ -124,12 +284,25 @@ app.use(
 
 app.get(
     "/api/health",
-    (req, res) => {
+    (
+        request,
+        response
+    ) => {
 
-        res.json({
-            ok: true,
-            service: "live-class-prototype",
-            livekit: LIVEKIT_URL
+        response.json({
+
+            ok:
+                true,
+
+            service:
+                "live-class-prototype",
+
+            livekit:
+                LIVEKIT_URL,
+
+            recordings:
+                listRecordingFiles().length
+
         });
 
     }
@@ -137,32 +310,31 @@ app.get(
 
 
 /* =========================================================
-   CREATE ROOM
+   Create Room
 ========================================================= */
 
 app.post(
     "/api/create-room",
-    async (req, res) => {
+    async (
+        request,
+        response
+    ) => {
 
         try {
 
             const teacherName =
                 String(
-                    req.body.teacherName ||
+                    request.body.teacherName ||
                     "Teacher"
                 ).trim();
 
 
             const title =
                 String(
-                    req.body.title ||
+                    request.body.title ||
                     "Live Class"
                 ).trim();
 
-
-            /* -------------------------------------------------
-               Unique Room Name
-            ------------------------------------------------- */
 
             const roomName =
                 "class-" +
@@ -170,52 +342,49 @@ app.post(
                 "-" +
                 Math.random()
                     .toString(36)
-                    .slice(2, 8);
+                    .slice(
+                        2,
+                        8
+                    );
 
 
-            /* -------------------------------------------------
-               Create LiveKit Room
-            ------------------------------------------------- */
+            /*
+             * Create LiveKit room.
+             */
 
-            const room =
-                await roomService.createRoom({
+            await roomService.createRoom({
 
-                    name:
-                        roomName,
+                name:
+                    roomName,
 
-                    emptyTimeout:
-                        60,
+                emptyTimeout:
+                    60,
 
-                    departureTimeout:
-                        20,
+                departureTimeout:
+                    20,
 
-                    maxParticipants:
-                        500,
+                maxParticipants:
+                    500,
 
-                    metadata:
-                        JSON.stringify({
+                metadata:
+                    JSON.stringify({
 
-                            title,
+                        title,
 
-                            teacherName,
+                        teacherName,
 
-                            createdAt:
-                                new Date()
-                                    .toISOString()
+                        createdAt:
+                            new Date()
+                                .toISOString()
 
-                        })
+                    })
 
-                });
+            });
 
 
-            /* -------------------------------------------------
-               Teacher Token
-            ------------------------------------------------- */
-
-            const teacherIdentity =
-                "teacher-" +
-                Date.now();
-
+            /*
+             * Teacher token.
+             */
 
             const teacherToken =
                 new AccessToken(
@@ -224,7 +393,8 @@ app.post(
                     {
 
                         identity:
-                            teacherIdentity,
+                            "teacher-" +
+                            Date.now(),
 
                         name:
                             teacherName
@@ -250,9 +420,6 @@ app.post(
                 canPublishData:
                     true,
 
-                /*
-                 * مهم جدًا للـEgress API
-                 */
                 roomRecord:
                     true
 
@@ -263,21 +430,21 @@ app.post(
                 await teacherToken.toJwt();
 
 
-            /* -------------------------------------------------
-               Start Automatic Recording
-            -------------------------------------------------
+            /*
+             * Start RoomComposite Egress.
+             *
+             * LiveKit RoomComposite is tied
+             * to the room lifecycle.
+             *
+             * When participants leave,
+             * the recording stops.
+             */
 
-               Room Composite
-               ↓
-               MP4
+            const outputPath =
+                `/out/${safeFilename(
+                    roomName
+                )}.mp4`;
 
-               LiveKit v2:
-               startRoomCompositeEgress(
-                   roomName,
-                   output,
-                   options
-               )
-            ------------------------------------------------- */
 
             const fileOutput =
                 new EncodedFileOutput({
@@ -286,7 +453,7 @@ app.post(
                         EncodedFileType.MP4,
 
                     filepath:
-                        `/out/${roomName}.mp4`
+                        outputPath
 
                 });
 
@@ -295,9 +462,7 @@ app.post(
                 await egressClient
                     .startRoomCompositeEgress(
                         roomName,
-
                         fileOutput,
-
                         {
 
                             layout:
@@ -313,10 +478,6 @@ app.post(
                     );
 
 
-            /* -------------------------------------------------
-               Save Recording Info
-            ------------------------------------------------- */
-
             const recording = {
 
                 roomName,
@@ -325,40 +486,52 @@ app.post(
 
                 teacherName,
 
-                teacherIdentity,
-
                 egressId:
                     egress.egressId,
 
                 status:
                     "starting",
 
-                filepath:
-                    `/out/${roomName}.mp4`,
+                filename:
+                    `${safeFilename(
+                        roomName
+                    )}.mp4`,
 
                 createdAt:
                     new Date()
-                        .toISOString(),
-
-                endedAt:
-                    null,
-
-                fileResults:
-                    []
+                        .toISOString()
 
             };
 
 
-            recordings.push(
+            recordings.set(
+                egress.egressId,
                 recording
             );
 
 
-            /* -------------------------------------------------
-               Response
-            ------------------------------------------------- */
+            rooms.set(
+                roomName,
+                {
 
-            res.json({
+                    roomName,
+
+                    title,
+
+                    teacherName,
+
+                    createdAt:
+                        new Date()
+                            .toISOString(),
+
+                    egressId:
+                        egress.egressId
+
+                }
+            );
+
+
+            response.json({
 
                 success:
                     true,
@@ -377,22 +550,23 @@ app.post(
                 token,
 
                 livekitUrl:
-                    LIVEKIT_URL,
+                    LIVEKIT_WS_URL,
 
                 recording: {
-
-                    started:
-                        true,
 
                     egressId:
                         egress.egressId,
 
-                    filepath:
-                        recording.filepath
+                    filename:
+                        recording.filename,
+
+                    status:
+                        recording.status
 
                 }
 
             });
+
 
         } catch (error) {
 
@@ -402,13 +576,15 @@ app.post(
             );
 
 
-            res.status(500).json({
+            response.status(
+                500
+            ).json({
 
                 success:
                     false,
 
                 error:
-                    error?.message ||
+                    error.message ||
                     "Failed to create room"
 
             });
@@ -420,60 +596,90 @@ app.post(
 
 
 /* =========================================================
-   JOIN ROOM
+   Join Room
 ========================================================= */
 
 app.post(
     "/api/join-room",
-    async (req, res) => {
+    async (
+        request,
+        response
+    ) => {
 
         try {
 
             const roomName =
                 String(
-                    req.body.roomName ||
+                    request.body.roomName ||
                     ""
                 ).trim();
 
 
             const participantName =
                 String(
-                    req.body.participantName ||
+                    request.body.participantName ||
                     "Student"
                 ).trim();
 
 
             if (!roomName) {
 
-                return res.status(400).json({
+                return response
+                    .status(400)
+                    .json({
 
-                    success:
-                        false,
+                        success:
+                            false,
 
-                    error:
-                        "roomName is required"
+                        error:
+                            "roomName is required"
 
-                });
+                    });
 
             }
 
 
-            /* -------------------------------------------------
-               Student Identity
-            ------------------------------------------------- */
+            /*
+             * Verify room exists.
+             */
 
-            const studentIdentity =
+            const roomList =
+                await roomService
+                    .listRooms(
+                        [roomName]
+                    );
+
+
+            if (
+                !roomList.length
+            ) {
+
+                return response
+                    .status(404)
+                    .json({
+
+                        success:
+                            false,
+
+                        error:
+                            "Room not found"
+
+                    });
+
+            }
+
+
+            const identity =
                 "student-" +
                 Date.now() +
                 "-" +
                 Math.random()
                     .toString(36)
-                    .slice(2, 8);
+                    .slice(
+                        2,
+                        8
+                    );
 
-
-            /* -------------------------------------------------
-               Student Token
-            ------------------------------------------------- */
 
             const token =
                 new AccessToken(
@@ -481,8 +687,7 @@ app.post(
                     LIVEKIT_API_SECRET,
                     {
 
-                        identity:
-                            studentIdentity,
+                        identity,
 
                         name:
                             participantName
@@ -498,6 +703,11 @@ app.post(
 
                 room:
                     roomName,
+
+                /*
+                 * الطالب في الـPrototype
+                 * يقدر يفتح كاميرا ومايك.
+                 */
 
                 canPublish:
                     true,
@@ -515,7 +725,7 @@ app.post(
                 await token.toJwt();
 
 
-            res.json({
+            response.json({
 
                 success:
                     true,
@@ -524,14 +734,12 @@ app.post(
                     jwt,
 
                 livekitUrl:
-                    LIVEKIT_URL,
+                    LIVEKIT_WS_URL,
 
-                roomName,
-
-                identity:
-                    studentIdentity
+                identity
 
             });
+
 
         } catch (error) {
 
@@ -541,13 +749,15 @@ app.post(
             );
 
 
-            res.status(500).json({
+            response.status(
+                500
+            ).json({
 
                 success:
                     false,
 
                 error:
-                    error?.message ||
+                    error.message ||
                     "Failed to join room"
 
             });
@@ -559,131 +769,101 @@ app.post(
 
 
 /* =========================================================
-   STOP RECORDING
-=========================================================
-
-   المدرس يقدر ينهي التسجيل صراحة.
-
-   POST /api/stop-recording
-
-   {
-       "egressId": "EG_..."
-   }
+   End Room
 ========================================================= */
 
 app.post(
-    "/api/stop-recording",
-    async (req, res) => {
+    "/api/end-room",
+    async (
+        request,
+        response
+    ) => {
 
         try {
 
-            const egressId =
+            const roomName =
                 String(
-                    req.body.egressId ||
+                    request.body.roomName ||
                     ""
                 ).trim();
 
 
-            if (!egressId) {
+            if (!roomName) {
 
-                return res.status(400).json({
+                return response
+                    .status(400)
+                    .json({
 
-                    success:
-                        false,
+                        success:
+                            false,
 
-                    error:
-                        "egressId is required"
+                        error:
+                            "roomName is required"
 
-                });
-
-            }
-
-
-            const recording =
-                recordings.find(
-                    item =>
-                        item.egressId ===
-                        egressId
-                );
-
-
-            if (!recording) {
-
-                return res.status(404).json({
-
-                    success:
-                        false,
-
-                    error:
-                        "Recording not found"
-
-                });
+                    });
 
             }
 
 
-            if (
-                recording.status ===
-                "completed"
-            ) {
+            /*
+             * Remove all participants.
+             *
+             * RoomComposite Egress will then
+             * finish with the room lifecycle.
+             */
 
-                return res.json({
-
-                    success:
-                        true,
-
-                    alreadyCompleted:
-                        true
-
-                });
-
-            }
-
-
-            const egress =
-                await egressClient
-                    .stopEgress(
-                        egressId
+            const participants =
+                await roomService
+                    .listParticipants(
+                        roomName
                     );
 
 
-            recording.status =
-                "stopping";
+            for (
+                const participant
+                of participants
+            ) {
+
+                await roomService
+                    .removeParticipant(
+                        roomName,
+                        participant.identity
+                    );
+
+            }
 
 
-            recording.stopRequestedAt =
-                new Date()
-                    .toISOString();
-
-
-            res.json({
+            response.json({
 
                 success:
                     true,
 
-                egressId,
+                roomName,
 
-                status:
-                    egress.status
+                removed:
+                    participants.length
 
             });
+
 
         } catch (error) {
 
             console.error(
-                "Stop recording error:",
+                "End room error:",
                 error
             );
 
 
-            res.status(500).json({
+            response.status(
+                500
+            ).json({
 
                 success:
                     false,
 
                 error:
-                    error?.message ||
-                    "Failed to stop recording"
+                    error.message ||
+                    "Failed to end room"
 
             });
 
@@ -694,51 +874,23 @@ app.post(
 
 
 /* =========================================================
-   RECORDINGS
+   Recordings API
 ========================================================= */
 
 app.get(
     "/api/recordings",
-    (req, res) => {
+    (
+        request,
+        response
+    ) => {
 
-        res.json({
+        response.json({
 
             success:
                 true,
 
             recordings:
-                recordings.map(
-                    recording => ({
-
-                        roomName:
-                            recording.roomName,
-
-                        title:
-                            recording.title,
-
-                        teacherName:
-                            recording.teacherName,
-
-                        egressId:
-                            recording.egressId,
-
-                        status:
-                            recording.status,
-
-                        filepath:
-                            recording.filepath,
-
-                        createdAt:
-                            recording.createdAt,
-
-                        endedAt:
-                            recording.endedAt,
-
-                        fileResults:
-                            recording.fileResults
-
-                    })
-                )
+                listRecordingFiles()
 
         });
 
@@ -747,42 +899,25 @@ app.get(
 
 
 /* =========================================================
-   SINGLE RECORDING
+   Recording Status
 ========================================================= */
 
 app.get(
-    "/api/recordings/:egressId",
-    (req, res) => {
+    "/api/recordings/status",
+    (
+        request,
+        response
+    ) => {
 
-        const recording =
-            recordings.find(
-                item =>
-                    item.egressId ===
-                    req.params.egressId
-            );
-
-
-        if (!recording) {
-
-            return res.status(404).json({
-
-                success:
-                    false,
-
-                error:
-                    "Recording not found"
-
-            });
-
-        }
-
-
-        res.json({
+        response.json({
 
             success:
                 true,
 
-            recording
+            active:
+                Array.from(
+                    recordings.values()
+                )
 
         });
 
@@ -791,77 +926,30 @@ app.get(
 
 
 /* =========================================================
-   LIVEKIT WEBHOOK
-=========================================================
-
-   مهم جدًا:
-
-   LiveKit يرسل:
-   Content-Type:
-   application/webhook+json
-
-   ويجب تمرير RAW BODY إلى:
-   webhookReceiver.receive()
+   LiveKit Webhook
 ========================================================= */
 
 app.post(
     "/api/livekit/webhook",
-
-    express.raw({
-        type:
-            "application/webhook+json"
-    }),
-
-    async (req, res) => {
+    async (
+        request,
+        response
+    ) => {
 
         try {
 
-            const authHeader =
-                req.get(
+            const authorization =
+                request.get(
                     "Authorization"
                 );
 
 
-            /* -------------------------------------------------
-               Raw Body
-            ------------------------------------------------- */
-
-            const rawBody =
-                Buffer.isBuffer(
-                    req.body
-                )
-                    ? req.body.toString(
-                        "utf8"
-                    )
-                    : String(
-                        req.body || ""
-                    );
-
-
-            if (!rawBody) {
-
-                return res.status(400).json({
-
-                    received:
-                        false,
-
-                    error:
-                        "Empty webhook body"
-
-                });
-
-            }
-
-
-            /* -------------------------------------------------
-               Verify + Decode
-            ------------------------------------------------- */
-
             const event =
-                await webhookReceiver.receive(
-                    rawBody,
-                    authHeader
-                );
+                await webhookReceiver
+                    .receive(
+                        request.body,
+                        authorization
+                    );
 
 
             console.log(
@@ -870,42 +958,47 @@ app.post(
             );
 
 
-            /* =================================================
-               EGRESS STARTED
-            ================================================= */
+            /*
+             * Egress started
+             */
 
             if (
                 event.event ===
                 "egress_started"
             ) {
 
-                const egressInfo =
+                const info =
                     event.egressInfo;
 
 
-                if (egressInfo) {
+                if (info) {
 
-                    const index =
-                        recordings.findIndex(
-                            recording =>
-                                recording.egressId ===
-                                egressInfo.egressId
+                    const existing =
+                        recordings.get(
+                            info.egressId
                         );
 
 
-                    if (
-                        index !==
-                        -1
-                    ) {
+                    if (existing) {
 
-                        recordings[index] = {
+                        recordings.set(
 
-                            ...recordings[index],
+                            info.egressId,
 
-                            status:
-                                "recording"
+                            {
 
-                        };
+                                ...existing,
+
+                                status:
+                                    "recording",
+
+                                startedAt:
+                                    new Date()
+                                        .toISOString()
+
+                            }
+
+                        );
 
                     }
 
@@ -914,125 +1007,67 @@ app.post(
             }
 
 
-            /* =================================================
-               EGRESS UPDATED
-            ================================================= */
-
-            if (
-                event.event ===
-                "egress_updated"
-            ) {
-
-                const egressInfo =
-                    event.egressInfo;
-
-
-                if (egressInfo) {
-
-                    const index =
-                        recordings.findIndex(
-                            recording =>
-                                recording.egressId ===
-                                egressInfo.egressId
-                        );
-
-
-                    if (
-                        index !==
-                        -1
-                    ) {
-
-                        recordings[index] = {
-
-                            ...recordings[index],
-
-                            lastUpdate:
-                                new Date()
-                                    .toISOString()
-
-                        };
-
-                    }
-
-                }
-
-            }
-
-
-            /* =================================================
-               EGRESS ENDED
-            ================================================= */
+            /*
+             * Egress ended
+             */
 
             if (
                 event.event ===
                 "egress_ended"
             ) {
 
-                const egressInfo =
+                const info =
                     event.egressInfo;
 
 
-                if (egressInfo) {
+                if (info) {
 
-                    const index =
-                        recordings.findIndex(
-                            recording =>
-                                recording.egressId ===
-                                egressInfo.egressId
+                    const existing =
+                        recordings.get(
+                            info.egressId
                         );
 
 
-                    if (
-                        index !==
-                        -1
-                    ) {
+                    if (existing) {
 
-                        const previous =
-                            recordings[index];
+                        const fileResults =
+                            info.fileResults ||
+                            [];
 
 
-                        recordings[index] = {
-
-                            ...previous,
-
-                            status:
-                                "completed",
-
-                            endedAt:
-                                new Date()
-                                    .toISOString(),
-
-                            fileResults:
-                                egressInfo.fileResults ||
-                                []
-
-                        };
+                        const firstFile =
+                            fileResults[0];
 
 
-                        console.log(
-                            "======================================"
-                        );
+                        recordings.set(
 
+                            info.egressId,
 
-                        console.log(
-                            "Recording completed"
-                        );
+                            {
 
+                                ...existing,
 
-                        console.log(
-                            "Room:",
-                            previous.roomName
+                                status:
+                                    "completed",
+
+                                endedAt:
+                                    new Date()
+                                        .toISOString(),
+
+                                fileResults,
+
+                                filename:
+                                    firstFile?.filename ||
+                                    existing.filename
+
+                            }
+
                         );
 
 
                         console.log(
-                            "File:",
-                            previous.filepath
-                        );
-
-
-                        console.log(
-                            "======================================"
+                            "Recording completed:",
+                            existing.roomName
                         );
 
                     }
@@ -1042,33 +1077,15 @@ app.post(
             }
 
 
-            /* =================================================
-               ROOM FINISHED
-            ================================================= */
+            response
+                .status(200)
+                .json({
 
-            if (
-                event.event ===
-                "room_finished"
-            ) {
+                    received:
+                        true
 
-                console.log(
-                    "Room finished:",
-                    event.room
-                );
+                });
 
-            }
-
-
-            /* -------------------------------------------------
-               Always acknowledge webhook
-            ------------------------------------------------- */
-
-            res.status(200).json({
-
-                received:
-                    true
-
-            });
 
         } catch (error) {
 
@@ -1078,83 +1095,26 @@ app.post(
             );
 
 
-            res.status(401).json({
+            response
+                .status(401)
+                .json({
 
-                received:
-                    false,
+                    received:
+                        false,
 
-                error:
-                    "Invalid LiveKit webhook"
+                    error:
+                        "Invalid LiveKit webhook"
 
-            });
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   404
-========================================================= */
-
-app.use(
-    (req, res) => {
-
-        res.status(404).json({
-
-            success:
-                false,
-
-            error:
-                "Route not found"
-
-        });
-
-    }
-);
-
-
-/* =========================================================
-   Global Error Handler
-========================================================= */
-
-app.use(
-    (error, req, res, next) => {
-
-        console.error(
-            "Server error:",
-            error
-        );
-
-
-        if (
-            res.headersSent
-        ) {
-
-            return next(
-                error
-            );
+                });
 
         }
 
-
-        res.status(500).json({
-
-            success:
-                false,
-
-            error:
-                "Internal server error"
-
-        });
-
     }
 );
 
 
 /* =========================================================
-   START SERVER
+   Start
 ========================================================= */
 
 app.listen(
@@ -1166,27 +1126,19 @@ app.listen(
         );
 
         console.log(
-            "LIVE CLASS PROTOTYPE"
+            `Live Class Prototype: http://localhost:${PORT}`
         );
 
         console.log(
-            "======================================"
+            `LiveKit: ${LIVEKIT_WS_URL}`
         );
 
         console.log(
-            `Server: http://localhost:${PORT}`
+            `Recordings: ${recordingsDir}`
         );
 
         console.log(
-            `LiveKit: ${LIVEKIT_URL}`
-        );
-
-        console.log(
-            `Health: http://localhost:${PORT}/api/health`
-        );
-
-        console.log(
-            `Webhook: http://localhost:${PORT}/api/livekit/webhook`
+            "Webhook: /api/livekit/webhook"
         );
 
         console.log(
