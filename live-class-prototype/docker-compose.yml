@@ -1,0 +1,48 @@
+services:
+
+  redis:
+    image: redis:7-alpine
+    container_name: liveclass-redis
+    restart: unless-stopped
+
+  livekit:
+    image: livekit/livekit-server:latest
+    container_name: liveclass-livekit
+    restart: unless-stopped
+
+    command: --dev
+
+    ports:
+      - "7880:7880"
+      - "7881:7881"
+      - "7882:7882/udp"
+
+    environment:
+      LIVEKIT_KEYS: "devkey: secret"
+
+    depends_on:
+      - redis
+
+  egress:
+    image: livekit/egress:latest
+    container_name: liveclass-egress
+    restart: unless-stopped
+
+    cap_add:
+      - SYS_ADMIN
+
+    environment:
+      EGRESS_CONFIG_BODY: |
+        log_level: info
+
+        api_key: devkey
+        api_secret: secret
+
+        ws_url: ws://livekit:7880
+
+        redis:
+          address: redis:6379
+
+    depends_on:
+      - livekit
+      - redis
