@@ -1,137 +1,226 @@
 <!DOCTYPE html>
 
-<html lang="ar" dir="rtl">
+<html
+    lang="ar"
+    dir="rtl"
+>
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>
-    Live Class Prototype
-</title>
+    <title>
+        Live Class Prototype
+    </title>
 
-<link
-    rel="stylesheet"
-    href="style.css"
->
+    <link
+        rel="stylesheet"
+        href="./style.css"
+    >
 
 </head>
 
 <body>
 
-<div class="container">
+    <main class="container">
 
-    <div class="card">
+        <div class="card">
 
-        <h1>
-            🎥 المحاضرة المباشرة
-        </h1>
+            <h1>
+                إنشاء محاضرة مباشرة
+            </h1>
 
-        <p>
-            Prototype - مسار التمريض
-        </p>
-
-
-        <input
-            id="name"
-            placeholder="اكتب اسمك"
-        >
+            <p class="muted">
+                Prototype - Teacher
+            </p>
 
 
-        <input
-            id="room"
-            value="nursing-class-1"
-            placeholder="اسم الغرفة"
-        >
+            <label>
+                اسم المدرس
+            </label>
+
+            <input
+                id="teacherName"
+                type="text"
+                placeholder="Dr.Nurhan"
+                value="Dr.Nurhan"
+            >
 
 
-        <select id="role">
+            <label>
+                عنوان المحاضرة
+            </label>
 
-            <option value="student">
-                طالب
-            </option>
-
-            <option value="teacher">
-                مدرس
-            </option>
-
-        </select>
+            <input
+                id="lectureTitle"
+                type="text"
+                placeholder="مثال: المحاضرة الأولى"
+            >
 
 
-        <button id="join">
-
-            دخول المحاضرة
-
-        </button>
-
-    </div>
-
-</div>
+            <button
+                id="createRoomButton"
+            >
+                🎥 إنشاء المحاضرة
+            </button>
 
 
-<script>
+            <div
+                id="status"
+                class="status"
+            ></div>
 
-document
-    .getElementById("join")
-    .addEventListener(
-        "click",
-        () => {
+        </div>
 
-            const name =
-                document
-                .getElementById("name")
-                .value
-                .trim();
+    </main>
 
 
-            const room =
-                document
-                .getElementById("room")
-                .value
-                .trim();
+    <script>
+
+        const API_URL =
+            "http://localhost:3000";
 
 
-            const role =
-                document
-                .getElementById("role")
-                .value;
+        const button =
+            document.getElementById(
+                "createRoomButton"
+            );
 
 
-            if (!name) {
+        const status =
+            document.getElementById(
+                "status"
+            );
 
-                alert(
-                    "اكتب اسمك أولًا."
-                );
 
-                return;
+        button.addEventListener(
+            "click",
+            async () => {
+
+                const teacherName =
+                    document
+                        .getElementById(
+                            "teacherName"
+                        )
+                        .value
+                        .trim();
+
+
+                const title =
+                    document
+                        .getElementById(
+                            "lectureTitle"
+                        )
+                        .value
+                        .trim();
+
+
+                if (!title) {
+
+                    status.textContent =
+                        "اكتب عنوان المحاضرة أولًا.";
+
+                    return;
+
+                }
+
+
+                button.disabled = true;
+
+                status.textContent =
+                    "جاري إنشاء الغرفة...";
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `${API_URL}/api/create-room`,
+                            {
+
+                                method:
+                                    "POST",
+
+                                headers: {
+
+                                    "Content-Type":
+                                        "application/json"
+
+                                },
+
+                                body:
+                                    JSON.stringify({
+
+                                        teacherName,
+
+                                        title
+
+                                    })
+
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (
+                        !response.ok ||
+                        !data.success
+                    ) {
+
+                        throw new Error(
+                            data.error ||
+                            "فشل إنشاء الغرفة"
+                        );
+
+                    }
+
+
+                    /*
+                     * نحفظ بيانات الغرفة
+                     * للانتقال إليها.
+                     */
+
+                    sessionStorage.setItem(
+                        "liveClass",
+                        JSON.stringify(
+                            data
+                        )
+                    );
+
+
+                    status.textContent =
+                        "تم إنشاء المحاضرة. جاري الدخول...";
+
+
+                    window.location.href =
+                        `room.html?room=${encodeURIComponent(
+                            data.room.name
+                        )}&role=teacher`;
+
+                } catch (error) {
+
+                    console.error(error);
+
+                    status.textContent =
+                        "❌ " +
+                        error.message;
+
+                    button.disabled = false;
+
+                }
 
             }
+        );
 
-
-            const params =
-                new URLSearchParams({
-
-                    name,
-
-                    room,
-
-                    role
-
-                });
-
-
-            window.location.href =
-                `room.html?${params}`;
-
-        }
-    );
-
-</script>
+    </script>
 
 </body>
 
