@@ -57,3 +57,4 @@ services:
     depends_on:
       - livekit
       - redis
+
