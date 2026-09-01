@@ -1,104 +1,84 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-
 import {
     AccessToken,
     RoomServiceClient
 } from "livekit-server-sdk";
 
-
 dotenv.config();
 
+const app = express();
 
-const app =
-    express();
+app.use(cors());
+app.use(express.json());
 
-
-app.use(
-    cors()
-);
-
-
-app.use(
-    express.json()
-);
-
-
-/* =====================================================
-   Configuration
-===================================================== */
-
-const PORT =
-    process.env.PORT ||
-    3000;
-
+const PORT = process.env.PORT || 3000;
 
 const LIVEKIT_URL =
-    process.env.LIVEKIT_URL ||
-    "ws://localhost:7880";
+    process.env.LIVEKIT_URL;
 
+const LIVEKIT_API_KEY =
+    process.env.LIVEKIT_API_KEY;
 
-const LIVEKIT_HTTP_URL =
-    LIVEKIT_URL
-        .replace(
-            "ws://",
-            "http://"
-        )
-        .replace(
-            "wss://",
-            "https://"
-        );
+const LIVEKIT_API_SECRET =
+    process.env.LIVEKIT_API_SECRET;
 
+if (
+    !LIVEKIT_URL ||
+    !LIVEKIT_API_KEY ||
+    !LIVEKIT_API_SECRET
+) {
+    console.error(
+        "Missing LiveKit environment variables."
+    );
 
-const API_KEY =
-    process.env.LIVEKIT_API_KEY ||
-    "devkey";
-
-
-const API_SECRET =
-    process.env.LIVEKIT_API_SECRET ||
-    "secret";
-
+    process.exit(1);
+}
 
 const roomService =
     new RoomServiceClient(
-        LIVEKIT_HTTP_URL,
-        API_KEY,
-        API_SECRET
+        LIVEKIT_URL,
+        LIVEKIT_API_KEY,
+        LIVEKIT_API_SECRET
     );
 
 
-/* =====================================================
-   Health
-===================================================== */
+/*
+|--------------------------------------------------------------------------
+| Health
+|--------------------------------------------------------------------------
+*/
 
 app.get(
-    "/",
+    "/api/health",
     (req, res) => {
 
         res.json({
-
             ok: true,
-
-            service:
-                "Nursing Live Class Prototype",
-
-            livekit:
-                true,
-
-            recording:
-                true
-
+            service: "live-class-prototype"
         });
 
     }
 );
 
 
-/* =====================================================
-   Create Room
-===================================================== */
+/*
+|--------------------------------------------------------------------------
+| Create Room
+|--------------------------------------------------------------------------
+|
+| المدرس:
+|
+| POST /api/create-room
+|
+| {
+|   "teacherName": "Dr.Nurhan",
+|   "title": "محاضرة تجريبية"
+| }
+|
+|--------------------------------------------------------------------------
+*/
 
 app.post(
     "/api/create-room",
@@ -106,87 +86,109 @@ app.post(
 
         try {
 
-            const {
-                roomName
-            } = req.body;
+            const teacherName =
+                String(
+                    req.body.teacherName ||
+                    "Teacher"
+                ).trim();
 
-
-            if (!roomName) {
-
-                return res
-                    .status(400)
-                    .json({
-
-                        error:
-                            "roomName مطلوب."
-
-                    });
-
-            }
+            const title =
+                String(
+                    req.body.title ||
+                    "Live Class"
+                ).trim();
 
 
             /*
-             * إنشاء الغرفة.
+             * Room name آمن وفريد
+             */
+
+            const roomName =
+                "class-" +
+                Date.now() +
+                "-" +
+                Math.random()
+                    .toString(36)
+                    .slice(2, 8);
+
+
+            /*
+             * إنشاء الغرفة
              *
-             * Auto Egress:
-             *
-             * يبدأ تسجيل Room Composite
-             * تلقائيًا عندما يدخل أول مشارك.
-             *
-             * ويتوقف عندما يغادر الجميع.
+             * maxParticipants:
+             * يمكن تغييره لاحقًا.
              */
 
             const room =
                 await roomService.createRoom({
 
-                    name:
-                        roomName,
+                    name: roomName,
 
-                    emptyTimeout:
-                        300,
+                    emptyTimeout: 60,
 
-                    departureTimeout:
-                        20,
+                    departureTimeout: 20,
 
-                    maxParticipants:
-                        500,
+                    maxParticipants: 500,
+
+                    metadata:
+                        JSON.stringify({
+
+                            title,
+
+                            teacherName,
+
+                            createdAt:
+                                new Date()
+                                    .toISOString()
+
+                        }),
+
+                    /*
+                     * Auto Egress
+                     *
+                     * التسجيل يبدأ تلقائيًا
+                     * مع إنشاء الغرفة.
+                     */
 
                     egress: {
 
                         room: {
 
-                            layout:
-                                "speaker",
+                            layout: "speaker",
+
+                            audioOnly: false,
+
+                            videoOnly: false,
 
                             fileOutputs: [
 
                                 {
 
-                                    fileType:
-                                        "MP4",
+                                    fileType: "MP4",
 
                                     filepath:
-                                        `recordings/${roomName}-{time}.mp4`,
+                                        `recordings/${roomName}.mp4`,
 
                                     s3: {
 
                                         accessKey:
-                                            "prototype",
+                                            process.env.S3_ACCESS_KEY,
 
                                         secret:
-                                            "prototype-secret",
-
-                                        region:
-                                            "us-east-1",
+                                            process.env.S3_SECRET,
 
                                         bucket:
-                                            "recordings",
+                                            process.env.S3_BUCKET,
+
+                                        region:
+                                            process.env.S3_REGION,
 
                                         endpoint:
-                                            "http://minio:9000",
+                                            process.env.S3_ENDPOINT || "",
 
                                         forcePathStyle:
-                                            true
+                                            process.env.S3_FORCE_PATH_STYLE ===
+                                            "true"
 
                                     }
 
@@ -201,23 +203,66 @@ app.post(
                 });
 
 
+            /*
+             * Token للمدرس
+             */
+
+            const teacherToken =
+                new AccessToken(
+                    LIVEKIT_API_KEY,
+                    LIVEKIT_API_SECRET,
+                    {
+                        identity:
+                            "teacher-" +
+                            Date.now(),
+
+                        name:
+                            teacherName
+                    }
+                );
+
+
+            teacherToken.addGrant({
+
+                roomJoin: true,
+
+                room:
+                    roomName,
+
+                canPublish: true,
+
+                canSubscribe: true,
+
+                canPublishData: true
+
+            });
+
+
+            const token =
+                await teacherToken.toJwt();
+
+
             res.json({
 
-                ok:
-                    true,
+                success: true,
 
                 room: {
 
                     name:
-                        room.name,
+                        roomName,
 
-                    sid:
-                        room.sid
+                    title,
 
-                }
+                    teacherName
+
+                },
+
+                token,
+
+                livekitUrl:
+                    LIVEKIT_URL
 
             });
-
 
         } catch (error) {
 
@@ -226,18 +271,15 @@ app.post(
                 error
             );
 
+            res.status(500).json({
 
-            res
-                .status(500)
-                .json({
+                success: false,
 
-                    error:
-                        "فشل إنشاء الغرفة.",
+                error:
+                    error.message ||
+                    "Failed to create room"
 
-                    details:
-                        error.message
-
-                });
+            });
 
         }
 
@@ -245,91 +287,82 @@ app.post(
 );
 
 
-/* =====================================================
-   Token
-===================================================== */
+/*
+|--------------------------------------------------------------------------
+| Join Room
+|--------------------------------------------------------------------------
+|
+| الطالب أو أي مشارك يطلب Token للغرفة.
+|
+|--------------------------------------------------------------------------
+*/
 
 app.post(
-    "/api/token",
+    "/api/join-room",
     async (req, res) => {
 
         try {
 
-            const {
+            const roomName =
+                String(
+                    req.body.roomName ||
+                    ""
+                ).trim();
 
-                roomName,
-
-                identity,
-
-                role
-
-            } = req.body;
+            const participantName =
+                String(
+                    req.body.participantName ||
+                    "Student"
+                ).trim();
 
 
-            if (
-                !roomName ||
-                !identity
-            ) {
+            if (!roomName) {
 
-                return res
-                    .status(400)
-                    .json({
+                return res.status(400).json({
 
-                        error:
-                            "roomName و identity مطلوبان."
+                    success: false,
 
-                    });
+                    error:
+                        "roomName is required"
+
+                });
 
             }
 
 
-            const isTeacher =
-                role ===
-                "teacher";
-
-
             const token =
                 new AccessToken(
-
-                    API_KEY,
-
-                    API_SECRET,
-
+                    LIVEKIT_API_KEY,
+                    LIVEKIT_API_SECRET,
                     {
 
                         identity:
-
-                            identity,
+                            "student-" +
+                            Date.now() +
+                            "-" +
+                            Math.random()
+                                .toString(36)
+                                .slice(2, 7),
 
                         name:
-
-                            identity,
-
-                        ttl:
-
-                            "2h"
+                            participantName
 
                     }
-
                 );
 
 
             token.addGrant({
 
-                roomJoin:
-                    true,
+                roomJoin: true,
 
                 room:
                     roomName,
 
-                canPublish:
-                    isTeacher,
+                canPublish: true,
 
-                canSubscribe:
-                    true,
+                canSubscribe: true,
 
-                canPublishData:
-                    true
+                canPublishData: true
 
             });
 
@@ -340,34 +373,31 @@ app.post(
 
             res.json({
 
-                ok:
-                    true,
+                success: true,
 
-                token:
-                    jwt,
+                token: jwt,
 
-                url:
+                livekitUrl:
                     LIVEKIT_URL
 
             });
 
-
         } catch (error) {
 
             console.error(
-                "Token error:",
+                "Join room error:",
                 error
             );
 
+            res.status(500).json({
 
-            res
-                .status(500)
-                .json({
+                success: false,
 
-                    error:
-                        "فشل إنشاء Token."
+                error:
+                    error.message ||
+                    "Failed to join room"
 
-                });
+            });
 
         }
 
@@ -375,36 +405,18 @@ app.post(
 );
 
 
-/* =====================================================
-   Start Server
-===================================================== */
+/*
+|--------------------------------------------------------------------------
+| Start
+|--------------------------------------------------------------------------
+*/
 
 app.listen(
     PORT,
     () => {
 
         console.log(
-            "================================="
-        );
-
-        console.log(
-            " Nursing Live Class Prototype"
-        );
-
-        console.log(
-            "================================="
-        );
-
-        console.log(
-            `Server: http://localhost:${PORT}`
-        );
-
-        console.log(
-            `LiveKit: ${LIVEKIT_URL}`
-        );
-
-        console.log(
-            "Auto Egress: ENABLED"
+            `Live Class Prototype Server running on port ${PORT}`
         );
 
     }
