@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 
-<html
-    lang="ar"
-    dir="rtl"
->
+<html lang="ar" dir="rtl">
 
 <head>
 
@@ -20,25 +17,35 @@
 
     <link
         rel="stylesheet"
-        href="./style.css"
+        href="style.css"
     >
 
 </head>
 
 <body>
 
-    <main class="container">
+<div class="container">
+
+    <div class="card">
+
+        <h1>
+            🎥 Live Class Prototype
+        </h1>
+
+        <p>
+            اختبار غرفة محاضرة مباشرة باستخدام LiveKit.
+        </p>
+
+    </div>
+
+
+    <div class="grid">
 
         <div class="card">
 
-            <h1>
-                إنشاء محاضرة مباشرة
-            </h1>
-
-            <p class="muted">
-                Prototype - Teacher
-            </p>
-
+            <h2>
+                👨‍🏫 المدرس
+            </h2>
 
             <label>
                 اسم المدرس
@@ -46,183 +53,326 @@
 
             <input
                 id="teacherName"
-                type="text"
-                placeholder="Dr.Nurhan"
                 value="Dr.Nurhan"
             >
-
 
             <label>
                 عنوان المحاضرة
             </label>
 
             <input
-                id="lectureTitle"
-                type="text"
-                placeholder="مثال: المحاضرة الأولى"
+                id="title"
+                value="محاضرة تجريبية"
             >
-
 
             <button
-                id="createRoomButton"
+                id="createRoom"
             >
-                🎥 إنشاء المحاضرة
+                إنشاء المحاضرة
             </button>
 
-
             <div
-                id="status"
+                id="teacherStatus"
                 class="status"
-            ></div>
+            >
+                جاهز
+            </div>
 
         </div>
 
-    </main>
+
+        <div class="card">
+
+            <h2>
+                👨‍🎓 الطالب
+            </h2>
+
+            <label>
+                اسم الطالب
+            </label>
+
+            <input
+                id="studentName"
+                value="Student 1"
+            >
+
+            <label>
+                Room Name
+            </label>
+
+            <input
+                id="roomName"
+                placeholder="class-..."
+            >
+
+            <button
+                id="joinRoom"
+            >
+                دخول المحاضرة
+            </button>
+
+            <div
+                id="studentStatus"
+                class="status"
+            >
+                اكتب Room Name
+            </div>
+
+        </div>
+
+    </div>
 
 
-    <script>
+    <div class="card">
 
-        const API_URL =
-            "http://localhost:3000";
+        <h3>
+            التسجيلات
+        </h3>
 
+        <a
+            href="recordings.html"
+        >
+            فتح صفحة التسجيلات
+        </a>
 
-        const button =
-            document.getElementById(
-                "createRoomButton"
-            );
+    </div>
 
-
-        const status =
-            document.getElementById(
-                "status"
-            );
-
-
-        button.addEventListener(
-            "click",
-            async () => {
-
-                const teacherName =
-                    document
-                        .getElementById(
-                            "teacherName"
-                        )
-                        .value
-                        .trim();
+</div>
 
 
-                const title =
-                    document
-                        .getElementById(
-                            "lectureTitle"
-                        )
-                        .value
-                        .trim();
+<script>
+
+const API =
+    "http://localhost:3000";
 
 
-                if (!title) {
+document
+    .getElementById("createRoom")
+    .addEventListener(
+        "click",
+        async () => {
 
-                    status.textContent =
-                        "اكتب عنوان المحاضرة أولًا.";
+            const teacherName =
+                document
+                    .getElementById(
+                        "teacherName"
+                    )
+                    .value;
 
-                    return;
-
-                }
-
-
-                button.disabled = true;
-
-                status.textContent =
-                    "جاري إنشاء الغرفة...";
-
-
-                try {
-
-                    const response =
-                        await fetch(
-                            `${API_URL}/api/create-room`,
-                            {
-
-                                method:
-                                    "POST",
-
-                                headers: {
-
-                                    "Content-Type":
-                                        "application/json"
-
-                                },
-
-                                body:
-                                    JSON.stringify({
-
-                                        teacherName,
-
-                                        title
-
-                                    })
-
-                            }
-                        );
+            const title =
+                document
+                    .getElementById(
+                        "title"
+                    )
+                    .value;
 
 
-                    const data =
-                        await response.json();
-
-
-                    if (
-                        !response.ok ||
-                        !data.success
-                    ) {
-
-                        throw new Error(
-                            data.error ||
-                            "فشل إنشاء الغرفة"
-                        );
-
-                    }
-
-
-                    /*
-                     * نحفظ بيانات الغرفة
-                     * للانتقال إليها.
-                     */
-
-                    sessionStorage.setItem(
-                        "liveClass",
-                        JSON.stringify(
-                            data
-                        )
+            const status =
+                document
+                    .getElementById(
+                        "teacherStatus"
                     );
 
 
-                    status.textContent =
-                        "تم إنشاء المحاضرة. جاري الدخول...";
+            status.textContent =
+                "جاري إنشاء الغرفة...";
 
 
-                    window.location.href =
-                        `room.html?room=${encodeURIComponent(
-                            data.room.name
-                        )}&role=teacher`;
+            try {
 
-                } catch (error) {
+                const response =
+                    await fetch(
+                        API +
+                        "/api/create-room",
+                        {
 
-                    console.error(error);
+                            method:
+                                "POST",
 
-                    status.textContent =
-                        "❌ " +
-                        error.message;
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
 
-                    button.disabled = false;
+                            body:
+                                JSON.stringify({
+
+                                    teacherName,
+
+                                    title
+
+                                })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!data.success) {
+
+                    throw new Error(
+                        data.error
+                    );
 
                 }
 
-            }
-        );
 
-    </script>
+                document
+                    .getElementById(
+                        "roomName"
+                    )
+                    .value =
+                    data.room.name;
+
+
+                status.innerHTML = `
+                    تم إنشاء المحاضرة.
+                    <br>
+                    Room:
+                    <strong>
+                        ${data.room.name}
+                    </strong>
+                    <br>
+                    التسجيل:
+                    ${data.recording.status}
+                    <br><br>
+                    <a href="room.html?room=${encodeURIComponent(
+                        data.room.name
+                    )}&token=${encodeURIComponent(
+                        data.token
+                    )}&role=teacher">
+                        فتح غرفة المدرس
+                    </a>
+                `;
+
+
+            } catch (error) {
+
+                status.textContent =
+                    "خطأ: " +
+                    error.message;
+
+            }
+
+        }
+    );
+
+
+document
+    .getElementById("joinRoom")
+    .addEventListener(
+        "click",
+        async () => {
+
+            const roomName =
+                document
+                    .getElementById(
+                        "roomName"
+                    )
+                    .value
+                    .trim();
+
+
+            const participantName =
+                document
+                    .getElementById(
+                        "studentName"
+                    )
+                    .value
+                    .trim();
+
+
+            const status =
+                document
+                    .getElementById(
+                        "studentStatus"
+                    );
+
+
+            if (!roomName) {
+
+                status.textContent =
+                    "اكتب Room Name أولًا.";
+
+                return;
+
+            }
+
+
+            status.textContent =
+                "جاري تجهيز الدخول...";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        API +
+                        "/api/join-room",
+                        {
+
+                            method:
+                                "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    roomName,
+
+                                    participantName
+
+                                })
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!data.success) {
+
+                    throw new Error(
+                        data.error
+                    );
+
+                }
+
+
+                window.location.href =
+                    "room.html?" +
+                    "room=" +
+                    encodeURIComponent(
+                        roomName
+                    ) +
+                    "&token=" +
+                    encodeURIComponent(
+                        data.token
+                    ) +
+                    "&role=student";
+
+            } catch (error) {
+
+                status.textContent =
+                    "خطأ: " +
+                    error.message;
+
+            }
+
+        }
+    );
+
+</script>
 
 </body>
 
 </html>
-
