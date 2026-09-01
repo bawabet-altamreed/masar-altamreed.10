@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+المحاضرات | بوابة التمريض
+</title>
+
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    font-family:
+        Arial,
+        Tahoma,
+        sans-serif;
+
+    background: #f1f5f9;
+
+    color: #0f172a;
+
+}
+
+
+.teacher-header {
+
+    height: 75px;
+
+    background: white;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 25px;
+
+    border-bottom: 1px solid #e2e8f0;
+
+}
+
+
+.header-right {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+}
+
+
+.menu-button {
+
+    display: none;
+
+    border: 0;
+
+    background: transparent;
+
+    font-size: 25px;
+
+}
+
+
+.brand {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+}
+
+
+.brand-icon {
+
+    width: 48px;
+    height: 48px;
+
+    background: #0f766e;
+
+    border-radius: 14px;
+
+    color: white;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 25px;
+
+}
+
+
+.brand span {
+
+    color: #64748b;
+
+    font-size: 12px;
+
+}
+
+
+.teacher-mini-profile {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+}
+
+
+.teacher-avatar {
+
+    width: 42px;
+    height: 42px;
+
+    background: #ccfbf1;
+
+    color: #0f766e;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-weight: bold;
+
+}
+
+
+.teacher-system {
+
+    display: flex;
+
+    min-height:
+        calc(100vh - 75px);
+
+}
+
+
+.teacher-sidebar {
+
+    width: 250px;
+
+    background: #0f172a;
+
+    color: white;
+
+}
+
+
+.sidebar-profile {
+
+    text-align: center;
+
+    padding: 30px 20px;
+
+    border-bottom:
+        1px solid #1e293b;
+
+}
+
+
+.large-avatar {
+
+    width: 70px;
+    height: 70px;
+
+    margin: auto auto 12px;
+
+    border-radius: 50%;
+
+    background: #0f766e;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 25px;
+
+}
+
+
+.sidebar-profile span {
+
+    display: block;
+
+    color: #94a3b8;
+
+    margin-top: 5px;
+
+}
+
+
+.teacher-nav {
+
+    padding: 15px;
+
+}
+
+
+.teacher-nav a,
+.logout-button {
+
+    display: block;
+
+    width: 100%;
+
+    padding: 13px;
+
+    margin-bottom: 7px;
+
+    border-radius: 10px;
+
+    text-decoration: none;
+
+    color: #cbd5e1;
+
+    border: 0;
+
+    background: transparent;
+
+    text-align: right;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+}
+
+
+.teacher-nav a:hover,
+.teacher-nav a.active {
+
+    background: #1e293b;
+
+    color: white;
+
+}
+
+
+.teacher-main {
+
+    flex: 1;
+
+    padding: 30px;
+
+}
+
+
+.top-title {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 25px;
+
+}
+
+
+.top-title h1 {
+
+    margin: 0;
+
+}
+
+
+.create-button {
+
+    background: #0f766e;
+
+    color: white;
+
+    border: 0;
+
+    border-radius: 12px;
+
+    padding: 13px 20px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+
+.lectures-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill,minmax(300px,1fr));
+
+    gap: 20px;
+
+}
+
+
+.lecture-card {
+
+    background: white;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 18px;
+
+    overflow: hidden;
+
+}
+
+
+.lecture-top {
+
+    background: #0f766e;
+
+    color: white;
+
+    padding: 20px;
+
+}
+
+
+.lecture-top h3 {
+
+    margin: 0 0 8px;
+
+}
+
+
+.lecture-body {
+
+    padding: 20px;
+
+}
+
+
+.lecture-info {
+
+    color: #64748b;
+
+    line-height: 1.9;
+
+}
+
+
+.status {
+
+    display: inline-block;
+
+    margin-top: 12px;
+
+    padding: 5px 10px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+}
+
+
+.status.live {
+
+    background: #dcfce7;
+
+    color: #166534;
+
+}
+
+
+.status.offline {
+
+    background: #e2e8f0;
+
+    color: #475569;
+
+}
+
+
+.empty {
+
+    background: white;
+
+    padding: 50px;
+
+    border-radius: 18px;
+
+    text-align: center;
+
+    color: #64748b;
+
+}
+
+
+.modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        rgba(15,23,42,.65);
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    z-index: 100;
+
+}
+
+
+.modal.show {
+
+    display: flex;
+
+}
+
+
+.modal-box {
+
+    width: 100%;
+
+    max-width: 550px;
+
+    background: white;
+
+    border-radius: 20px;
+
+    padding: 25px;
+
+}
+
+
+.modal-box h2 {
+
+    margin-top: 0;
+
+}
+
+
+.form-group {
+
+    margin-bottom: 15px;
+
+}
+
+
+.form-group label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-weight: bold;
+
+}
+
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+
+    width: 100%;
+
+    padding: 12px;
+
+    border: 1px solid #cbd5e1;
+
+    border-radius: 10px;
+
+    font-size: 15px;
+
+}
+
+
+.form-buttons {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 20px;
+
+}
+
+
+.form-buttons button {
+
+    flex: 1;
+
+    padding: 13px;
+
+    border-radius: 10px;
+
+    border: 0;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+}
+
+
+.save-button {
+
+    background: #0f766e;
+
+    color: white;
+
+}
+
+
+.cancel-button {
+
+    background: #e2e8f0;
+
+}
+
+
+@media(max-width:800px) {
+
+    .menu-button {
+        display: block;
+    }
+
+    .teacher-sidebar {
+
+        position: fixed;
+
+        right: -270px;
+
+        top: 75px;
+
+        bottom: 0;
+
+        z-index: 50;
+
+        transition: .3s;
+
+    }
+
+    .teacher-sidebar.open {
+        right: 0;
+    }
+
+    .teacher-main {
+        padding: 20px;
+    }
+
+    .top-title {
+
+        align-items: stretch;
+
+        flex-direction: column;
+
+        gap: 15px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div id="app"></div>
+
+
+<div
+    class="modal"
+    id="lectureModal"
+>
+
+    <div class="modal-box">
+
+        <h2>
+            إنشاء محاضرة جديدة
+        </h2>
+
+
+        <form id="lectureForm">
+
+            <div class="form-group">
+
+                <label>
+                    عنوان المحاضرة
+                </label>
+
+                <input
+                    id="title"
+                    required
+                    placeholder="مثال: محاضرة الالتهاب"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    المرحلة
+                </label>
+
+                <select
+                    id="stageId"
+                    required
+                >
+
+                    <option value="">
+                        اختر المرحلة
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    المادة
+                </label>
+
+                <select
+                    id="subjectId"
+                    required
+                >
+
+                    <option value="">
+                        اختر المادة
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    تاريخ المحاضرة
+                </label>
+
+                <input
+                    type="datetime-local"
+                    id="date"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    وصف المحاضرة
+                </label>
+
+                <textarea
+                    id="description"
+                    rows="4"
+                    placeholder="وصف مختصر للمحاضرة"
+                ></textarea>
+
+            </div>
+
+
+            <div class="form-buttons">
+
+                <button
+                    type="button"
+                    class="cancel-button"
+                    id="cancelModal"
+                >
+                    إلغاء
+                </button>
+
+                <button
+                    type="submit"
+                    class="save-button"
+                >
+                    إنشاء المحاضرة
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script type="module">
+
+import {
+    auth,
+    db
+} from "../src/firebase/firebase-config.js";
+
+import {
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+    collection,
+    query,
+    where,
+    getDocs,
+    addDoc,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+let teacher = null;
+
+let stages = [];
+
+let subjects = [];
+
+
+const app =
+    document.getElementById("app");
+
+
+// ============================================================
+// LOAD
+// ============================================================
+
+onAuthStateChanged(
+    auth,
+    async (user) => {
+
+        if (!user) {
+
+            location.href =
+                "./login.html";
+
+            return;
+        }
+
+
+        const teacherSnap =
+            await getDocs(
+                query(
+                    collection(db, "users"),
+                    where(
+                        "__name__",
+                        "==",
+                        user.uid
+                    )
+                )
+            );
+
+
+        if (teacherSnap.empty) {
+
+            location.href =
+                "./login.html";
+
+            return;
+        }
+
+
+        teacher = {
+            uid: user.uid,
+            ...teacherSnap.docs[0].data()
+        };
+
+
+        if (
+            teacher.role !== "teacher" ||
+            teacher.isActive === false
+        ) {
+
+            location.href =
+                "./login.html";
+
+            return;
+        }
+
+
+        renderLayout();
+
+        await loadData();
+
+        await loadLectures();
+
+    }
+);
+
+
+// ============================================================
+// LAYOUT
+// ============================================================
+
+function renderLayout() {
+
+    const name =
+        teacher.name ||
+        teacher.fullName ||
+        "المعلم";
+
+
+    app.innerHTML = `
+
+        <header class="teacher-header">
+
+            <div class="header-right">
+
+                <button
+                    class="menu-button"
+                    id="menuButton"
+                >
+                    ☰
+                </button>
+
+                <div class="brand">
+
+                    <div class="brand-icon">
+                        🩺
+                    </div>
+
+                    <div>
+                        <strong>
+                            بوابة التمريض
+                        </strong>
+
+                        <span>
+                            لوحة تحكم المعلم
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="teacher-mini-profile">
+
+                <div class="teacher-avatar">
+                    ${name.charAt(0)}
+                </div>
+
+                <strong>
+                    ${name}
+                </strong>
+
+            </div>
+
+        </header>
+
+
+        <div class="teacher-system">
+
+            <aside
+                class="teacher-sidebar"
+                id="sidebar"
+            >
+
+                <div class="sidebar-profile">
+
+                    <div class="large-avatar">
+                        ${name.charAt(0)}
+                    </div>
+
+                    <strong>
+                        ${name}
+                    </strong>
+
+                    <span>
+                        مدرس / معلم
+                    </span>
+
+                </div>
+
+
+                <nav class="teacher-nav">
+
+                    <a href="./dashboard.html">
+                        🏠 الرئيسية
+                    </a>
+
+                    <a
+                        href="./lectures.html"
+                        class="active"
+                    >
+                        🎥 المحاضرات
+                    </a>
+
+                    <a href="./exams.html">
+                        📝 الاختبارات
+                    </a>
+
+                    <a href="./profile.html">
+                        👤 حسابي
+                    </a>
+
+                    <button
+                        id="logout"
+                        class="logout-button"
+                    >
+                        🚪 تسجيل الخروج
+                    </button>
+
+                </nav>
+
+            </aside>
+
+
+            <main class="teacher-main">
+
+                <div class="top-title">
+
+                    <div>
+
+                        <h1>
+                            المحاضرات
+                        </h1>
+
+                        <p>
+                            إدارة محاضراتك التعليمية
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="create-button"
+                        id="createLecture"
+                    >
+                        ＋ محاضرة جديدة
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="lectures-grid"
+                    id="lecturesGrid"
+                ></div>
+
+            </main>
+
+        </div>
+
+    `;
+
+
+    document
+        .getElementById("menuButton")
+        .onclick = () => {
+
+            document
+                .getElementById("sidebar")
+                .classList.toggle("open");
+
+        };
+
+
+    document
+        .getElementById("createLecture")
+        .onclick = openModal;
+
+
+    document
+        .getElementById("cancelModal")
+        .onclick = closeModal;
+
+
+    document
+        .getElementById("logout")
+        .onclick = async () => {
+
+            const {
+                signOut
+            } = await import(
+                "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"
+            );
+
+            await signOut(auth);
+
+            location.href =
+                "./login.html";
+
+        };
+
+
+    document
+        .getElementById("lectureForm")
+        .addEventListener(
+            "submit",
+            createLecture
+        );
+
+}
+
+
+// ============================================================
+// LOAD STAGES + SUBJECTS
+// ============================================================
+
+async function loadData() {
+
+    const stagesSnap =
+        await getDocs(
+            collection(db, "stages")
+        );
+
+    stages = [];
+
+    stagesSnap.forEach((item) => {
+
+        stages.push({
+            id: item.id,
+            ...item.data()
+        });
+
+    });
+
+
+    const subjectsSnap =
+        await getDocs(
+            collection(db, "subjects")
+        );
+
+    subjects = [];
+
+    subjectsSnap.forEach((item) => {
+
+        subjects.push({
+            id: item.id,
+            ...item.data()
+        });
+
+    });
+
+
+    renderSelects();
+
+}
+
+
+// ============================================================
+// SELECTS
+// ============================================================
+
+function renderSelects() {
+
+    const stageSelect =
+        document.getElementById("stageId");
+
+    const subjectSelect =
+        document.getElementById("subjectId");
+
+
+    stages.forEach(stage => {
+
+        const option =
+            document.createElement("option");
+
+        option.value =
+            stage.id;
+
+        option.textContent =
+            stage.name ||
+            stage.title ||
+            stage.id;
+
+        stageSelect.appendChild(option);
+
+    });
+
+
+    subjects.forEach(subject => {
+
+        const option =
+            document.createElement("option");
+
+        option.value =
+            subject.id;
+
+        option.textContent =
+            subject.name ||
+            subject.title ||
+            subject.id;
+
+        subjectSelect.appendChild(option);
+
+    });
+
+}
+
+
+// ============================================================
+// LOAD LECTURES
+// ============================================================
+
+async function loadLectures() {
+
+    const grid =
+        document.getElementById(
+            "lecturesGrid"
+        );
+
+
+    grid.innerHTML =
+        `<div class="empty">جاري تحميل المحاضرات...</div>`;
+
+
+    const q =
+        query(
+            collection(db, "lectures"),
+            where(
+                "teacherId",
+                "==",
+                teacher.uid
+            )
+        );
+
+
+    const snapshot =
+        await getDocs(q);
+
+
+    if (snapshot.empty) {
+
+        grid.innerHTML = `
+
+            <div class="empty">
+
+                <div style="font-size:40px">
+                    🎥
+                </div>
+
+                <h3>
+                    لا توجد محاضرات حتى الآن
+                </h3>
+
+                <p>
+                    ابدأ بإنشاء أول محاضرة لك.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    grid.innerHTML = "";
+
+
+    snapshot.forEach(
+        (docSnap) => {
+
+            const lecture =
+                docSnap.data();
+
+
+            const stage =
+                stages.find(
+                    x =>
+                        x.id === lecture.stageId
+                );
+
+
+            const subject =
+                subjects.find(
+                    x =>
+                        x.id === lecture.subjectId
+                );
+
+
+            const card =
+                document.createElement("article");
+
+            card.className =
+                "lecture-card";
+
+
+            card.innerHTML = `
+
+                <div class="lecture-top">
+
+                    <h3>
+                        ${escapeHtml(
+                            lecture.title ||
+                            "محاضرة بدون عنوان"
+                        )}
+                    </h3>
+
+                    <span>
+                        ${escapeHtml(
+                            subject?.name ||
+                            lecture.subjectId ||
+                            ""
+                        )}
+                    </span>
+
+                </div>
+
+
+                <div class="lecture-body">
+
+                    <div class="lecture-info">
+
+                        🎓 المرحلة:
+                        ${escapeHtml(
+                            stage?.name ||
+                            lecture.stageId ||
+                            "غير محددة"
+                        )}
+
+                        <br>
+
+                        📅 التاريخ:
+                        ${formatDate(
+                            lecture.date
+                        )}
+
+                    </div>
+
+
+                    <span
+                        class="status ${
+                            lecture.isLive
+                                ? "live"
+                                : "offline"
+                        }"
+                    >
+                        ${
+                            lecture.isLive
+                                ? "● مباشر الآن"
+                                : lecture.isPublished
+                                    ? "منشورة"
+                                    : "غير منشورة"
+                        }
+                    </span>
+
+                </div>
+
+            `;
+
+
+            grid.appendChild(card);
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// CREATE LECTURE
+// ============================================================
+
+async function createLecture(event) {
+
+    event.preventDefault();
+
+
+    const title =
+        document
+            .getElementById("title")
+            .value
+            .trim();
+
+
+    const stageId =
+        document
+            .getElementById("stageId")
+            .value;
+
+
+    const subjectId =
+        document
+            .getElementById("subjectId")
+            .value;
+
+
+    const dateValue =
+        document
+            .getElementById("date")
+            .value;
+
+
+    const description =
+        document
+            .getElementById("description")
+            .value
+            .trim();
+
+
+    if (
+        !title ||
+        !stageId ||
+        !subjectId ||
+        !dateValue
+    ) {
+
+        alert(
+            "من فضلك أكمل بيانات المحاضرة"
+        );
+
+        return;
+    }
+
+
+    try {
+
+        await addDoc(
+            collection(db, "lectures"),
+            {
+
+                title,
+
+                teacherId:
+                    teacher.uid,
+
+                teacherName:
+                    teacher.name ||
+                    teacher.fullName ||
+                    "",
+
+                stageId,
+
+                subjectId,
+
+                description,
+
+                date:
+                    new Date(dateValue),
+
+                isPublished:
+                    false,
+
+                isLive:
+                    false,
+
+                roomName:
+                    "",
+
+                recordingUrl:
+                    "",
+
+                recordingStatus:
+                    "pending",
+
+                createdAt:
+                    serverTimestamp()
+
+            }
+        );
+
+
+        alert(
+            "تم إنشاء المحاضرة بنجاح ✅"
+        );
+
+
+        closeModal();
+
+        document
+            .getElementById("lectureForm")
+            .reset();
+
+
+        await loadLectures();
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "حدث خطأ أثناء إنشاء المحاضرة"
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// MODAL
+// ============================================================
+
+function openModal() {
+
+    document
+        .getElementById("lectureModal")
+        .classList.add("show");
+
+}
+
+
+function closeModal() {
+
+    document
+        .getElementById("lectureModal")
+        .classList.remove("show");
+
+}
+
+
+// ============================================================
+// HELPERS
+// ============================================================
+
+function escapeHtml(value) {
+
+    return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+function formatDate(timestamp) {
+
+    if (!timestamp) {
+        return "غير محدد";
+    }
+
+
+    try {
+
+        const date =
+            timestamp.toDate
+                ? timestamp.toDate()
+                : new Date(timestamp);
+
+
+        return date.toLocaleString(
+            "ar-EG",
+            {
+                dateStyle: "medium",
+                timeStyle: "short"
+            }
+        );
+
+    } catch {
+
+        return "غير محدد";
+
+    }
+
+}
+
+</script>
+
+</body>
+
+</html>
