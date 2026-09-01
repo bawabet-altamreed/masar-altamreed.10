@@ -1,24 +1,16 @@
 log_level: info
 
-api_key: prototypekey
-api_secret: prototype-secret-change-me
+api_key: devkey
+
+api_secret: devsecret123456789
 
 ws_url: ws://livekit:7880
 
-redis:
-  address: redis:6379
-  db: 0
-
 insecure: true
 
-room_composite:
-  enabled: true
+redis:
+  address: redis:6379
 
-file:
-  enabled: true
+health_port: 8081
 
-  output:
-    type: local
-
-    local:
-      filepath: /out/{room_name}-{time}.mp4
+enable_chrome_sandbox: false
