@@ -703,6 +703,37 @@
 <script type="module">
 
     import {
+    getFunctions,
+    httpsCallable
+} from
+    "https://www.gstatic.com/firebasejs/12.1.0/firebase-functions.js";
+
+import {
+    app
+} from "../src/firebase/init.js";
+
+    const functions =
+    getFunctions(
+        app,
+        "us-central1"
+    );
+
+
+const createTeacher =
+    httpsCallable(
+        functions,
+        "createTeacher"
+    );
+
+
+const setTeacherActive =
+    httpsCallable(
+        functions,
+        "setTeacherActive"
+    );
+
+    
+    import {
         protectAdminPage
     } from "../src/admin/auth-guard.js";
 
@@ -1958,112 +1989,46 @@
                 // Create New Teacher
                 // =================================================
 
-                else {
+else {
 
-                    /*
-                     * مهم:
-                     * إنشاء Firebase Auth User يجب أن يتم
-                     * من Backend / Firebase Admin SDK.
-                     *
-                     * لا نستخدم:
-                     *
-                     * createUserWithEmailAndPassword()
-                     *
-                     * هنا حتى لا تتغير جلسة الأدمن.
-                     */
+    const result =
+        await createTeacher({
 
+            name,
 
-                    const response =
-                        await fetch(
-                            "/api/admin/create-teacher",
-                            {
+            email,
 
-                                method: "POST",
+            password,
 
-                                headers: {
+            stageIds:
+                selectedStageIds,
 
-                                    "Content-Type":
-                                        "application/json"
+            subjectIds:
+                selectedSubjectIds,
 
-                                },
+            isActive:
+                active
 
-                                body:
-                                    JSON.stringify({
-
-                                        name,
-
-                                        email,
-
-                                        password,
-
-                                        stageIds:
-                                            selectedStageIds,
-
-                                        subjectIds:
-                                            selectedSubjectIds,
-
-                                        isActive:
-                                            active
-
-                                    })
-
-                            }
-                        );
+        });
 
 
-                    const result =
-                        await response.json();
+    if (
+        !result.data ||
+        result.data.success !== true
+    ) {
+
+        throw new Error(
+            "فشل إنشاء حساب المعلم."
+        );
+
+    }
 
 
-                    if (!response.ok) {
-
-                        throw new Error(
-                            result.message ||
-                            "فشل إنشاء حساب المعلم."
-                        );
-
-                    }
-
-
-                    showToast(
-                        "تم إنشاء حساب المعلم بنجاح."
-                    );
-
-                }
-
-
-                closeModal();
-
-                await loadTeachers();
-
-            } catch (error) {
-
-                console.error(
-                    "Teacher save error:",
-                    error
-                );
-
-
-                modalError.textContent =
-                    error.message ||
-                    "حدث خطأ أثناء حفظ بيانات المعلم.";
-
-            } finally {
-
-                saveTeacherButton.disabled =
-                    false;
-
-
-                saveTeacherButton.textContent =
-                    teacherId.value
-                    ? "حفظ التعديلات"
-                    : "إنشاء المعلم";
-
-            }
-
-        }
+    showToast(
+        "تم إنشاء حساب المعلم بنجاح."
     );
 
+}
 
     // =====================================================
     // Toggle Teacher
@@ -2108,23 +2073,27 @@
 
 
         try {
+const result =
+    await setTeacherActive({
 
-            await updateDoc(
-                doc(
-                    db,
-                    "users",
-                    id
-                ),
-                {
+        uid: id,
 
-                    isActive:
-                        newStatus,
+        isActive:
+            newStatus
 
-                    updatedAt:
-                        serverTimestamp()
+    });
 
-                }
-            );
+
+if (
+    !result.data ||
+    result.data.success !== true
+) {
+
+    throw new Error(
+        "فشل تغيير حالة المعلم."
+    );
+
+}
 
 
             showToast(
