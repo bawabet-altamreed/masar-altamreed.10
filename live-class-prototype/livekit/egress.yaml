@@ -1,14 +1,24 @@
-api_key: ${LIVEKIT_API_KEY}
-api_secret: ${LIVEKIT_API_SECRET}
+log_level: info
 
-ws_url: ${LIVEKIT_WS_URL}
+api_key: prototypekey
+api_secret: prototype-secret-change-me
+
+ws_url: ws://livekit:7880
 
 redis:
   address: redis:6379
+  db: 0
 
-s3:
-  access_key: ${R2_ACCESS_KEY}
-  secret: ${R2_SECRET_KEY}
-  region: ${R2_REGION}
-  endpoint: ${R2_ENDPOINT}
-  bucket: ${R2_BUCKET}
+insecure: true
+
+room_composite:
+  enabled: true
+
+file:
+  enabled: true
+
+  output:
+    type: local
+
+    local:
+      filepath: /out/{room_name}-{time}.mp4
