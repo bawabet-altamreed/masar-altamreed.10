@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ar" dir="rtl">
 
 <head>
@@ -7,184 +6,192 @@
 <meta charset="UTF-8">
 
 <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
 >
 
-<title>
-حسابي | بوابة التمريض
-</title>
-
+<title>الملف الشخصي | بوابة التمريض</title>
 
 <style>
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
-
-    margin: 0;
-
-    font-family:
-        Arial,
-        Tahoma,
-        sans-serif;
-
-    background: #f1f5f9;
-
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f7fb;
+  color: #172033;
 }
 
-
-header {
-
-    height: 75px;
-
-    background: white;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    padding: 0 25px;
-
-    border-bottom:
-        1px solid #e2e8f0;
-
+#teacher-layout {
+  display: flex;
+  min-height: 100vh;
 }
 
-
-.system {
-
-    display: flex;
-
-    min-height:
-        calc(100vh - 75px);
-
+.teacher-sidebar {
+  width: 260px;
+  background: #0b1f3a;
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
-
-.sidebar {
-
-    width: 250px;
-
-    background: #0f172a;
-
-    padding: 20px;
-
+.teacher-brand {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ffffff20;
 }
 
-
-.sidebar a {
-
-    display: block;
-
-    color: #cbd5e1;
-
-    text-decoration: none;
-
-    padding: 13px;
-
-    border-radius: 10px;
-
-    margin-bottom: 8px;
-
+.teacher-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: #1976d2;
+  display: grid;
+  place-items: center;
 }
 
-
-.sidebar a.active,
-.sidebar a:hover {
-
-    background: #1e293b;
-
-    color: white;
-
+.teacher-brand strong,
+.teacher-brand span {
+  display: block;
 }
 
-
-main {
-
-    flex: 1;
-
-    padding: 30px;
-
+.teacher-brand span {
+  font-size: 12px;
+  color: #b9c7d8;
 }
 
+.teacher-account {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.teacher-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: white;
+  color: #0b1f3a;
+  display: grid;
+  place-items: center;
+}
+
+.teacher-nav {
+  display: grid;
+  gap: 8px;
+}
+
+.teacher-nav a {
+  color: white;
+  text-decoration: none;
+  padding: 13px;
+  border-radius: 9px;
+}
+
+.teacher-nav a.active,
+.teacher-nav a:hover {
+  background: #1976d2;
+}
+
+.teacher-logout {
+  margin-top: auto;
+  border: 0;
+  background: #c62828;
+  color: white;
+  padding: 12px;
+  border-radius: 9px;
+}
+
+.teacher-main {
+  flex: 1;
+}
+
+.teacher-topbar {
+  background: white;
+  padding: 20px 30px;
+}
+
+#teacher-content {
+  padding: 30px;
+}
 
 .profile-card {
-
-    max-width: 700px;
-
-    background: white;
-
-    border-radius: 20px;
-
-    padding: 30px;
-
-    border: 1px solid #e2e8f0;
-
+  background: white;
+  border-radius: 18px;
+  padding: 25px;
+  max-width: 750px;
+  box-shadow: 0 3px 15px #00000008;
 }
 
-
-.avatar {
-
-    width: 90px;
-    height: 90px;
-
-    border-radius: 50%;
-
-    background: #0f766e;
-
-    color: white;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 35px;
-
-    margin-bottom: 20px;
-
+.form-group {
+  margin-bottom: 18px;
 }
 
-
-.info {
-
-    padding: 15px 0;
-
-    border-bottom:
-        1px solid #e2e8f0;
-
+label {
+  display: block;
+  margin-bottom: 7px;
+  font-weight: bold;
 }
 
-
-.info:last-child {
-
-    border-bottom: 0;
-
+input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d6dde7;
+  border-radius: 9px;
 }
 
-
-.info span {
-
-    display: block;
-
-    color: #64748b;
-
-    font-size: 13px;
-
-    margin-bottom: 5px;
-
+input:disabled {
+  background: #f0f2f5;
 }
 
+button {
+  border: 0;
+  background: #1976d2;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 9px;
+  cursor: pointer;
+}
 
-.info strong {
+.box {
+  background: #f7f9fc;
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 20px;
+}
 
-    font-size: 17px;
+.tag {
+  display: inline-block;
+  background: #e3f2fd;
+  color: #1565c0;
+  padding: 7px 10px;
+  border-radius: 20px;
+  margin: 4px;
+}
+
+@media(max-width:700px) {
+
+  .teacher-sidebar {
+    width: 70px;
+    padding: 10px;
+  }
+
+  .teacher-brand div:not(.teacher-logo),
+  .teacher-account div:not(.teacher-avatar),
+  .teacher-nav span {
+    display: none;
+  }
+
+  #teacher-content {
+    padding: 15px;
+  }
 
 }
 
@@ -192,255 +199,184 @@ main {
 
 </head>
 
-
 <body>
 
-
-<header>
-
-    <strong>
-        🩺 بوابة التمريض
-    </strong>
-
-    <strong id="name">
-        المعلم
-    </strong>
-
-</header>
-
-
-<div class="system">
-
-
-<aside class="sidebar">
-
-    <a href="./dashboard.html">
-        🏠 الرئيسية
-    </a>
-
-    <a href="./lectures.html">
-        🎥 المحاضرات
-    </a>
-
-    <a href="./exams.html">
-        📝 الاختبارات
-    </a>
-
-    <a
-        href="./profile.html"
-        class="active"
-    >
-        👤 حسابي
-    </a>
-
-</aside>
-
-
-<main>
-
-    <h1>
-        حسابي
-    </h1>
-
-    <p style="color:#64748b">
-        بيانات حساب المعلم
-    </p>
-
-
-    <div
-        class="profile-card"
-        id="profile"
-    >
-
-        جاري تحميل البيانات...
-
-    </div>
-
-</main>
-
-
-</div>
-
+<div id="teacher-layout"></div>
 
 <script type="module">
 
 import {
-    auth,
-    db
-} from "../src/firebase/firebase-config.js";
-
-import {
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-import {
-    doc,
-    getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  protectTeacherPage,
+  createTeacherLayout,
+  getStages,
+  getSubjects,
+  updateTeacherProfile,
+  escapeHtml
+} from "../src/teacher/teacher.js";
 
 
-onAuthStateChanged(
-    auth,
-    async user => {
+const teacher =
+  await protectTeacherPage();
 
-        if (!user) {
+createTeacherLayout("profile");
 
-            location.href =
-                "./login.html";
+document.querySelector("#teacher-page-title").textContent =
+  "الملف الشخصي";
 
-            return;
-        }
+const content =
+  document.querySelector("#teacher-content");
 
+const stages =
+  await getStages();
 
-        try {
+const subjects =
+  await getSubjects();
 
-            const snap =
-                await getDoc(
-                    doc(
-                        db,
-                        "users",
-                        user.uid
-                    )
-                );
+const teacherStages =
+  stages.filter(stage =>
+    teacher.stageIds?.includes(stage.id)
+  );
 
-
-            if (!snap.exists()) {
-
-                location.href =
-                    "./login.html";
-
-                return;
-            }
+const teacherSubjects =
+  subjects.filter(subject =>
+    teacher.subjectIds?.includes(subject.id)
+  );
 
 
-            const teacher =
-                snap.data();
+content.innerHTML = `
+
+<div class="profile-card">
+
+  <h2>بيانات المعلم</h2>
+
+  <form id="profileForm">
+
+    <div class="form-group">
+
+      <label>الاسم</label>
+
+      <input
+        id="teacherName"
+        value="${escapeHtml(
+          teacher.name || ""
+        )}"
+        required
+      >
+
+    </div>
+
+    <div class="form-group">
+
+      <label>البريد الإلكتروني</label>
+
+      <input
+        id="teacherEmail"
+        type="email"
+        value="${escapeHtml(
+          teacher.email || ""
+        )}"
+      >
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Firebase UID</label>
+
+      <input
+        value="${escapeHtml(
+          teacher.uid
+        )}"
+        disabled
+      >
+
+    </div>
+
+    <button type="submit">
+      حفظ التعديلات
+    </button>
+
+  </form>
+
+  <div class="box">
+
+    <h3>المراحل المسموحة</h3>
+
+    ${
+      teacherStages.length
+      ? teacherStages.map(stage => `
+          <span class="tag">
+            ${escapeHtml(stage.name)}
+          </span>
+        `).join("")
+      : "<p>لا توجد مراحل.</p>"
+    }
+
+  </div>
+
+  <div class="box">
+
+    <h3>المواد المسموحة</h3>
+
+    ${
+      teacherSubjects.length
+      ? teacherSubjects.map(subject => `
+          <span class="tag">
+            ${escapeHtml(subject.name)}
+          </span>
+        `).join("")
+      : "<p>لا توجد مواد.</p>"
+    }
+
+  </div>
+
+</div>
+`;
 
 
-            if (
-                teacher.role !== "teacher"
-            ) {
+document
+  .querySelector("#profileForm")
+  .addEventListener(
+    "submit",
+    async event => {
 
-                location.href =
-                    "./login.html";
+      event.preventDefault();
 
-                return;
-            }
+      try {
 
+        await updateTeacherProfile({
 
-            const name =
-                teacher.name ||
-                teacher.fullName ||
-                "المعلم";
-
-
+          name:
             document
-                .getElementById("name")
-                .textContent =
-                    name;
+              .querySelector("#teacherName")
+              .value
+              .trim(),
 
-
+          email:
             document
-                .getElementById("profile")
-                .innerHTML = `
+              .querySelector("#teacherEmail")
+              .value
+              .trim()
 
-                    <div class="avatar">
+        });
 
-                        ${escapeHtml(
-                            name.charAt(0)
-                        )}
+        alert(
+          "تم حفظ البيانات بنجاح."
+        );
 
-                    </div>
+      } catch (error) {
 
+        console.error(error);
 
-                    <div class="info">
-
-                        <span>
-                            الاسم
-                        </span>
-
-                        <strong>
-                            ${escapeHtml(name)}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="info">
-
-                        <span>
-                            البريد الإلكتروني
-                        </span>
-
-                        <strong>
-                            ${escapeHtml(
-                                user.email || ""
-                            )}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="info">
-
-                        <span>
-                            نوع الحساب
-                        </span>
-
-                        <strong>
-                            معلم
-                        </strong>
-
-                    </div>
-
-
-                    <div class="info">
-
-                        <span>
-                            حالة الحساب
-                        </span>
-
-                        <strong>
-                            ${
-                                teacher.isActive === false
-                                    ? "غير مفعل"
-                                    : "نشط ✅"
-                            }
-                        </strong>
-
-                    </div>
-
-                `;
-
-
-        } catch (error) {
-
-            console.error(error);
-
-            document
-                .getElementById("profile")
-                .textContent =
-                    "حدث خطأ أثناء تحميل البيانات.";
-
-        }
+        alert(
+          "حدث خطأ أثناء حفظ البيانات."
+        );
+      }
 
     }
-);
-
-
-function escapeHtml(value) {
-
-    return String(value || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-
-}
+  );
 
 </script>
 
 </body>
-
 </html>
