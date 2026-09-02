@@ -2,481 +2,550 @@
 <html lang="ar" dir="rtl">
 
 <head>
+    <meta charset="UTF-8">
 
-<meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <title>نتائجي | مسار التمريض</title>
 
-<title>
-    نتائجي | مسار التمريض
-</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-<style>
+        body {
+            font-family:
+                "Tajawal",
+                "Cairo",
+                Arial,
+                sans-serif;
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
+            background: #f5f7fb;
+            color: #1f2937;
+        }
 
-body {
-    font-family: Arial, Tahoma, sans-serif;
-    background: #f3f8fb;
-    color: #17324a;
-}
+        button,
+        a {
+            font-family: inherit;
+        }
 
-.results-page {
-    padding: 25px;
-    max-width: 1100px;
-    margin: auto;
-}
+        .app {
+            min-height: 100vh;
+            display: flex;
+        }
 
-.results-header-main {
-    background: linear-gradient(
-        135deg,
-        #087ea4,
-        #075f7c
-    );
+        /* =========================
+           SIDEBAR
+        ========================= */
 
-    color: white;
-    border-radius: 18px;
-    padding: 28px;
-    margin-bottom: 18px;
-}
+        .sidebar {
+            width: 270px;
+            background: #0f172a;
+            color: white;
+            min-height: 100vh;
+            position: fixed;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            padding: 24px 16px;
+            overflow-y: auto;
+            z-index: 100;
+        }
 
-.results-header-main h2 {
-    font-size: 23px;
-    margin-bottom: 8px;
-}
+        .brand {
+            text-align: center;
+            padding-bottom: 24px;
+            border-bottom: 1px solid rgba(255,255,255,.1);
+            margin-bottom: 20px;
+        }
 
-.results-header-main p {
-    font-size: 13px;
-    line-height: 1.9;
-}
+        .brand h2 {
+            font-size: 22px;
+            margin-bottom: 6px;
+        }
 
-.summary-grid {
-    display: grid;
-    grid-template-columns:
-        repeat(3, minmax(0, 1fr));
-    gap: 14px;
-    margin-bottom: 18px;
-}
+        .brand span {
+            color: #94a3b8;
+            font-size: 13px;
+        }
 
-.summary-card {
-    background: white;
-    border: 1px solid #e4edf2;
-    border-radius: 15px;
-    padding: 20px;
-    text-align: center;
-}
+        .student-box {
+            background: rgba(255,255,255,.06);
+            border-radius: 14px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
 
-.summary-icon {
-    font-size: 22px;
-    margin-bottom: 8px;
-}
+        .student-name {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
 
-.summary-label {
-    color: #82919d;
-    font-size: 11px;
-    margin-bottom: 7px;
-}
+        .student-stage {
+            color: #94a3b8;
+            font-size: 12px;
+            line-height: 1.6;
+        }
 
-.summary-value {
-    color: #087ea4;
-    font-size: 22px;
-    font-weight: bold;
-}
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
 
-.results-section {
-    background: white;
-    border: 1px solid #e4edf2;
-    border-radius: 17px;
-    overflow: hidden;
-}
+        .nav a {
+            color: #cbd5e1;
+            text-decoration: none;
+            padding: 12px 14px;
+            border-radius: 10px;
+            transition: .2s;
+            font-size: 14px;
+        }
 
-.results-section-header {
-    padding: 18px 20px;
-    border-bottom: 1px solid #edf1f4;
-}
+        .nav a:hover {
+            background: rgba(255,255,255,.07);
+            color: white;
+        }
 
-.results-section-header h3 {
-    font-size: 16px;
-}
+        .nav a.active {
+            background: #2563eb;
+            color: white;
+        }
 
-.result-item {
-    padding: 18px 20px;
-    border-bottom: 1px solid #edf1f4;
-}
+        .logout-btn {
+            width: 100%;
+            border: 0;
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 10px;
+            background: #dc2626;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: .2s;
+        }
 
-.result-item:last-child {
-    border-bottom: none;
-}
+        .logout-btn:hover {
+            background: #b91c1c;
+        }
 
-.result-top {
-    display: flex;
-    justify-content: space-between;
-    gap: 15px;
-    margin-bottom: 13px;
-}
+        /* =========================
+           MAIN
+        ========================= */
 
-.result-title {
-    font-weight: bold;
-    font-size: 14px;
-    margin-bottom: 6px;
-}
+        .main {
+            flex: 1;
+            margin-right: 270px;
+            padding: 30px;
+            min-width: 0;
+        }
 
-.result-subject {
-    color: #82919d;
-    font-size: 10px;
-}
+        .page-header {
+            margin-bottom: 25px;
+        }
 
-.percentage-badge {
-    min-width: 75px;
-    padding: 9px;
-    border-radius: 9px;
-    background: #eaf7fb;
-    color: #087ea4;
-    text-align: center;
-    font-weight: bold;
-}
+        .page-header h1 {
+            font-size: 28px;
+            margin-bottom: 7px;
+            color: #0f172a;
+        }
 
-.result-details {
-    display: grid;
-    grid-template-columns:
-        repeat(4, 1fr);
-    gap: 9px;
-}
+        .page-header p {
+            color: #64748b;
+            font-size: 14px;
+        }
 
-.result-detail {
-    background: #f7fafc;
-    border-radius: 9px;
-    padding: 10px;
-    text-align: center;
-}
+        /* =========================
+           SUMMARY
+        ========================= */
 
-.result-detail span {
-    display: block;
-    color: #82919d;
-    font-size: 9px;
-    margin-bottom: 5px;
-}
+        .summary-grid {
+            display: grid;
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
 
-.result-detail strong {
-    font-size: 12px;
-}
+            gap: 16px;
+            margin-bottom: 25px;
+        }
 
-.state-box {
-    background: white;
-    border: 1px solid #e4edf2;
-    border-radius: 15px;
-    padding: 45px 20px;
-    text-align: center;
-    color: #8795a0;
-    line-height: 2;
-}
+        .summary-card {
+            background: white;
+            border-radius: 16px;
+            padding: 22px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 15px rgba(15,23,42,.04);
+        }
 
-.error-box {
-    background: #fff1f1;
-    border-color: #ffd5d5;
-    color: #b42318;
-}
+        .summary-label {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
 
-@media (max-width: 750px) {
+        .summary-value {
+            color: #0f172a;
+            font-size: 28px;
+            font-weight: 800;
+        }
 
-    .results-page {
-        padding: 15px;
-    }
+        /* =========================
+           RESULTS
+        ========================= */
 
-    .summary-grid {
-        grid-template-columns: 1fr;
-    }
+        .results-section {
+            background: white;
+            border-radius: 18px;
+            border: 1px solid #e5e7eb;
+            padding: 22px;
+            box-shadow: 0 4px 15px rgba(15,23,42,.04);
+        }
 
-    .result-details {
-        grid-template-columns:
-            repeat(2, 1fr);
-    }
+        .section-title {
+            font-size: 19px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 18px;
+        }
 
-}
+        .results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
 
-@media (max-width: 450px) {
+        .result-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 18px;
+            transition: .2s;
+        }
 
-    .result-top {
-        flex-direction: column;
-    }
+        .result-card:hover {
+            border-color: #bfdbfe;
+            box-shadow: 0 5px 18px rgba(37,99,235,.07);
+        }
 
-    .result-details {
-        grid-template-columns: 1fr;
-    }
+        .result-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 14px;
+        }
 
-}
+        .exam-title {
+            font-size: 17px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
 
-</style>
+        .exam-meta {
+            color: #64748b;
+            font-size: 12px;
+            line-height: 1.8;
+        }
 
+        .percentage {
+            min-width: 72px;
+            text-align: center;
+            padding: 9px 10px;
+            border-radius: 10px;
+            background: #eff6ff;
+            color: #2563eb;
+            font-weight: 800;
+            font-size: 16px;
+        }
+
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-top: 12px;
+        }
+
+        .score-text {
+            color: #334155;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .date-text {
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        .progress {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 99px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 99px;
+            background: #2563eb;
+            transition: width .4s ease;
+        }
+
+        /* =========================
+           STATES
+        ========================= */
+
+        .loading,
+        .empty,
+        .error {
+            text-align: center;
+            padding: 45px 20px;
+            color: #64748b;
+        }
+
+        .empty-icon,
+        .error-icon {
+            font-size: 42px;
+            margin-bottom: 12px;
+        }
+
+        .empty h3,
+        .error h3 {
+            color: #334155;
+            margin-bottom: 8px;
+        }
+
+        .error {
+            color: #b91c1c;
+        }
+
+        .error h3 {
+            color: #991b1b;
+        }
+
+        .retry-btn {
+            margin-top: 15px;
+            border: 0;
+            background: #2563eb;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 9px;
+            cursor: pointer;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+                width: 230px;
+            }
+
+            .main {
+                margin-right: 230px;
+                padding: 22px;
+            }
+
+            .summary-grid {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 650px) {
+
+            .app {
+                display: block;
+            }
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+                min-height: auto;
+                padding: 15px;
+            }
+
+            .brand {
+                padding-bottom: 15px;
+                margin-bottom: 15px;
+            }
+
+            .student-box {
+                margin-bottom: 15px;
+            }
+
+            .nav {
+                display: grid;
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+            .logout-btn {
+                margin-top: 15px;
+            }
+
+            .main {
+                margin-right: 0;
+                padding: 18px;
+            }
+
+            .page-header h1 {
+                font-size: 23px;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .result-top {
+                flex-direction: column;
+            }
+
+            .percentage {
+                min-width: auto;
+            }
+
+            .score-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<div id="studentApp">
-    جاري تحميل المنصة...
-</div>
+<div class="app">
 
+    <!-- =========================
+         SIDEBAR
+    ========================= -->
 
-<script type="module">
+    <aside class="sidebar">
 
-import {
-    protectStudentPage,
-    createStudentLayout,
-    getStudentResults,
-    escapeHtml,
-    formatDateTime,
-    studentErrorMessage
-} from "../src/student/student.js";
-
-
-let student = null;
-let results = [];
-
-
-try {
-
-    const result =
-        await protectStudentPage();
-
-
-    student =
-        result.student;
-
-
-    createStudentLayout(
-        student,
-        "leaderboard"
-    );
-
-
-    document.getElementById(
-        "studentPageTitle"
-    ).textContent =
-        "نتائجي";
-
-
-    document.getElementById(
-        "studentPageSubtitle"
-    ).textContent =
-        "نتائج الاختبارات الخاصة بك";
-
-
-    const content =
-        document.getElementById(
-            "studentPageContent"
-        );
-
-
-    content.innerHTML = `
-
-        <div class="results-page">
-
-            <div class="results-header-main">
-
-                <h2>
-                    🏆 نتائجي
-                </h2>
-
-                <p>
-                    هنا تظهر نتائج الاختبارات
-                    التي قمت بحلها فقط.
-                </p>
-
-            </div>
-
-
-            <div id="summaryContainer">
-
-            </div>
-
-
-            <div class="results-section">
-
-                <div class="results-section-header">
-
-                    <h3>
-                        📝 سجل الاختبارات
-                    </h3>
-
-                </div>
-
-
-                <div id="resultsContainer">
-
-                    <div class="state-box">
-
-                        ⏳
-
-                        <br>
-
-                        جاري تحميل النتائج...
-
-                    </div>
-
-                </div>
-
-            </div>
-
+        <div class="brand">
+            <h2>مسار التمريض</h2>
+            <span>بوابة الطالب</span>
         </div>
 
-    `;
+        <div class="student-box">
+            <div
+                class="student-name"
+                id="sidebarStudentName"
+            >
+                جاري التحميل...
+            </div>
 
-
-    results =
-        await getStudentResults(
-            student.id
-        );
-
-
-    results.sort(
-        (
-            a,
-            b
-        ) =>
-            getTimestamp(
-                b.submittedAt
-            ) -
-            getTimestamp(
-                a.submittedAt
-            )
-    );
-
-
-    renderSummary();
-
-    renderResults();
-
-
-} catch (error) {
-
-    console.error(
-        "Student results error:",
-        error
-    );
-
-
-    const app =
-        document.getElementById(
-            "studentApp"
-        );
-
-
-    app.innerHTML = `
-
-        <div class="state-box error-box">
-
-            ⚠️
-
-            <br>
-
-            ${escapeHtml(
-                studentErrorMessage(
-                    error
-                )
-            )}
-
+            <div
+                class="student-stage"
+                id="sidebarStudentStage"
+            >
+                ...
+            </div>
         </div>
 
-    `;
+        <nav class="nav">
 
-}
+            <a href="dashboard.html">
+                🏠 الرئيسية
+            </a>
 
+            <a href="schedule.html">
+                📅 الجدول
+            </a>
 
-// =====================================================
-// Summary
-// =====================================================
+            <a href="lectures.html">
+                📚 المحاضرات
+            </a>
 
-function renderSummary() {
+            <a href="exams.html">
+                📝 الاختبارات
+            </a>
 
-    const container =
-        document.getElementById(
-            "summaryContainer"
-        );
+            <a
+                href="leaderboard.html"
+                class="active"
+            >
+                🏆 نتائجي
+            </a>
 
+            <a href="profile.html">
+                👤 الملف الشخصي
+            </a>
 
-    if (!container) {
-        return;
-    }
+        </nav>
 
+        <button
+            class="logout-btn"
+            id="logoutBtn"
+        >
+            تسجيل الخروج
+        </button>
 
-    if (!results.length) {
-
-        container.innerHTML = "";
-
-        return;
-
-    }
-
-
-    const count =
-        results.length;
-
-
-    const average =
-        results.reduce(
-            (
-                total,
-                result
-            ) =>
-                total +
-                getPercentage(
-                    result
-                ),
-            0
-        ) / count;
+    </aside>
 
 
-    const best =
-        Math.max(
-            ...results.map(
-                result =>
-                    getPercentage(
-                        result
-                    )
-            )
-        );
+    <!-- =========================
+         MAIN
+    ========================= -->
+
+    <main class="main">
+
+        <header class="page-header">
+
+            <h1>
+                نتائجي
+            </h1>
+
+            <p>
+                تابع نتائج اختباراتك ونسبة تقدمك في الدراسة
+            </p>
+
+        </header>
 
 
-    container.innerHTML = `
+        <!-- =========================
+             SUMMARY
+        ========================= -->
 
-        <div class="summary-grid">
+        <section class="summary-grid">
 
             <div class="summary-card">
-
-                <div class="summary-icon">
-                    📝
-                </div>
 
                 <div class="summary-label">
                     عدد الاختبارات
                 </div>
 
-                <div class="summary-value">
-                    ${count}
+                <div
+                    class="summary-value"
+                    id="examCount"
+                >
+                    0
                 </div>
 
             </div>
 
 
             <div class="summary-card">
-
-                <div class="summary-icon">
-                    📊
-                </div>
 
                 <div class="summary-label">
                     متوسط النسبة
                 </div>
 
-                <div class="summary-value">
-                    ${average.toFixed(1)}%
+                <div
+                    class="summary-value"
+                    id="averagePercentage"
+                >
+                    0%
                 </div>
 
             </div>
@@ -484,342 +553,796 @@ function renderSummary() {
 
             <div class="summary-card">
 
-                <div class="summary-icon">
-                    🏆
-                </div>
-
                 <div class="summary-label">
-                    أعلى نسبة
+                    أفضل نتيجة
                 </div>
 
-                <div class="summary-value">
-                    ${best.toFixed(1)}%
+                <div
+                    class="summary-value"
+                    id="bestPercentage"
+                >
+                    0%
                 </div>
 
             </div>
 
-        </div>
-
-    `;
-
-}
+        </section>
 
 
-// =====================================================
-// Results
-// =====================================================
+        <!-- =========================
+             RESULTS
+        ========================= -->
 
-function renderResults() {
+        <section class="results-section">
 
-    const container =
+            <h2 class="section-title">
+                سجل الاختبارات
+            </h2>
+
+            <div
+                id="resultsContainer"
+                class="results-list"
+            >
+
+                <div class="loading">
+                    <div class="empty-icon">
+                        ⏳
+                    </div>
+
+                    جاري تحميل النتائج...
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script type="module">
+
+    import {
+        db,
+        protectStudentPage,
+        logoutStudent,
+        escapeHtml,
+        formatDateTime,
+        studentErrorMessage
+    } from "../src/student/student.js";
+
+    import {
+        collection,
+        getDocs,
+        query,
+        where,
+        doc,
+        getDoc
+    } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+    /* =========================
+       DOM
+    ========================= */
+
+    const sidebarStudentName =
+        document.getElementById(
+            "sidebarStudentName"
+        );
+
+    const sidebarStudentStage =
+        document.getElementById(
+            "sidebarStudentStage"
+        );
+
+    const examCount =
+        document.getElementById(
+            "examCount"
+        );
+
+    const averagePercentage =
+        document.getElementById(
+            "averagePercentage"
+        );
+
+    const bestPercentage =
+        document.getElementById(
+            "bestPercentage"
+        );
+
+    const resultsContainer =
         document.getElementById(
             "resultsContainer"
         );
 
+    const logoutBtn =
+        document.getElementById(
+            "logoutBtn"
+        );
 
-    if (!container) {
-        return;
+
+    /* =========================
+       LOGOUT
+    ========================= */
+
+    logoutBtn.addEventListener(
+        "click",
+        async () => {
+
+            await logoutStudent();
+
+        }
+    );
+
+
+    /* =========================
+       HELPERS
+    ========================= */
+
+    function getResultPercentage(result) {
+
+        const percentage =
+            Number(result.percentage);
+
+        if (
+            Number.isFinite(percentage)
+        ) {
+            return Math.max(
+                0,
+                Math.min(100, percentage)
+            );
+        }
+
+        const score =
+            Number(result.score);
+
+        const totalScore =
+            Number(result.totalScore);
+
+        if (
+            Number.isFinite(score) &&
+            Number.isFinite(totalScore) &&
+            totalScore > 0
+        ) {
+            return Math.max(
+                0,
+                Math.min(
+                    100,
+                    (score / totalScore) * 100
+                )
+            );
+        }
+
+        return 0;
     }
 
 
-    if (!results.length) {
+    function getScore(result) {
 
-        container.innerHTML = `
+        const score =
+            Number(result.score);
 
-            <div class="state-box">
-
-                📝
-
-                <br>
-
-                لم تقم بحل أي اختبار
-                حتى الآن.
-
-            </div>
-
-        `;
-
-        return;
-
+        return Number.isFinite(score)
+            ? score
+            : 0;
     }
 
 
-    container.innerHTML =
-        results
-            .map(
-                result =>
-                    createResult(
-                        result
-                    )
-            )
-            .join("");
+    function getTotalScore(result) {
 
-}
+        const totalScore =
+            Number(result.totalScore);
+
+        return Number.isFinite(totalScore)
+            ? totalScore
+            : 0;
+    }
 
 
-// =====================================================
-// Result
-// =====================================================
+    function getDate(result) {
 
-function createResult(
-    result
-) {
+        if (!result.submittedAt) {
+            return null;
+        }
 
-    const score =
-        Number(
-            result.score || 0
-        );
+        try {
+
+            if (
+                typeof result.submittedAt.toDate ===
+                "function"
+            ) {
+                return result.submittedAt.toDate();
+            }
+
+            if (
+                result.submittedAt instanceof Date
+            ) {
+                return result.submittedAt;
+            }
+
+            const date =
+                new Date(result.submittedAt);
+
+            if (!Number.isNaN(date.getTime())) {
+                return date;
+            }
+
+        } catch (error) {
+            console.warn(
+                "Invalid result date",
+                error
+            );
+        }
+
+        return null;
+    }
 
 
-    const totalScore =
-        Number(
-            result.totalScore || 0
-        );
+    function getPercentageClass(percentage) {
+
+        if (percentage >= 85) {
+            return "excellent";
+        }
+
+        if (percentage >= 70) {
+            return "good";
+        }
+
+        if (percentage >= 50) {
+            return "average";
+        }
+
+        return "low";
+    }
 
 
-    const percentage =
-        getPercentage(
-            result
-        );
+    async function getExamTitle(
+        result,
+        examCache
+    ) {
+
+        if (
+            result.examTitle &&
+            typeof result.examTitle === "string"
+        ) {
+            return result.examTitle;
+        }
+
+        if (!result.examId) {
+            return "اختبار";
+        }
+
+        if (
+            examCache.has(result.examId)
+        ) {
+            return examCache.get(
+                result.examId
+            );
+        }
+
+        try {
+
+            const examRef =
+                doc(
+                    db,
+                    "exams",
+                    result.examId
+                );
+
+            const examSnap =
+                await getDoc(examRef);
+
+            if (examSnap.exists()) {
+
+                const exam =
+                    examSnap.data();
+
+                const title =
+                    exam.title ||
+                    "اختبار";
+
+                examCache.set(
+                    result.examId,
+                    title
+                );
+
+                return title;
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "Could not load exam",
+                error
+            );
+
+        }
+
+        return "اختبار";
+    }
 
 
-    return `
+    async function getSubjectName(
+        subjectId,
+        subjectCache
+    ) {
 
-        <article class="result-item">
+        if (!subjectId) {
+            return "";
+        }
+
+        if (
+            subjectCache.has(subjectId)
+        ) {
+            return subjectCache.get(
+                subjectId
+            );
+        }
+
+        try {
+
+            const subjectRef =
+                doc(
+                    db,
+                    "subjects",
+                    subjectId
+                );
+
+            const subjectSnap =
+                await getDoc(subjectRef);
+
+            if (subjectSnap.exists()) {
+
+                const subject =
+                    subjectSnap.data();
+
+                const name =
+                    subject.name ||
+                    subject.title ||
+                    "";
+
+                subjectCache.set(
+                    subjectId,
+                    name
+                );
+
+                return name;
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "Could not load subject",
+                error
+            );
+
+        }
+
+        return "";
+    }
+
+
+    /* =========================
+       RENDER RESULT
+    ========================= */
+
+    async function renderResult(
+        result,
+        examCache,
+        subjectCache
+    ) {
+
+        const percentage =
+            getResultPercentage(result);
+
+        const score =
+            getScore(result);
+
+        const totalScore =
+            getTotalScore(result);
+
+        const examTitle =
+            await getExamTitle(
+                result,
+                examCache
+            );
+
+        const subjectName =
+            await getSubjectName(
+                result.subjectId,
+                subjectCache
+            );
+
+        const date =
+            getDate(result);
+
+        let dateText =
+            "تاريخ غير متاح";
+
+        if (date) {
+
+            try {
+
+                dateText =
+                    formatDateTime(date);
+
+            } catch {
+
+                dateText =
+                    date.toLocaleString(
+                        "ar-EG"
+                    );
+
+            }
+        }
+
+
+        const card =
+            document.createElement(
+                "article"
+            );
+
+        card.className =
+            "result-card";
+
+
+        const percentageText =
+            `${percentage.toFixed(1)}%`;
+
+
+        card.innerHTML = `
 
             <div class="result-top">
 
                 <div>
 
-                    <div class="result-title">
-
-                        📝
-
-                        ${escapeHtml(
-                            result.examTitle ||
-                            result.examName ||
-                            "اختبار"
-                        )}
-
+                    <div class="exam-title">
+                        ${escapeHtml(examTitle)}
                     </div>
 
+                    <div class="exam-meta">
 
-                    <div class="result-subject">
-
-                        📚
-
-                        ${escapeHtml(
-                            result.subjectId ||
-                            "غير محدد"
-                        )}
-
-                    </div>
-
-                </div>
-
-
-                <div class="percentage-badge">
-
-                    ${percentage}%
-
-                </div>
-
-            </div>
-
-
-            <div class="result-details">
-
-                <div class="result-detail">
-
-                    <span>
-                        الدرجة
-                    </span>
-
-                    <strong>
-                        ${score}/${totalScore}
-                    </strong>
-
-                </div>
-
-
-                <div class="result-detail">
-
-                    <span>
-                        المرحلة
-                    </span>
-
-                    <strong>
-                        ${escapeHtml(
-                            String(
-                                result.stageId ||
-                                student.stageId ||
-                                "—"
-                            )
-                        )}
-                    </strong>
-
-                </div>
-
-
-                <div class="result-detail">
-
-                    <span>
-                        الأسئلة
-                    </span>
-
-                    <strong>
                         ${
-                            Array.isArray(
-                                result.answers
-                            )
-                                ? result.answers.length
-                                : "—"
+                            subjectName
+                                ? `المادة: ${escapeHtml(subjectName)}`
+                                : "اختبار"
                         }
-                    </strong>
+
+                        ${
+                            result.lectureId
+                                ? " • اختبار مرتبط بمحاضرة"
+                                : ""
+                        }
+
+                    </div>
 
                 </div>
 
-
-                <div class="result-detail">
-
-                    <span>
-                        تاريخ التسليم
-                    </span>
-
-                    <strong>
-                        ${escapeHtml(
-                            formatDateTime(
-                                result.submittedAt
-                            )
-                        )}
-                    </strong>
-
+                <div class="percentage">
+                    ${percentageText}
                 </div>
 
             </div>
 
-        </article>
 
-    `;
+            <div class="score-row">
 
-}
+                <div class="score-text">
 
+                    الدرجة:
+                    ${score}
+                    /
+                    ${totalScore}
 
-// =====================================================
-// Percentage
-// =====================================================
+                </div>
 
-function getPercentage(
-    result
-) {
+                <div class="date-text">
+                    ${escapeHtml(dateText)}
+                </div>
 
-    const percentage =
-        Number(
-            result.percentage
-        );
+            </div>
 
 
-    if (
-        Number.isFinite(
-            percentage
-        )
+            <div class="progress">
+
+                <div
+                    class="progress-bar"
+                    style="width:${percentage}%"
+                ></div>
+
+            </div>
+
+        `;
+
+        return card;
+    }
+
+
+    /* =========================
+       LOAD RESULTS
+    ========================= */
+
+    async function loadResults(
+        student
     ) {
 
-        return percentage;
+        resultsContainer.innerHTML = `
+            <div class="loading">
+                <div class="empty-icon">
+                    ⏳
+                </div>
+                جاري تحميل النتائج...
+            </div>
+        `;
+
+
+        try {
+
+            /*
+             * مهم:
+             * نقرأ فقط نتائج الطالب الحالي.
+             * هذا متوافق مع Firestore Rules.
+             */
+
+            const resultsQuery =
+                query(
+                    collection(
+                        db,
+                        "examResults"
+                    ),
+                    where(
+                        "studentId",
+                        "==",
+                        student.id
+                    )
+                );
+
+
+            const snapshot =
+                await getDocs(
+                    resultsQuery
+                );
+
+
+            const results =
+                snapshot.docs.map(
+                    resultDoc => ({
+                        id: resultDoc.id,
+                        ...resultDoc.data()
+                    })
+                );
+
+
+            /* =========================
+               SORT BY DATE
+            ========================= */
+
+            results.sort(
+                (a, b) => {
+
+                    const dateA =
+                        getDate(a);
+
+                    const dateB =
+                        getDate(b);
+
+                    if (!dateA && !dateB) {
+                        return 0;
+                    }
+
+                    if (!dateA) {
+                        return 1;
+                    }
+
+                    if (!dateB) {
+                        return -1;
+                    }
+
+                    return (
+                        dateB.getTime() -
+                        dateA.getTime()
+                    );
+
+                }
+            );
+
+
+            /* =========================
+               EMPTY
+            ========================= */
+
+            if (results.length === 0) {
+
+                examCount.textContent =
+                    "0";
+
+                averagePercentage.textContent =
+                    "0%";
+
+                bestPercentage.textContent =
+                    "0%";
+
+
+                resultsContainer.innerHTML = `
+
+                    <div class="empty">
+
+                        <div class="empty-icon">
+                            📝
+                        </div>
+
+                        <h3>
+                            لا توجد نتائج حتى الآن
+                        </h3>
+
+                        <p>
+                            عند إتمام أي اختبار ستظهر نتيجتك هنا.
+                        </p>
+
+                    </div>
+
+                `;
+
+                return;
+            }
+
+
+            /* =========================
+               STATISTICS
+            ========================= */
+
+            const percentages =
+                results.map(
+                    getResultPercentage
+                );
+
+
+            const average =
+                percentages.reduce(
+                    (sum, value) =>
+                        sum + value,
+                    0
+                ) / percentages.length;
+
+
+            const best =
+                Math.max(
+                    ...percentages
+                );
+
+
+            examCount.textContent =
+                results.length;
+
+
+            averagePercentage.textContent =
+                `${average.toFixed(1)}%`;
+
+
+            bestPercentage.textContent =
+                `${best.toFixed(1)}%`;
+
+
+            /* =========================
+               RENDER
+            ========================= */
+
+            resultsContainer.innerHTML =
+                "";
+
+
+            const examCache =
+                new Map();
+
+            const subjectCache =
+                new Map();
+
+
+            for (const result of results) {
+
+                const card =
+                    await renderResult(
+                        result,
+                        examCache,
+                        subjectCache
+                    );
+
+                resultsContainer.appendChild(
+                    card
+                );
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Load student results error:",
+                error
+            );
+
+
+            resultsContainer.innerHTML = `
+
+                <div class="error">
+
+                    <div class="error-icon">
+                        ⚠️
+                    </div>
+
+                    <h3>
+                        تعذر تحميل النتائج
+                    </h3>
+
+                    <p>
+                        ${
+                            escapeHtml(
+                                studentErrorMessage(
+                                    error
+                                )
+                            )
+                        }
+                    </p>
+
+                    <button
+                        class="retry-btn"
+                        id="retryBtn"
+                    >
+                        إعادة المحاولة
+                    </button>
+
+                </div>
+
+            `;
+
+
+            document
+                .getElementById("retryBtn")
+                ?.addEventListener(
+                    "click",
+                    () => loadResults(student)
+                );
+
+        }
 
     }
 
 
-    const score =
-        Number(
-            result.score || 0
-        );
+    /* =========================
+       INIT
+    ========================= */
+
+    protectStudentPage(
+        async ({
+            student,
+            subscription
+        }) => {
+
+            /*
+             * student.id هو Firebase Auth UID
+             * لأن users/{uid} هو ملف الطالب.
+             */
+
+            sidebarStudentName.textContent =
+                student.name ||
+                student.fullName ||
+                student.email ||
+                "الطالب";
 
 
-    const total =
-        Number(
-            result.totalScore || 0
-        );
+            sidebarStudentStage.textContent =
+                student.stageId
+                    ? `المرحلة: ${student.stageId}`
+                    : "المرحلة غير محددة";
 
 
-    if (
-        total > 0
-    ) {
+            await loadResults(
+                student
+            );
 
-        return Number(
-            (
-                score /
-                total *
-                100
-            ).toFixed(2)
-        );
-
-    }
-
-
-    return 0;
-
-}
-
-
-// =====================================================
-// Timestamp
-// =====================================================
-
-function getTimestamp(
-    value
-) {
-
-    if (!value) {
-        return 0;
-    }
-
-
-    if (
-        typeof value.toMillis ===
-        "function"
-    ) {
-
-        return value.toMillis();
-
-    }
-
-
-    if (
-        typeof value.toDate ===
-        "function"
-    ) {
-
-        return value
-            .toDate()
-            .getTime();
-
-    }
-
-
-    if (
-        value.seconds !==
-        undefined
-    ) {
-
-        return Number(
-            value.seconds
-        ) * 1000;
-
-    }
-
-
-    const date =
-        new Date(value);
-
-
-    return Number.isNaN(
-        date.getTime()
-    )
-        ? 0
-        : date.getTime();
-
-}
+        }
+    );
 
 </script>
 
