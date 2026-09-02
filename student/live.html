@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+    المحاضرة المباشرة | مسار التمريض
+</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+
+    font-family:
+        Arial,
+        Tahoma,
+        sans-serif;
+
+    background:
+        #071923;
+
+    color:
+        white;
+
+}
+
+.live-page {
+
+    min-height:
+        100vh;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+}
+
+.live-header {
+
+    padding:
+        15px 20px;
+
+    background:
+        #0c2735;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.08);
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
+
+    gap:
+        15px;
+
+}
+
+.live-title {
+
+    font-size:
+        17px;
+
+    font-weight:
+        bold;
+
+}
+
+.live-status {
+
+    padding:
+        7px 11px;
+
+    border-radius:
+        20px;
+
+    background:
+        #173846;
+
+    color:
+        #8fd9ee;
+
+    font-size:
+        11px;
+
+}
+
+.live-status.connected {
+
+    background:
+        #123b2a;
+
+    color:
+        #72e3a8;
+
+}
+
+.live-status.error {
+
+    background:
+        #401d1d;
+
+    color:
+        #ff9b9b;
+
+}
+
+.video-area {
+
+    flex:
+        1;
+
+    padding:
+        18px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+}
+
+.video-container {
+
+    width:
+        100%;
+
+    max-width:
+        1100px;
+
+    min-height:
+        500px;
+
+    background:
+        #000;
+
+    border-radius:
+        16px;
+
+    overflow:
+        hidden;
+
+    position:
+        relative;
+
+}
+
+.remote-video {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    min-height:
+        500px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+}
+
+.remote-video video {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    object-fit:
+        contain;
+
+}
+
+.empty-video {
+
+    color:
+        #8499a5;
+
+    text-align:
+        center;
+
+    line-height:
+        2;
+
+}
+
+.controls {
+
+    padding:
+        15px 20px;
+
+    background:
+        #0c2735;
+
+    display:
+        flex;
+
+    justify-content:
+        center;
+
+    gap:
+        10px;
+
+}
+
+.control-button {
+
+    border:
+        none;
+
+    border-radius:
+        10px;
+
+    padding:
+        11px 20px;
+
+    cursor:
+        pointer;
+
+    font-family:
+        inherit;
+
+    font-weight:
+        bold;
+
+    background:
+        #087ea4;
+
+    color:
+        white;
+
+}
+
+.control-button.leave {
+
+    background:
+        #b42318;
+
+}
+
+.message {
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    text-align:
+        center;
+
+    padding:
+        30px;
+
+}
+
+.hidden {
+
+    display:
+        none !important;
+
+}
+
+@media (max-width:700px) {
+
+    .video-container,
+    .remote-video {
+
+        min-height:
+            300px;
+
+    }
+
+    .live-header {
+
+        flex-direction:
+            column;
+
+        align-items:
+            stretch;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<div class="live-page">
+
+
+    <header class="live-header">
+
+        <div>
+
+            <div
+                class="live-title"
+                id="lectureTitle"
+            >
+                جاري تحميل المحاضرة...
+            </div>
+
+        </div>
+
+
+        <div
+            id="liveStatus"
+            class="live-status"
+        >
+            جاري الاتصال...
+        </div>
+
+    </header>
+
+
+    <main class="video-area">
+
+        <div class="video-container">
+
+            <div
+                id="remoteVideo"
+                class="remote-video"
+            >
+
+                <div
+                    id="emptyVideo"
+                    class="empty-video"
+                >
+
+                    🎥
+
+                    <br>
+
+                    في انتظار بث المدرس...
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="message"
+                class="message hidden"
+            >
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <footer class="controls">
+
+        <button
+            id="leaveButton"
+            class="control-button leave"
+        >
+            مغادرة المحاضرة
+        </button>
+
+    </footer>
+
+</div>
+
+
+<script type="module">
+
+import {
+
+    doc,
+    getDoc
+
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+import {
+
+    db
+
+} from "../src/firebase/init.js";
+
+
+import {
+
+    protectStudentPage,
+    escapeHtml,
+    studentErrorMessage
+
+} from "../src/student/student.js";
+
+
+import {
+
+    connectLiveKit,
+    leaveLiveKit,
+    attachTrack
+
+} from "../src/livekit/client.js";
+
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+
+const lectureId =
+    params.get("lectureId");
+
+
+const lectureTitle =
+    document.getElementById(
+        "lectureTitle"
+    );
+
+
+const liveStatus =
+    document.getElementById(
+        "liveStatus"
+    );
+
+
+const remoteVideo =
+    document.getElementById(
+        "remoteVideo"
+    );
+
+
+const emptyVideo =
+    document.getElementById(
+        "emptyVideo"
+    );
+
+
+const message =
+    document.getElementById(
+        "message"
+    );
+
+
+const leaveButton =
+    document.getElementById(
+        "leaveButton"
+    );
+
+
+let room = null;
+
+
+/* =====================================================
+   Error
+===================================================== */
+
+function showError(
+    text
+) {
+
+    liveStatus.textContent =
+        "حدث خطأ";
+
+    liveStatus.className =
+        "live-status error";
+
+
+    message.innerHTML = `
+
+        ⚠️
+
+        <br><br>
+
+        ${escapeHtml(text)}
+
+    `;
+
+
+    message.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+/* =====================================================
+   Load
+===================================================== */
+
+async function start() {
+
+    try {
+
+        if (!lectureId) {
+
+            throw new Error(
+                "معرّف المحاضرة غير موجود."
+            );
+
+        }
+
+
+        const {
+
+            student
+
+        } = await protectStudentPage();
+
+
+        const lectureRef =
+            doc(
+                db,
+                "lectures",
+                lectureId
+            );
+
+
+        const lectureSnap =
+            await getDoc(
+                lectureRef
+            );
+
+
+        if (!lectureSnap.exists()) {
+
+            throw new Error(
+                "المحاضرة غير موجودة."
+            );
+
+        }
+
+
+        const lecture =
+            lectureSnap.data();
+
+
+        if (
+            lecture.stageId !==
+            student.stageId
+        ) {
+
+            throw new Error(
+                "هذه المحاضرة غير متاحة لمرحلتك."
+            );
+
+        }
+
+
+        if (
+            lecture.isPublished !== true
+        ) {
+
+            throw new Error(
+                "هذه المحاضرة غير منشورة."
+            );
+
+        }
+
+
+        if (
+            lecture.isLive !== true
+        ) {
+
+            throw new Error(
+                "المحاضرة ليست مباشرة الآن."
+            );
+
+        }
+
+
+        if (!lecture.roomName) {
+
+            throw new Error(
+                "غرفة البث غير مجهزة."
+            );
+
+        }
+
+
+        lectureTitle.textContent =
+            lecture.title ||
+            "المحاضرة المباشرة";
+
+
+        liveStatus.textContent =
+            "جاري الاتصال...";
+
+
+        room =
+            await connectLiveKit(
+                lecture.roomName,
+                {
+
+                    onConnected() {
+
+                        liveStatus.textContent =
+                            "🟢 متصل بالمحاضرة";
+
+                        liveStatus.className =
+                            "live-status connected";
+
+                    },
+
+
+                    onDisconnected() {
+
+                        liveStatus.textContent =
+                            "تم قطع الاتصال";
+
+                        liveStatus.className =
+                            "live-status error";
+
+                    },
+
+
+                    onTrackSubscribed(
+                        track,
+                        publication,
+                        participant
+                    ) {
+
+                        if (
+                            track.kind ===
+                            "video"
+                        ) {
+
+                            emptyVideo.classList.add(
+                                "hidden"
+                            );
+
+
+                            attachTrack(
+                                track,
+                                remoteVideo
+                            );
+
+                        }
+
+
+                        if (
+                            track.kind ===
+                            "audio"
+                        ) {
+
+                            attachTrack(
+                                track,
+                                remoteVideo
+                            );
+
+                        }
+
+                    },
+
+                    onTrackUnsubscribed(
+                        track
+                    ) {
+
+                        track.detach();
+
+                    }
+
+                }
+            );
+
+
+    } catch (error) {
+
+        console.error(
+            "Student LiveKit error:",
+            error
+        );
+
+
+        showError(
+            studentErrorMessage(
+                error
+            ) ||
+            error.message ||
+            "تعذر دخول المحاضرة."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   Leave
+===================================================== */
+
+leaveButton.addEventListener(
+    "click",
+    async () => {
+
+        await leaveLiveKit();
+
+        window.location.href =
+            "lectures.html";
+
+    }
+);
+
+
+window.addEventListener(
+    "beforeunload",
+    () => {
+
+        leaveLiveKit();
+
+    }
+);
+
+
+start();
+
+</script>
+
+</body>
+
+</html>
