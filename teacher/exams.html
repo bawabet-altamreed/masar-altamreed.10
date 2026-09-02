@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ar" dir="rtl">
 
 <head>
@@ -7,335 +6,420 @@
 <meta charset="UTF-8">
 
 <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
 >
 
-<title>
-الاختبارات | بوابة التمريض
-</title>
-
+<title>الاختبارات | بوابة التمريض</title>
 
 <style>
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
-
-    margin: 0;
-
-    font-family:
-        Arial,
-        Tahoma,
-        sans-serif;
-
-    background: #f1f5f9;
-
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f7fb;
+  color: #172033;
 }
 
-
-header {
-
-    height: 75px;
-
-    background: white;
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    padding: 0 25px;
-
-    border-bottom: 1px solid #e2e8f0;
-
+#teacher-layout {
+  display: flex;
+  min-height: 100vh;
 }
 
-
-.brand {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-
+.teacher-sidebar {
+  width: 260px;
+  background: #0b1f3a;
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
-
-.brand-icon {
-
-    width: 48px;
-    height: 48px;
-
-    border-radius: 14px;
-
-    background: #0f766e;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    color: white;
-
-    font-size: 24px;
-
+.teacher-brand {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ffffff20;
 }
 
-
-.system {
-
-    display: flex;
-
-    min-height:
-        calc(100vh - 75px);
-
+.teacher-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: #1976d2;
+  display: grid;
+  place-items: center;
 }
 
-
-.sidebar {
-
-    width: 250px;
-
-    background: #0f172a;
-
-    color: white;
-
-    padding: 20px;
-
+.teacher-brand strong,
+.teacher-brand span {
+  display: block;
 }
 
-
-.sidebar a {
-
-    display: block;
-
-    padding: 13px;
-
-    color: #cbd5e1;
-
-    text-decoration: none;
-
-    border-radius: 10px;
-
-    margin-bottom: 8px;
-
+.teacher-brand span {
+  font-size: 12px;
+  color: #b9c7d8;
 }
 
-
-.sidebar a:hover,
-.sidebar a.active {
-
-    background: #1e293b;
-
-    color: white;
-
+.teacher-account {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 20px 0;
 }
 
-
-main {
-
-    flex: 1;
-
-    padding: 30px;
-
+.teacher-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: white;
+  color: #0b1f3a;
+  display: grid;
+  place-items: center;
 }
 
-
-.top {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    margin-bottom: 25px;
-
+.teacher-nav {
+  display: grid;
+  gap: 8px;
 }
 
-
-button {
-
-    border: 0;
-
-    cursor: pointer;
-
+.teacher-nav a {
+  color: white;
+  text-decoration: none;
+  padding: 13px;
+  border-radius: 9px;
 }
 
-
-.create {
-
-    background: #0f766e;
-
-    color: white;
-
-    padding: 13px 18px;
-
-    border-radius: 10px;
-
-    font-weight: bold;
-
+.teacher-nav a.active,
+.teacher-nav a:hover {
+  background: #1976d2;
 }
 
-
-.grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(auto-fill,minmax(280px,1fr));
-
-    gap: 20px;
-
+.teacher-logout {
+  margin-top: auto;
+  border: 0;
+  background: #c62828;
+  color: white;
+  padding: 12px;
+  border-radius: 9px;
+  cursor: pointer;
 }
 
+.teacher-main {
+  flex: 1;
+}
+
+.teacher-topbar {
+  background: white;
+  padding: 20px 30px;
+}
+
+.teacher-topbar h1 {
+  margin: 0;
+}
+
+.teacher-topbar p {
+  color: #718096;
+}
+
+#teacher-content {
+  padding: 25px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  border: 0;
+  border-radius: 9px;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.primary {
+  background: #1976d2;
+  color: white;
+}
+
+.danger {
+  background: #d32f2f;
+  color: white;
+}
+
+.secondary {
+  background: #e8edf4;
+}
+
+.exam-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
 
 .card {
-
-    background: white;
-
-    padding: 20px;
-
-    border-radius: 18px;
-
-    border: 1px solid #e2e8f0;
-
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 3px 15px #00000008;
 }
 
-
-.card h3 {
-
-    margin-top: 0;
-
+.meta {
+  line-height: 1.9;
+  color: #68778c;
 }
 
-
-.card p {
-
-    color: #64748b;
-
+.badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
 }
 
+.green {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.red {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.actions {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: #00000080;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  z-index: 999;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-box {
+  width: min(850px, 100%);
+  max-height: 92vh;
+  overflow-y: auto;
+  background: white;
+  border-radius: 18px;
+  padding: 25px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 7px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #d5dce6;
+  border-radius: 8px;
+}
+
+.question {
+  border: 1px solid #dce3ed;
+  border-radius: 13px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background: #fafcff;
+}
+
+.question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.option-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.option-row input[type="radio"] {
+  width: auto;
+}
+
+.option-row input[type="text"] {
+  flex: 1;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
 
 .empty {
-
-    background: white;
-
-    padding: 50px;
-
-    border-radius: 18px;
-
-    text-align: center;
-
-    color: #64748b;
-
+  background: white;
+  border-radius: 15px;
+  padding: 40px;
+  text-align: center;
 }
 
+@media(max-width:1000px) {
+  .exam-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media(max-width:700px) {
+
+  .teacher-sidebar {
+    width: 70px;
+    padding: 10px;
+  }
+
+  .teacher-brand div:not(.teacher-logo),
+  .teacher-account div:not(.teacher-avatar),
+  .teacher-nav span {
+    display: none;
+  }
+
+  .exam-grid {
+    grid-template-columns: 1fr;
+  }
+
+  #teacher-content {
+    padding: 15px;
+  }
+}
 
 </style>
 
 </head>
 
-
 <body>
 
+<div id="teacher-layout"></div>
 
-<header>
+<div id="examModal" class="modal">
 
-    <div class="brand">
+  <div class="modal-box">
 
-        <div class="brand-icon">
-            🩺
-        </div>
+    <h2 id="modalTitle">
+      إنشاء اختبار
+    </h2>
 
-        <div>
+    <form id="examForm">
 
-            <strong>
-                بوابة التمريض
-            </strong>
+      <input
+        type="hidden"
+        id="examId"
+      >
 
-            <small style="display:block;color:#64748b">
-                الاختبارات
-            </small>
+      <div class="form-group">
 
-        </div>
+        <label>المحاضرة</label>
 
-    </div>
-
-
-    <strong id="teacherName">
-        المعلم
-    </strong>
-
-</header>
-
-
-<div class="system">
-
-
-    <aside class="sidebar">
-
-        <a href="./dashboard.html">
-            🏠 الرئيسية
-        </a>
-
-        <a href="./lectures.html">
-            🎥 المحاضرات
-        </a>
-
-        <a
-            href="./exams.html"
-            class="active"
+        <select
+          id="lectureId"
+          required
         >
-            📝 الاختبارات
-        </a>
 
-        <a href="./profile.html">
-            👤 حسابي
-        </a>
+          <option value="">
+            اختر المحاضرة
+          </option>
 
-    </aside>
+        </select>
 
+      </div>
 
-    <main>
+      <div class="form-group">
 
-        <div class="top">
+        <label>عنوان الاختبار</label>
 
-            <div>
+        <input
+          id="examTitle"
+          required
+          placeholder="اختبار المحاضرة الأولى"
+        >
 
-                <h1>
-                    الاختبارات
-                </h1>
+      </div>
 
-                <p>
-                    إدارة اختبارات الطلاب
-                </p>
+      <div class="form-group">
 
-            </div>
+        <label>مدة الاختبار بالدقائق</label>
 
+        <input
+          type="number"
+          id="examDuration"
+          min="1"
+          value="30"
+          required
+        >
 
-            <button
-                class="create"
-                onclick="createExam()"
-            >
-                ＋ اختبار جديد
-            </button>
+      </div>
 
-        </div>
+      <div>
 
+        <h3>الأسئلة</h3>
 
-        <div
-            id="exams"
-            class="grid"
-        ></div>
+        <div id="questions"></div>
 
-    </main>
+        <button
+          type="button"
+          id="addQuestion"
+          class="btn secondary"
+        >
+          + إضافة سؤال
+        </button>
+
+      </div>
+
+      <div class="modal-actions">
+
+        <button
+          type="submit"
+          class="btn primary"
+        >
+          حفظ الاختبار
+        </button>
+
+        <button
+          type="button"
+          id="closeModal"
+          class="btn secondary"
+        >
+          إلغاء
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
 
 </div>
 
@@ -343,216 +427,825 @@ button {
 <script type="module">
 
 import {
-    auth,
-    db
-} from "../src/firebase/firebase-config.js";
+  protectTeacherPage,
+  createTeacherLayout,
+  getTeacherLectures,
+  getTeacherExams,
+  escapeHtml,
+  getStages,
+  getSubjects
+} from "../src/teacher/teacher.js";
 
 import {
-    onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  db
+} from "../src/firebase/init.js";
 
 import {
-    collection,
-    query,
-    where,
-    getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  collection,
+  doc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-window.createExam = function () {
+const teacher =
+  await protectTeacherPage();
 
-    alert(
-        "واجهة إنشاء الاختبار هنكملها بعد تثبيت نظام المعلمين الأساسي."
+createTeacherLayout("exams");
+
+document.querySelector("#teacher-page-title").textContent =
+  "إدارة الاختبارات";
+
+const content =
+  document.querySelector("#teacher-content");
+
+const modal =
+  document.querySelector("#examModal");
+
+const form =
+  document.querySelector("#examForm");
+
+const lectureSelect =
+  document.querySelector("#lectureId");
+
+const examTitle =
+  document.querySelector("#examTitle");
+
+const examDuration =
+  document.querySelector("#examDuration");
+
+const questionsContainer =
+  document.querySelector("#questions");
+
+const examId =
+  document.querySelector("#examId");
+
+const modalTitle =
+  document.querySelector("#modalTitle");
+
+
+const stages =
+  await getStages();
+
+const subjects =
+  await getSubjects();
+
+const lectures =
+  await getTeacherLectures(teacher.uid);
+
+let exams = [];
+
+const params =
+  new URLSearchParams(
+    window.location.search
+  );
+
+const requestedLectureId =
+  params.get("lectureId");
+
+
+function loadLectureOptions() {
+
+  lectureSelect.innerHTML =
+    `<option value="">اختر المحاضرة</option>` +
+
+    lectures.map(lecture => `
+
+      <option value="${escapeHtml(lecture.id)}">
+
+        ${escapeHtml(lecture.title)}
+
+      </option>
+
+    `).join("");
+}
+
+
+loadLectureOptions();
+
+
+function getStageName(id) {
+
+  return (
+    stages.find(x => x.id === id)?.name
+    || "-"
+  );
+
+}
+
+
+function getSubjectName(id) {
+
+  return (
+    subjects.find(x => x.id === id)?.name
+    || "-"
+  );
+
+}
+
+
+async function loadExams() {
+
+  exams =
+    await getTeacherExams(
+      teacher.uid
     );
 
-};
 
+  if (!exams.length) {
 
-onAuthStateChanged(
-    auth,
-    async (user) => {
+    content.innerHTML = `
 
-        if (!user) {
+      <div class="toolbar">
 
-            location.href =
-                "./login.html";
+        <h2>الاختبارات</h2>
 
-            return;
-        }
+        <button
+          id="addExam"
+          class="btn primary"
+        >
+          + إنشاء اختبار
+        </button>
 
+      </div>
 
-        const q =
-            query(
-                collection(db, "users"),
-                where(
-                    "__name__",
-                    "==",
-                    user.uid
-                )
+      <div class="empty">
+
+        <h2>لا توجد اختبارات</h2>
+
+        <p>
+          أنشئ أول اختبار واربطه بإحدى محاضراتك.
+        </p>
+
+      </div>
+    `;
+
+  } else {
+
+    content.innerHTML = `
+
+      <div class="toolbar">
+
+        <h2>الاختبارات</h2>
+
+        <button
+          id="addExam"
+          class="btn primary"
+        >
+          + إنشاء اختبار
+        </button>
+
+      </div>
+
+      <div class="exam-grid">
+
+        ${exams.map(exam => {
+
+          const lecture =
+            lectures.find(
+              x => x.id === exam.lectureId
             );
 
+          return `
 
-        const snap =
-            await getDocs(q);
+            <div class="card">
 
+              <h3>
+                ${escapeHtml(exam.title)}
+              </h3>
 
-        if (snap.empty) {
+              <div class="meta">
 
-            location.href =
-                "./login.html";
+                🎓 المحاضرة:
+                ${escapeHtml(
+                  lecture?.title || "-"
+                )}
 
-            return;
-        }
+                <br>
 
+                📚 المرحلة:
+                ${escapeHtml(
+                  getStageName(exam.stageId)
+                )}
 
-        const teacher =
-            snap.docs[0].data();
+                <br>
 
+                🩺 المادة:
+                ${escapeHtml(
+                  getSubjectName(exam.subjectId)
+                )}
 
-        if (
-            teacher.role !== "teacher"
-        ) {
+                <br>
 
-            location.href =
-                "./login.html";
+                ❓ عدد الأسئلة:
+                ${(exam.questions || []).length}
 
-            return;
-        }
+                <br>
 
+                ⏱️ المدة:
+                ${exam.duration || 0} دقيقة
 
-        document
-            .getElementById("teacherName")
-            .textContent =
-                teacher.name ||
-                teacher.fullName ||
-                "المعلم";
+              </div>
 
+              <br>
 
-        loadExams(user.uid);
+              <span class="badge ${
+                exam.isPublished
+                ? "green"
+                : "red"
+              }">
 
-    }
-);
+                ${
+                  exam.isPublished
+                  ? "منشور"
+                  : "مسودة"
+                }
 
+              </span>
 
-async function loadExams(
-    teacherId
-) {
+              <div class="actions">
 
-    const container =
-        document.getElementById(
-            "exams"
-        );
+                <button
+                  class="btn secondary edit-btn"
+                  data-id="${exam.id}"
+                >
+                  تعديل
+                </button>
 
+                <button
+                  class="btn primary publish-btn"
+                  data-id="${exam.id}"
+                >
+                  ${
+                    exam.isPublished
+                    ? "إلغاء النشر"
+                    : "نشر"
+                  }
+                </button>
 
-    const q =
-        query(
-            collection(db, "exams"),
-            where(
-                "teacherId",
-                "==",
-                teacherId
-            )
-        );
+                <button
+                  class="btn danger delete-btn"
+                  data-id="${exam.id}"
+                >
+                  حذف
+                </button>
 
-
-    const snap =
-        await getDocs(q);
-
-
-    if (snap.empty) {
-
-        container.innerHTML = `
-
-            <div class="empty">
-
-                📝
-
-                <h3>
-                    لا توجد اختبارات
-                </h3>
-
-                <p>
-                    لم تقم بإنشاء أي اختبار حتى الآن.
-                </p>
+              </div>
 
             </div>
 
-        `;
+          `;
 
-        return;
-    }
+        }).join("")}
 
-
-    container.innerHTML = "";
-
-
-    snap.forEach(
-        docSnap => {
-
-            const exam =
-                docSnap.data();
+      </div>
+    `;
+  }
 
 
-            const card =
-                document.createElement(
-                    "div"
-                );
-
-
-            card.className =
-                "card";
-
-
-            card.innerHTML = `
-
-                <h3>
-                    ${escapeHtml(
-                        exam.title ||
-                        "اختبار"
-                    )}
-                </h3>
-
-                <p>
-                    المرحلة:
-                    ${escapeHtml(
-                        exam.stageId ||
-                        "غير محددة"
-                    )}
-                </p>
-
-                <p>
-                    الحالة:
-                    ${
-                        exam.isPublished
-                            ? "منشور"
-                            : "غير منشور"
-                    }
-                </p>
-
-            `;
-
-
-            container.appendChild(card);
-
-        }
+  document
+    .querySelector("#addExam")
+    ?.addEventListener(
+      "click",
+      () => openAddModal()
     );
 
+
+  document
+    .querySelectorAll(".edit-btn")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => openEditModal(
+          button.dataset.id
+        )
+      );
+
+    });
+
+
+  document
+    .querySelectorAll(".publish-btn")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => togglePublish(
+          button.dataset.id
+        )
+      );
+
+    });
+
+
+  document
+    .querySelectorAll(".delete-btn")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => deleteExam(
+          button.dataset.id
+        )
+      );
+
+    });
+
 }
 
 
-function escapeHtml(value) {
+function addQuestion(data = null) {
 
-    return String(value || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+  const index =
+    questionsContainer.children.length;
+
+  const questionId =
+    data?.id ||
+    crypto.randomUUID();
+
+  const div =
+    document.createElement("div");
+
+  div.className = "question";
+
+  div.dataset.id =
+    questionId;
+
+  const options =
+    data?.options || ["", "", "", ""];
+
+  const correct =
+    Number.isInteger(data?.correctAnswer)
+      ? data.correctAnswer
+      : 0;
+
+  div.innerHTML = `
+
+    <div class="question-header">
+
+      <strong>
+        السؤال ${index + 1}
+      </strong>
+
+      <button
+        type="button"
+        class="btn danger remove-question"
+      >
+        حذف السؤال
+      </button>
+
+    </div>
+
+    <div class="form-group">
+
+      <label>نص السؤال</label>
+
+      <textarea
+        class="question-text"
+        required
+      >${escapeHtml(
+        data?.question || ""
+      )}</textarea>
+
+    </div>
+
+    ${options.map((option, i) => `
+
+      <div class="option-row">
+
+        <input
+          type="radio"
+          name="correct-${questionId}"
+          value="${i}"
+          ${i === correct ? "checked" : ""}
+          title="الإجابة الصحيحة"
+        >
+
+        <input
+          type="text"
+          class="option-text"
+          value="${escapeHtml(option)}"
+          placeholder="الاختيار ${i + 1}"
+          required
+        >
+
+      </div>
+
+    `).join("")}
+
+    <div class="form-group">
+
+      <label>درجة السؤال</label>
+
+      <input
+        type="number"
+        class="question-points"
+        min="1"
+        value="${data?.points || 1}"
+        required
+      >
+
+    </div>
+  `;
+
+
+  div
+    .querySelector(".remove-question")
+    .addEventListener(
+      "click",
+      () => {
+
+        div.remove();
+
+        refreshQuestionNumbers();
+
+      }
+    );
+
+
+  questionsContainer.appendChild(div);
+}
+
+
+function refreshQuestionNumbers() {
+
+  [
+    ...questionsContainer.children
+  ].forEach((element, index) => {
+
+    element
+      .querySelector("strong")
+      .textContent =
+        `السؤال ${index + 1}`;
+
+  });
 
 }
+
+
+document
+  .querySelector("#addQuestion")
+  .addEventListener(
+    "click",
+    () => addQuestion()
+  );
+
+
+function openAddModal() {
+
+  form.reset();
+
+  examId.value = "";
+
+  questionsContainer.innerHTML = "";
+
+  modalTitle.textContent =
+    "إنشاء اختبار";
+
+  if (requestedLectureId) {
+
+    lectureSelect.value =
+      requestedLectureId;
+
+  }
+
+  addQuestion();
+
+  modal.classList.add("show");
+}
+
+
+function openEditModal(id) {
+
+  const exam =
+    exams.find(x => x.id === id);
+
+  if (!exam) return;
+
+  examId.value =
+    exam.id;
+
+  examTitle.value =
+    exam.title || "";
+
+  examDuration.value =
+    exam.duration || 30;
+
+  lectureSelect.value =
+    exam.lectureId || "";
+
+  questionsContainer.innerHTML = "";
+
+  (exam.questions || [])
+    .forEach(question =>
+      addQuestion(question)
+    );
+
+  if (!exam.questions?.length) {
+    addQuestion();
+  }
+
+  modalTitle.textContent =
+    "تعديل الاختبار";
+
+  modal.classList.add("show");
+}
+
+
+document
+  .querySelector("#closeModal")
+  .addEventListener(
+    "click",
+    () => modal.classList.remove("show")
+  );
+
+
+lectureSelect.addEventListener(
+  "change",
+  () => {
+
+    const lecture =
+      lectures.find(
+        x => x.id === lectureSelect.value
+      );
+
+    if (!lecture) return;
+
+  }
+);
+
+
+form.addEventListener(
+  "submit",
+  async event => {
+
+    event.preventDefault();
+
+    try {
+
+      const selectedLectureId =
+        lectureSelect.value;
+
+      const lecture =
+        lectures.find(
+          x => x.id === selectedLectureId
+        );
+
+      if (!lecture) {
+        alert("اختر محاضرة صحيحة.");
+        return;
+      }
+
+
+      if (
+        !teacher.stageIds?.includes(
+          lecture.stageId
+        )
+      ) {
+        alert("مرحلة هذه المحاضرة غير مسموحة.");
+        return;
+      }
+
+
+      if (
+        !teacher.subjectIds?.includes(
+          lecture.subjectId
+        )
+      ) {
+        alert("مادة هذه المحاضرة غير مسموحة.");
+        return;
+      }
+
+
+      const questionElements =
+        [
+          ...questionsContainer.children
+        ];
+
+
+      if (!questionElements.length) {
+
+        alert(
+          "أضف سؤالًا واحدًا على الأقل."
+        );
+
+        return;
+      }
+
+
+      const questions =
+        questionElements.map(
+          element => {
+
+            const options =
+              [
+                ...element
+                  .querySelectorAll(
+                    ".option-text"
+                  )
+              ]
+              .map(input =>
+                input.value.trim()
+              );
+
+
+            const correctAnswer =
+              Number(
+                element.querySelector(
+                  'input[type="radio"]:checked'
+                )?.value
+              );
+
+
+            const points =
+              Number(
+                element.querySelector(
+                  ".question-points"
+                ).value
+              );
+
+
+            return {
+
+              id:
+                element.dataset.id,
+
+              question:
+                element.querySelector(
+                  ".question-text"
+                ).value.trim(),
+
+              options,
+
+              correctAnswer,
+
+              points
+
+            };
+
+          }
+        );
+
+
+      const totalScore =
+        questions.reduce(
+          (sum, question) =>
+            sum + question.points,
+          0
+        );
+
+
+      const data = {
+
+        lectureId:
+          lecture.id,
+
+        teacherId:
+          teacher.uid,
+
+        teacherName:
+          teacher.name || "",
+
+        stageId:
+          lecture.stageId,
+
+        subjectId:
+          lecture.subjectId,
+
+        title:
+          examTitle.value.trim(),
+
+        duration:
+          Number(examDuration.value),
+
+        questions,
+
+        totalScore
+
+      };
+
+
+      if (examId.value) {
+
+        await updateDoc(
+          doc(
+            db,
+            "exams",
+            examId.value
+          ),
+          {
+            ...data,
+            updatedAt:
+              serverTimestamp()
+          }
+        );
+
+        alert("تم تعديل الاختبار.");
+
+      } else {
+
+        await addDoc(
+          collection(db, "exams"),
+          {
+            ...data,
+            isPublished: false,
+            createdAt:
+              serverTimestamp(),
+            updatedAt:
+              serverTimestamp()
+          }
+        );
+
+        alert("تم إنشاء الاختبار.");
+      }
+
+
+      modal.classList.remove("show");
+
+      await loadExams();
+
+    } catch (error) {
+
+      console.error(error);
+
+      alert(
+        "حدث خطأ أثناء حفظ الاختبار."
+      );
+    }
+
+  }
+);
+
+
+async function togglePublish(id) {
+
+  const exam =
+    exams.find(x => x.id === id);
+
+  if (!exam) return;
+
+  try {
+
+    await updateDoc(
+      doc(db, "exams", id),
+      {
+        isPublished:
+          exam.isPublished !== true,
+
+        updatedAt:
+          serverTimestamp()
+      }
+    );
+
+    await loadExams();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert("تعذر تغيير حالة الاختبار.");
+  }
+}
+
+
+async function deleteExam(id) {
+
+  const exam =
+    exams.find(x => x.id === id);
+
+  if (!exam) return;
+
+  if (
+    !confirm(
+      `هل تريد حذف الاختبار "${exam.title}"؟`
+    )
+  ) {
+    return;
+  }
+
+  try {
+
+    await deleteDoc(
+      doc(db, "exams", id)
+    );
+
+    await loadExams();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert("تعذر حذف الاختبار.");
+  }
+}
+
+
+await loadExams();
 
 </script>
 
 </body>
-
 </html>
