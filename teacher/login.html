@@ -1,435 +1,230 @@
 <!DOCTYPE html>
-
-<html
-    lang="ar"
-    dir="rtl"
->
+<html lang="ar" dir="rtl">
 
 <head>
 
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>
-        دخول المعلمين | مسار التمريض
-    </title>
-
-    <style>
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-
-            min-height: 100vh;
-
-            font-family:
-                Arial,
-                Tahoma,
-                sans-serif;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #0f172a,
-                    #0f766e
-                );
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            padding: 20px;
-
-        }
-
-        .login-card {
-
-            width: 100%;
-            max-width: 430px;
-
-            background: white;
-
-            border-radius: 25px;
-
-            padding: 35px;
-
-            box-shadow:
-                0 25px 60px
-                rgba(0,0,0,.25);
-
-        }
-
-        .logo {
-
-            width: 80px;
-            height: 80px;
-
-            margin: auto;
-
-            border-radius: 22px;
-
-            background: #0f766e;
-
-            color: white;
-
-            display: flex;
-
-            align-items: center;
-            justify-content: center;
-
-            font-size: 38px;
-
-        }
-
-        h1 {
-
-            text-align: center;
-
-            margin-top: 20px;
-
-            color: #0f172a;
-
-        }
-
-        .subtitle {
-
-            text-align: center;
-
-            color: #64748b;
-
-            margin: 10px 0 30px;
-
-        }
-
-        label {
-
-            display: block;
-
-            margin-bottom: 8px;
-
-            font-weight: bold;
-
-            color: #334155;
-
-        }
-
-        input {
-
-            width: 100%;
-
-            padding: 14px;
-
-            border: 1px solid #cbd5e1;
-
-            border-radius: 12px;
-
-            margin-bottom: 18px;
-
-            font-size: 16px;
-
-            outline: none;
-
-        }
-
-        input:focus {
-
-            border-color: #0f766e;
-
-        }
-
-        button {
-
-            width: 100%;
-
-            border: 0;
-
-            padding: 15px;
-
-            border-radius: 12px;
-
-            background: #0f766e;
-
-            color: white;
-
-            font-size: 17px;
-
-            font-weight: bold;
-
-            cursor: pointer;
-
-        }
-
-        button:disabled {
-
-            opacity: .6;
-
-        }
-
-        .error {
-
-            display: none;
-
-            background: #fee2e2;
-
-            color: #991b1b;
-
-            padding: 12px;
-
-            border-radius: 10px;
-
-            margin-bottom: 15px;
-
-        }
-
-    </style>
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
+<title>دخول المعلم | بوابة التمريض</title>
+
+<style>
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(
+    135deg,
+    #071b34,
+    #1976d2
+  );
+}
+
+.login-card {
+  width: min(420px, 92%);
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 15px 50px #0005;
+}
+
+.logo {
+  width: 65px;
+  height: 65px;
+  border-radius: 18px;
+  background: #1976d2;
+  color: white;
+  display: grid;
+  place-items: center;
+  font-size: 30px;
+  margin: auto;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #718096;
+  margin-bottom: 25px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 7px;
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #d7dee8;
+  border-radius: 9px;
+  box-sizing: border-box;
+}
+
+button {
+  width: 100%;
+  padding: 13px;
+  border: 0;
+  border-radius: 9px;
+  background: #1976d2;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.error {
+  display: none;
+  margin-top: 15px;
+  background: #ffebee;
+  color: #c62828;
+  padding: 12px;
+  border-radius: 9px;
+}
+
+</style>
 
 </head>
 
-
 <body>
 
+<div class="login-card">
 
-    <div class="login-card">
+  <div class="logo">
+    🩺
+  </div>
 
-        <div class="logo">
-            🩺
-        </div>
+  <h1>
+    دخول المعلم
+  </h1>
 
-        <h1>
-            دخول المعلمين
-        </h1>
+  <div class="subtitle">
+    بوابة التمريض
+  </div>
 
-        <p class="subtitle">
-            بوابة التمريض
-        </p>
+  <form id="loginForm">
 
+    <div class="form-group">
 
-        <div
-            id="error"
-            class="error"
-        ></div>
+      <label>
+        البريد الإلكتروني
+      </label>
 
-
-        <form id="loginForm">
-
-            <label>
-                البريد الإلكتروني
-            </label>
-
-            <input
-                type="email"
-                id="email"
-                required
-                autocomplete="email"
-            >
-
-
-            <label>
-                كلمة المرور
-            </label>
-
-            <input
-                type="password"
-                id="password"
-                required
-                autocomplete="current-password"
-            >
-
-
-            <button
-                type="submit"
-                id="loginButton"
-            >
-                تسجيل الدخول
-            </button>
-
-        </form>
+      <input
+        id="email"
+        type="email"
+        required
+        autocomplete="username"
+      >
 
     </div>
 
+    <div class="form-group">
 
-    <script type="module">
+      <label>
+        كلمة المرور
+      </label>
 
-        import {
-            auth,
-            db
-        } from "../src/firebase/firebase-config.js";
+      <input
+        id="password"
+        type="password"
+        required
+        autocomplete="current-password"
+      >
 
-        import {
-            signInWithEmailAndPassword,
-            onAuthStateChanged
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    </div>
 
-        import {
-            doc,
-            getDoc
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    <button type="submit">
+      تسجيل الدخول
+    </button>
 
+  </form>
 
-        const form =
-            document.getElementById("loginForm");
+  <div
+    id="error"
+    class="error"
+  ></div>
 
-        const button =
-            document.getElementById("loginButton");
+</div>
 
-        const errorBox =
-            document.getElementById("error");
 
+<script type="module">
 
-        function showError(message) {
+import {
+  auth
+} from "../src/firebase/init.js";
 
-            errorBox.textContent = message;
+import {
+  signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
-            errorBox.style.display = "block";
 
-        }
+const form =
+  document.querySelector("#loginForm");
 
+const errorBox =
+  document.querySelector("#error");
 
-        onAuthStateChanged(auth, async (user) => {
 
-            if (!user) {
-                return;
-            }
+form.addEventListener(
+  "submit",
+  async event => {
 
-            try {
+    event.preventDefault();
 
-                const snap =
-                    await getDoc(
-                        doc(db, "users", user.uid)
-                    );
+    errorBox.style.display = "none";
 
-                if (
-                    snap.exists() &&
-                    snap.data().role === "teacher"
-                ) {
+    const email =
+      document
+        .querySelector("#email")
+        .value
+        .trim();
 
-                    window.location.href =
-                        "./dashboard.html";
+    const password =
+      document
+        .querySelector("#password")
+        .value;
 
-                }
 
-            } catch (error) {
+    try {
 
-                console.error(error);
+      await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
 
-            }
+      window.location.href =
+        "dashboard.html";
 
-        });
+    } catch (error) {
 
+      console.error(error);
 
-        form.addEventListener(
-            "submit",
-            async (event) => {
+      errorBox.textContent =
+        "البريد الإلكتروني أو كلمة المرور غير صحيحة.";
 
-                event.preventDefault();
+      errorBox.style.display = "block";
+    }
 
-                errorBox.style.display = "none";
+  }
+);
 
-                button.disabled = true;
-
-                button.textContent =
-                    "جاري تسجيل الدخول...";
-
-
-                const email =
-                    document.getElementById("email")
-                        .value
-                        .trim();
-
-                const password =
-                    document.getElementById("password")
-                        .value;
-
-
-                try {
-
-                    const credential =
-                        await signInWithEmailAndPassword(
-                            auth,
-                            email,
-                            password
-                        );
-
-
-                    const snap =
-                        await getDoc(
-                            doc(
-                                db,
-                                "users",
-                                credential.user.uid
-                            )
-                        );
-
-
-                    if (!snap.exists()) {
-
-                        throw new Error(
-                            "بيانات المعلم غير موجودة"
-                        );
-
-                    }
-
-
-                    const data =
-                        snap.data();
-
-
-                    if (data.role !== "teacher") {
-
-                        throw new Error(
-                            "هذا الحساب ليس حساب معلم"
-                        );
-
-                    }
-
-
-                    if (data.isActive === false) {
-
-                        throw new Error(
-                            "حساب المعلم غير مفعل"
-                        );
-
-                    }
-
-
-                    window.location.href =
-                        "./dashboard.html";
-
-
-                } catch (error) {
-
-                    console.error(error);
-
-                    let message =
-                        "البريد الإلكتروني أو كلمة المرور غير صحيحة";
-
-                    if (
-                        error.message &&
-                        !error.code
-                    ) {
-                        message = error.message;
-                    }
-
-                    showError(message);
-
-                    button.disabled = false;
-
-                    button.textContent =
-                        "تسجيل الدخول";
-                }
-
-            }
-        );
-
-    </script>
+</script>
 
 </body>
 
