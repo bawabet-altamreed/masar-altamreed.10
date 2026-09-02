@@ -1,561 +1,493 @@
-// ============================================================
-// BOABAT AL TAMREED
-// TEACHER SYSTEM
-// ============================================================
+import { auth, db } from "../firebase/init.js";
 
 import {
-    auth,
-    db
-} from "../firebase/firebase-config.js";
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  limit,
+  updateDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 import {
-    onAuthStateChanged,
-    signOut
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-import {
-    doc,
-    getDoc,
-    collection,
-    query,
-    where,
-    getDocs,
-    orderBy
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 
-// ============================================================
-// GLOBAL TEACHER
-// ============================================================
+/* =========================================================
+   CURRENT TEACHER
+========================================================= */
 
-let currentTeacher = null;
+export let currentTeacher = null;
 
 
-// ============================================================
-// ESCAPE HTML
-// ============================================================
+/* =========================================================
+   HELPERS
+========================================================= */
 
-export function escapeHtml(value) {
-
-    if (value === null || value === undefined) {
-        return "";
-    }
-
-    return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+export function escapeHtml(value = "") {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 
-// ============================================================
-// DATE FORMAT
-// ============================================================
+export function formatDate(value) {
+  if (!value) return "-";
 
-export function formatDate(timestamp) {
+  let date;
 
-    if (!timestamp) {
-        return "غير محدد";
-    }
+  if (value?.toDate) {
+    date = value.toDate();
+  } else {
+    date = new Date(value);
+  }
 
-    try {
+  if (Number.isNaN(date.getTime())) return "-";
 
-        const date = timestamp.toDate
-            ? timestamp.toDate()
-            : new Date(timestamp);
-
-        return date.toLocaleDateString("ar-EG", {
-            year: "numeric",
-            month: "long",
-            day: "numeric"
-        });
-
-    } catch {
-
-        return "غير محدد";
-    }
+  return date.toLocaleDateString("ar-EG", {
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  });
 }
 
 
-// ============================================================
-// TIME FORMAT
-// ============================================================
+export function formatTime(value) {
+  if (!value) return "-";
 
-export function formatTime(timestamp) {
+  let date;
 
-    if (!timestamp) {
-        return "";
-    }
+  if (value?.toDate) {
+    date = value.toDate();
+  } else {
+    date = new Date(value);
+  }
 
-    try {
+  if (Number.isNaN(date.getTime())) return "-";
 
-        const date = timestamp.toDate
-            ? timestamp.toDate()
-            : new Date(timestamp);
-
-        return date.toLocaleTimeString("ar-EG", {
-            hour: "2-digit",
-            minute: "2-digit"
-        });
-
-    } catch {
-
-        return "";
-    }
+  return date.toLocaleTimeString("ar-EG", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
 }
 
 
-// ============================================================
-// GET TEACHER PROFILE
-// ============================================================
+/* =========================================================
+   GET TEACHER PROFILE
+========================================================= */
 
 export async function getTeacherProfile(uid) {
+  if (!uid) return null;
 
-    const ref = doc(db, "users", uid);
+  const userRef = doc(db, "users", uid);
+  const snapshot = await getDoc(userRef);
 
-    const snap = await getDoc(ref);
+  if (!snapshot.exists()) {
+    return null;
+  }
 
-    if (!snap.exists()) {
-        throw new Error("لم يتم العثور على بيانات المعلم");
-    }
+  const data = snapshot.data();
 
-    const data = snap.data();
+  if (data.role !== "teacher") {
+    return null;
+  }
 
-    if (data.role !== "teacher") {
-        throw new Error("هذا الحساب ليس حساب معلم");
-    }
-
-    if (data.isActive === false) {
-        throw new Error("حساب المعلم غير مفعل");
-    }
-
-    return {
-        uid,
-        ...data
-    };
+  return {
+    id: snapshot.id,
+    ...data
+  };
 }
 
 
-// ============================================================
-// PROTECT TEACHER PAGE
-// ============================================================
+/* =========================================================
+   PROTECT TEACHER PAGE
+========================================================= */
 
-export function protectTeacherPage(callback) {
+export function protectTeacherPage() {
+  return new Promise((resolve) => {
 
     onAuthStateChanged(auth, async (user) => {
 
-        if (!user) {
+      if (!user) {
+        window.location.href = "../login.html";
+        return;
+      }
 
-            window.location.href = "./login.html";
-            return;
+      try {
+
+        const teacher = await getTeacherProfile(user.uid);
+
+        if (!teacher) {
+          await signOut(auth);
+          window.location.href = "../login.html";
+          return;
         }
 
-        try {
-
-            const teacher = await getTeacherProfile(user.uid);
-
-            currentTeacher = teacher;
-
-            window.currentTeacher = teacher;
-
-            if (typeof callback === "function") {
-                await callback(teacher);
-            }
-
-        } catch (error) {
-
-            console.error(error);
-
-            await signOut(auth);
-
-            window.location.href = "./login.html";
+        if (teacher.isActive !== true) {
+          alert("حساب المعلم غير مفعل حاليًا.");
+          await signOut(auth);
+          window.location.href = "../login.html";
+          return;
         }
-    });
-}
 
+        currentTeacher = {
+          uid: user.uid,
+          email: user.email || "",
+          ...teacher
+        };
 
-// ============================================================
-// LOGOUT
-// ============================================================
+        resolve(currentTeacher);
 
-export async function logoutTeacher() {
+      } catch (error) {
 
-    try {
+        console.error("Teacher authorization error:", error);
 
         await signOut(auth);
 
-        window.location.href = "./login.html";
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert("حدث خطأ أثناء تسجيل الخروج");
-    }
-}
-
-
-// ============================================================
-// TEACHER LAYOUT
-// ============================================================
-
-export function createTeacherLayout(
-    teacher,
-    activePage = "dashboard"
-) {
-
-    const teacherName =
-        teacher?.name ||
-        teacher?.displayName ||
-        teacher?.fullName ||
-        "المعلم";
-
-    const container =
-        document.getElementById("teacherLayout");
-
-    if (!container) {
-        return;
-    }
-
-    container.innerHTML = `
-
-        <header class="teacher-header">
-
-            <div class="header-right">
-
-                <button
-                    class="menu-button"
-                    id="menuButton"
-                    type="button"
-                >
-                    ☰
-                </button>
-
-                <div class="brand">
-
-                    <div class="brand-icon">
-                        🩺
-                    </div>
-
-                    <div>
-                        <h2>بوابة التمريض</h2>
-                        <span>لوحة تحكم المعلم</span>
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="teacher-mini-profile">
-
-                <div class="teacher-avatar">
-                    ${escapeHtml(
-                        teacherName
-                            .charAt(0)
-                            .toUpperCase()
-                    )}
-                </div>
-
-                <div class="teacher-mini-info">
-
-                    <strong>
-                        ${escapeHtml(teacherName)}
-                    </strong>
-
-                    <span>
-                        معلم
-                    </span>
-
-                </div>
-
-            </div>
-
-        </header>
-
-
-        <div class="teacher-system">
-
-
-            <aside
-                class="teacher-sidebar"
-                id="teacherSidebar"
-            >
-
-                <div class="sidebar-profile">
-
-                    <div class="large-avatar">
-                        ${escapeHtml(
-                            teacherName
-                                .charAt(0)
-                                .toUpperCase()
-                        )}
-                    </div>
-
-                    <strong>
-                        ${escapeHtml(teacherName)}
-                    </strong>
-
-                    <span>
-                        مدرس / معلم
-                    </span>
-
-                </div>
-
-
-                <nav class="teacher-nav">
-
-                    <a
-                        href="./dashboard.html"
-                        class="${activePage === "dashboard" ? "active" : ""}"
-                    >
-                        <span>🏠</span>
-                        الرئيسية
-                    </a>
-
-
-                    <a
-                        href="./lectures.html"
-                        class="${activePage === "lectures" ? "active" : ""}"
-                    >
-                        <span>🎥</span>
-                        المحاضرات
-                    </a>
-
-
-                    <a
-                        href="./exams.html"
-                        class="${activePage === "exams" ? "active" : ""}"
-                    >
-                        <span>📝</span>
-                        الاختبارات
-                    </a>
-
-
-                    <a
-                        href="./profile.html"
-                        class="${activePage === "profile" ? "active" : ""}"
-                    >
-                        <span>👤</span>
-                        حسابي
-                    </a>
-
-
-                    <div class="nav-divider"></div>
-
-
-                    <button
-                        type="button"
-                        id="logoutTeacher"
-                        class="logout-button"
-                    >
-                        <span>🚪</span>
-                        تسجيل الخروج
-                    </button>
-
-                </nav>
-
-            </aside>
-
-
-            <main class="teacher-main">
-
-                <div class="teacher-content">
-
-                    ${document.getElementById("teacherContent")
-                        ?.innerHTML || ""}
-
-                </div>
-
-            </main>
-
-        </div>
-    `;
-
-
-    // Mobile menu
-
-    const menuButton =
-        document.getElementById("menuButton");
-
-    const sidebar =
-        document.getElementById("teacherSidebar");
-
-    if (menuButton && sidebar) {
-
-        menuButton.addEventListener(
-            "click",
-            () => {
-
-                sidebar.classList.toggle("open");
-
-            }
-        );
-    }
-
-
-    // Logout
-
-    const logoutButton =
-        document.getElementById("logoutTeacher");
-
-    if (logoutButton) {
-
-        logoutButton.addEventListener(
-            "click",
-            logoutTeacher
-        );
-    }
-}
-
-
-// ============================================================
-// LOAD TEACHER LECTURES
-// ============================================================
-
-export async function getTeacherLectures(
-    teacherId
-) {
-
-    const lecturesRef =
-        collection(db, "lectures");
-
-    const q = query(
-        lecturesRef,
-        where("teacherId", "==", teacherId)
-    );
-
-    const snapshot =
-        await getDocs(q);
-
-    const lectures = [];
-
-    snapshot.forEach((docSnap) => {
-
-        lectures.push({
-            id: docSnap.id,
-            ...docSnap.data()
-        });
+        window.location.href = "../login.html";
+      }
 
     });
 
-    lectures.sort((a, b) => {
-
-        const aDate =
-            a.createdAt?.toMillis?.() || 0;
-
-        const bDate =
-            b.createdAt?.toMillis?.() || 0;
-
-        return bDate - aDate;
-    });
-
-    return lectures;
+  });
 }
 
 
-// ============================================================
-// LOAD TEACHER EXAMS
-// ============================================================
+/* =========================================================
+   LOGOUT
+========================================================= */
 
-export async function getTeacherExams(
-    teacherId
-) {
+export async function logoutTeacher() {
 
-    const examsRef =
-        collection(db, "exams");
+  try {
+    await signOut(auth);
+    window.location.href = "../login.html";
+  } catch (error) {
+    console.error(error);
+  }
 
-    const q = query(
-        examsRef,
-        where("teacherId", "==", teacherId)
-    );
-
-    const snapshot =
-        await getDocs(q);
-
-    const exams = [];
-
-    snapshot.forEach((docSnap) => {
-
-        exams.push({
-            id: docSnap.id,
-            ...docSnap.data()
-        });
-
-    });
-
-    exams.sort((a, b) => {
-
-        const aDate =
-            a.createdAt?.toMillis?.() || 0;
-
-        const bDate =
-            b.createdAt?.toMillis?.() || 0;
-
-        return bDate - aDate;
-    });
-
-    return exams;
 }
 
 
-// ============================================================
-// STAGES
-// ============================================================
+/* =========================================================
+   GET STAGES
+========================================================= */
 
 export async function getStages() {
 
-    const snapshot =
-        await getDocs(
-            collection(db, "stages")
-        );
+  const snapshot = await getDocs(
+    query(
+      collection(db, "stages"),
+      orderBy("name")
+    )
+  );
 
-    const stages = [];
+  return snapshot.docs.map(docSnap => ({
+    id: docSnap.id,
+    ...docSnap.data()
+  }));
 
-    snapshot.forEach((docSnap) => {
-
-        stages.push({
-            id: docSnap.id,
-            ...docSnap.data()
-        });
-
-    });
-
-    return stages;
 }
 
 
-// ============================================================
-// SUBJECTS
-// ============================================================
+/* =========================================================
+   GET SUBJECTS
+========================================================= */
 
 export async function getSubjects() {
 
-    const snapshot =
-        await getDocs(
-            collection(db, "subjects")
-        );
+  const snapshot = await getDocs(
+    query(
+      collection(db, "subjects"),
+      orderBy("name")
+    )
+  );
 
-    const subjects = [];
+  return snapshot.docs.map(docSnap => ({
+    id: docSnap.id,
+    ...docSnap.data()
+  }));
 
-    snapshot.forEach((docSnap) => {
-
-        subjects.push({
-            id: docSnap.id,
-            ...docSnap.data()
-        });
-
-    });
-
-    return subjects;
 }
 
 
-// ============================================================
-// EXPORT
-// ============================================================
+/* =========================================================
+   GET TEACHER LECTURES
+========================================================= */
 
-export {
-    currentTeacher
-};
+export async function getTeacherLectures(uid) {
+
+  if (!uid) {
+    uid = currentTeacher?.uid;
+  }
+
+  if (!uid) return [];
+
+  const q = query(
+    collection(db, "lectures"),
+    where("teacherId", "==", uid)
+  );
+
+  const snapshot = await getDocs(q);
+
+  const lectures = snapshot.docs.map(docSnap => ({
+    id: docSnap.id,
+    ...docSnap.data()
+  }));
+
+  lectures.sort((a, b) => {
+
+    const dateA = a.date?.toDate
+      ? a.date.toDate()
+      : new Date(a.date || 0);
+
+    const dateB = b.date?.toDate
+      ? b.date.toDate()
+      : new Date(b.date || 0);
+
+    return dateB - dateA;
+  });
+
+  return lectures;
+}
+
+
+/* =========================================================
+   GET TEACHER EXAMS
+========================================================= */
+
+export async function getTeacherExams(uid) {
+
+  if (!uid) {
+    uid = currentTeacher?.uid;
+  }
+
+  if (!uid) return [];
+
+  const q = query(
+    collection(db, "exams"),
+    where("teacherId", "==", uid)
+  );
+
+  const snapshot = await getDocs(q);
+
+  const exams = snapshot.docs.map(docSnap => ({
+    id: docSnap.id,
+    ...docSnap.data()
+  }));
+
+  exams.sort((a, b) => {
+
+    const dateA = a.createdAt?.toDate
+      ? a.createdAt.toDate()
+      : new Date(0);
+
+    const dateB = b.createdAt?.toDate
+      ? b.createdAt.toDate()
+      : new Date(0);
+
+    return dateB - dateA;
+  });
+
+  return exams;
+}
+
+
+/* =========================================================
+   GET EXAMS FOR SPECIFIC LECTURE
+========================================================= */
+
+export async function getLectureExams(lectureId) {
+
+  if (!lectureId) return [];
+
+  const q = query(
+    collection(db, "exams"),
+    where("lectureId", "==", lectureId)
+  );
+
+  const snapshot = await getDocs(q);
+
+  return snapshot.docs.map(docSnap => ({
+    id: docSnap.id,
+    ...docSnap.data()
+  }));
+}
+
+
+/* =========================================================
+   CREATE TEACHER LAYOUT
+========================================================= */
+
+export function createTeacherLayout(activePage = "") {
+
+  const container = document.querySelector("#teacher-layout");
+
+  if (!container) return;
+
+  const teacherName =
+    currentTeacher?.name ||
+    currentTeacher?.fullName ||
+    "المعلم";
+
+  container.innerHTML = `
+
+    <aside class="teacher-sidebar">
+
+      <div class="teacher-brand">
+        <div class="teacher-logo">🩺</div>
+
+        <div>
+          <strong>بوابة التمريض</strong>
+          <span>لوحة المعلم</span>
+        </div>
+      </div>
+
+      <div class="teacher-account">
+
+        <div class="teacher-avatar">
+          ${escapeHtml(
+            teacherName
+              .trim()
+              .charAt(0)
+              .toUpperCase()
+          )}
+        </div>
+
+        <div>
+          <strong>${escapeHtml(teacherName)}</strong>
+          <small>معلم</small>
+        </div>
+
+      </div>
+
+      <nav class="teacher-nav">
+
+        <a
+          href="dashboard.html"
+          class="${activePage === "dashboard" ? "active" : ""}"
+        >
+          🏠
+          <span>الرئيسية</span>
+        </a>
+
+        <a
+          href="lectures.html"
+          class="${activePage === "lectures" ? "active" : ""}"
+        >
+          🎓
+          <span>المحاضرات</span>
+        </a>
+
+        <a
+          href="exams.html"
+          class="${activePage === "exams" ? "active" : ""}"
+        >
+          📝
+          <span>الاختبارات</span>
+        </a>
+
+        <a
+          href="profile.html"
+          class="${activePage === "profile" ? "active" : ""}"
+        >
+          👤
+          <span>الملف الشخصي</span>
+        </a>
+
+      </nav>
+
+      <button id="teacherLogout" class="teacher-logout">
+        🚪 تسجيل الخروج
+      </button>
+
+    </aside>
+
+    <main class="teacher-main">
+
+      <header class="teacher-topbar">
+
+        <div>
+          <h1 id="teacher-page-title">لوحة المعلم</h1>
+          <p>إدارة المحاضرات والاختبارات</p>
+        </div>
+
+        <div class="teacher-top-user">
+          🩺 ${escapeHtml(teacherName)}
+        </div>
+
+      </header>
+
+      <section id="teacher-content"></section>
+
+    </main>
+  `;
+
+  const logoutButton =
+    document.querySelector("#teacherLogout");
+
+  logoutButton?.addEventListener(
+    "click",
+    logoutTeacher
+  );
+}
+
+
+/* =========================================================
+   UPDATE TEACHER PROFILE
+========================================================= */
+
+export async function updateTeacherProfile(data) {
+
+  if (!currentTeacher?.uid) {
+    throw new Error("Teacher not authenticated");
+  }
+
+  const userRef = doc(
+    db,
+    "users",
+    currentTeacher.uid
+  );
+
+  await updateDoc(userRef, {
+    name: data.name,
+    email: data.email,
+    updatedAt: serverTimestamp()
+  });
+
+  currentTeacher.name = data.name;
+  currentTeacher.email = data.email;
+}
+
+
+/* =========================================================
+   GET RECENT EXAMS
+========================================================= */
+
+export async function getRecentExams(uid) {
+
+  const exams = await getTeacherExams(uid);
+
+  return exams.slice(0, 5);
+}
+
+
+/* =========================================================
+   GET RECENT LECTURES
+========================================================= */
+
+export async function getRecentLectures(uid) {
+
+  const lectures = await getTeacherLectures(uid);
+
+  return lectures.slice(0, 5);
+}
