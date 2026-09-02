@@ -22,27 +22,20 @@
     <style>
 
         .teachers-toolbar {
-
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 15px;
             margin-bottom: 20px;
             flex-wrap: wrap;
-
         }
-
 
         .teachers-search {
-
             flex: 1;
             min-width: 220px;
-
         }
 
-
         .teachers-search input {
-
             width: 100%;
             box-sizing: border-box;
             padding: 12px 15px;
@@ -51,19 +44,13 @@
             font-family: inherit;
             font-size: 15px;
             outline: none;
-
         }
-
 
         .teachers-search input:focus {
-
             border-color: #087ea4;
-
         }
 
-
         .primary-button {
-
             border: none;
             background: #087ea4;
             color: white;
@@ -73,81 +60,60 @@
             font-family: inherit;
             font-size: 15px;
             font-weight: bold;
-
         }
-
 
         .primary-button:hover {
-
             opacity: 0.92;
-
         }
 
+        .primary-button:disabled,
+        .secondary-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
 
         .teacher-table-wrapper {
-
             overflow-x: auto;
-
         }
 
-
         .teacher-table {
-
             width: 100%;
             border-collapse: collapse;
             text-align: right;
             min-width: 850px;
-
         }
 
-
         .teacher-table th {
-
             padding: 13px;
             border-bottom: 1px solid #e5edf3;
             background: #f8fbfd;
             white-space: nowrap;
-
         }
 
-
         .teacher-table td {
-
             padding: 13px;
             border-bottom: 1px solid #edf1f4;
             vertical-align: middle;
-
         }
-
 
         .teacher-name {
-
             font-weight: bold;
-
         }
 
-
         .teacher-email {
-
             direction: ltr;
             text-align: right;
             font-size: 14px;
-
         }
-
 
         .stage-tags,
         .subject-tags {
-
             display: flex;
             flex-wrap: wrap;
             gap: 5px;
-
         }
 
-
         .tag {
-
             display: inline-block;
             padding: 5px 8px;
             border-radius: 7px;
@@ -155,89 +121,64 @@
             color: #087ea4;
             font-size: 12px;
             white-space: nowrap;
-
         }
 
-
         .status-badge {
-
             display: inline-block;
             padding: 6px 10px;
             border-radius: 8px;
             font-size: 13px;
             font-weight: bold;
-
         }
-
 
         .status-active {
-
             background: #e9f8f0;
             color: #16794c;
-
         }
-
 
         .status-inactive {
-
             background: #fdecec;
             color: #b42318;
-
         }
 
-
         .action-buttons {
-
             display: flex;
             gap: 7px;
             flex-wrap: wrap;
-
         }
 
-
         .action-button {
-
             border: none;
             padding: 8px 10px;
             border-radius: 8px;
             cursor: pointer;
             font-family: inherit;
             font-size: 13px;
-
         }
-
 
         .edit-button {
-
             background: #eef5ff;
             color: #155eef;
-
         }
-
 
         .toggle-button {
-
             background: #fff6e5;
             color: #9a6700;
-
         }
 
-
         .empty-state-box {
-
             text-align: center;
             padding: 35px 15px;
             color: #68737d;
-
         }
 
-
-        /* =====================================================
-           Modal
-        ===================================================== */
+        .loading {
+            text-align: center;
+            padding: 35px;
+            color: #68737d;
+        }
 
         .modal-overlay {
-
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.45);
@@ -246,85 +187,58 @@
             justify-content: center;
             padding: 20px;
             z-index: 9999;
-
         }
-
 
         .modal-overlay.show {
-
             display: flex;
-
         }
 
-
         .teacher-modal {
-
             width: min(700px, 100%);
             max-height: 90vh;
             overflow-y: auto;
             background: white;
             border-radius: 16px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-
         }
 
-
         .modal-header {
-
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 15px;
             padding: 20px;
             border-bottom: 1px solid #edf1f4;
-
         }
-
 
         .modal-header h2 {
-
             margin: 0;
             font-size: 20px;
-
         }
 
-
         .close-modal {
-
             border: none;
             background: transparent;
             font-size: 25px;
             cursor: pointer;
             color: #68737d;
-
         }
-
 
         .modal-body {
-
             padding: 20px;
-
         }
-
 
         .form-group {
-
             margin-bottom: 18px;
-
         }
 
-
         .form-group label {
-
             display: block;
             margin-bottom: 7px;
             font-weight: bold;
-
         }
 
-
         .form-group input {
-
             width: 100%;
             box-sizing: border-box;
             padding: 11px 13px;
@@ -333,28 +247,27 @@
             font-family: inherit;
             font-size: 15px;
             outline: none;
-
         }
-
 
         .form-group input:focus {
-
             border-color: #087ea4;
-
         }
 
+        .form-group input:disabled {
+            background: #f5f7f9;
+            cursor: not-allowed;
+        }
 
         .checkbox-grid {
-
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(180px, 1fr)
+            );
             gap: 10px;
-
         }
 
-
         .checkbox-item {
-
             display: flex;
             align-items: center;
             gap: 8px;
@@ -363,47 +276,44 @@
             border-radius: 9px;
             cursor: pointer;
             background: #fbfdfe;
-
         }
-
 
         .checkbox-item:hover {
-
             background: #f4f9fb;
-
         }
-
 
         .checkbox-item input {
-
             width: auto;
-
         }
 
-
         .form-help {
-
             color: #68737d;
             font-size: 13px;
             margin-top: 6px;
-
+            line-height: 1.7;
         }
 
+        .account-help {
+            background: #eef7fa;
+            border: 1px solid #d5edf4;
+            color: #075b76;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 18px;
+            line-height: 1.8;
+            font-size: 13px;
+        }
 
         .modal-footer {
-
             display: flex;
             justify-content: flex-end;
             gap: 10px;
             padding: 18px 20px;
             border-top: 1px solid #edf1f4;
             flex-wrap: wrap;
-
         }
 
-
         .secondary-button {
-
             border: 1px solid #dbe5ec;
             background: white;
             color: #344054;
@@ -412,30 +322,16 @@
             cursor: pointer;
             font-family: inherit;
             font-weight: bold;
-
         }
 
-
         .danger-message {
-
             color: #b42318;
             font-size: 13px;
             margin-top: 10px;
-
+            line-height: 1.7;
         }
-
-
-        .loading {
-
-            text-align: center;
-            padding: 35px;
-            color: #68737d;
-
-        }
-
 
         .toast {
-
             position: fixed;
             left: 20px;
             bottom: 20px;
@@ -447,21 +343,14 @@
             color: white;
             font-weight: bold;
             display: none;
-
         }
-
 
         .toast.error {
-
             background: #b42318;
-
         }
 
-
         .toast.show {
-
             display: block;
-
         }
 
     </style>
@@ -513,6 +402,39 @@
                 >
 
 
+                <div
+                    id="accountHelp"
+                    class="account-help"
+                >
+                    لإضافة معلم بدون Cloud Functions:
+                    أنشئ حساب المعلم أولًا في
+                    Firebase Authentication، ثم ضع UID الخاص به هنا.
+                </div>
+
+
+                <!-- UID -->
+
+                <div class="form-group">
+
+                    <label for="teacherUid">
+                        Firebase Auth UID
+                    </label>
+
+                    <input
+                        type="text"
+                        id="teacherUid"
+                        placeholder="مثال: abc123XYZ..."
+                        required
+                    >
+
+                    <div class="form-help">
+                        هذا هو UID الخاص بحساب المعلم في Firebase Authentication.
+                        لا تستخدم البريد الإلكتروني بدلًا منه.
+                    </div>
+
+                </div>
+
+
                 <!-- الاسم -->
 
                 <div class="form-group">
@@ -543,34 +465,10 @@
                         type="email"
                         id="teacherEmail"
                         placeholder="teacher@example.com"
-                        required
-                    >
-
-                </div>
-
-
-                <!-- كلمة المرور -->
-
-                <div
-                    class="form-group"
-                    id="passwordGroup"
-                >
-
-                    <label for="teacherPassword">
-                        كلمة المرور
-                    </label>
-
-                    <input
-                        type="password"
-                        id="teacherPassword"
-                        placeholder="كلمة المرور الأولية"
-                        minlength="6"
                     >
 
                     <div class="form-help">
-
-                        تستخدم عند إنشاء حساب المعلم لأول مرة.
-
+                        البريد هنا لتخزينه في ملف المعلم داخل Firestore.
                     </div>
 
                 </div>
@@ -588,15 +486,11 @@
                         id="stagesContainer"
                         class="checkbox-grid"
                     >
-
                         جاري تحميل المراحل...
-
                     </div>
 
                     <div class="form-help">
-
                         يمكنك اختيار أكثر من مرحلة.
-
                     </div>
 
                 </div>
@@ -614,15 +508,11 @@
                         id="subjectsContainer"
                         class="checkbox-grid"
                     >
-
                         جاري تحميل المواد...
-
                     </div>
 
                     <div class="form-help">
-
                         يمكنك اختيار أكثر من مادة.
-
                     </div>
 
                 </div>
@@ -633,11 +523,8 @@
                 <div class="form-group">
 
                     <label>
-
                         حالة الحساب
-
                     </label>
-
 
                     <label
                         class="checkbox-item"
@@ -682,7 +569,7 @@
                     id="saveTeacherButton"
                     class="primary-button"
                 >
-                    إنشاء المعلم
+                    إضافة المعلم
                 </button>
 
             </div>
@@ -703,37 +590,6 @@
 <script type="module">
 
     import {
-    getFunctions,
-    httpsCallable
-} from
-    "https://www.gstatic.com/firebasejs/12.1.0/firebase-functions.js";
-
-import {
-    app
-} from "../src/firebase/init.js";
-
-    const functions =
-    getFunctions(
-        app,
-        "us-central1"
-    );
-
-
-const createTeacher =
-    httpsCallable(
-        functions,
-        "createTeacher"
-    );
-
-
-const setTeacherActive =
-    httpsCallable(
-        functions,
-        "setTeacherActive"
-    );
-
-    
-    import {
         protectAdminPage
     } from "../src/admin/auth-guard.js";
 
@@ -749,6 +605,7 @@ const setTeacherActive =
         collection,
         getDocs,
         doc,
+        setDoc,
         updateDoc,
         serverTimestamp
     } from
@@ -833,112 +690,94 @@ const setTeacherActive =
             "teachersContainer"
         );
 
-
     const teacherSearch =
         document.getElementById(
             "teacherSearch"
         );
-
 
     const addTeacherButton =
         document.getElementById(
             "addTeacherButton"
         );
 
-
     const teacherModal =
         document.getElementById(
             "teacherModal"
         );
-
 
     const closeModalButton =
         document.getElementById(
             "closeModalButton"
         );
 
-
     const cancelModalButton =
         document.getElementById(
             "cancelModalButton"
         );
-
 
     const teacherForm =
         document.getElementById(
             "teacherForm"
         );
 
-
     const teacherId =
         document.getElementById(
             "teacherId"
         );
 
+    const teacherUid =
+        document.getElementById(
+            "teacherUid"
+        );
 
     const teacherName =
         document.getElementById(
             "teacherName"
         );
 
-
     const teacherEmail =
         document.getElementById(
             "teacherEmail"
         );
-
-
-    const teacherPassword =
-        document.getElementById(
-            "teacherPassword"
-        );
-
-
-    const passwordGroup =
-        document.getElementById(
-            "passwordGroup"
-        );
-
 
     const teacherActive =
         document.getElementById(
             "teacherActive"
         );
 
-
     const stagesContainer =
         document.getElementById(
             "stagesContainer"
         );
-
 
     const subjectsContainer =
         document.getElementById(
             "subjectsContainer"
         );
 
-
     const modalTitle =
         document.getElementById(
             "modalTitle"
         );
-
 
     const saveTeacherButton =
         document.getElementById(
             "saveTeacherButton"
         );
 
-
     const modalError =
         document.getElementById(
             "modalError"
         );
 
-
     const toast =
         document.getElementById(
             "toast"
+        );
+
+    const accountHelp =
+        document.getElementById(
+            "accountHelp"
         );
 
 
@@ -1338,29 +1177,17 @@ const setTeacherActive =
 
                         <tr>
 
-                            <th>
-                                المعلم
-                            </th>
+                            <th>المعلم</th>
 
-                            <th>
-                                البريد
-                            </th>
+                            <th>البريد</th>
 
-                            <th>
-                                المراحل
-                            </th>
+                            <th>المراحل</th>
 
-                            <th>
-                                المواد
-                            </th>
+                            <th>المواد</th>
 
-                            <th>
-                                الحالة
-                            </th>
+                            <th>الحالة</th>
 
-                            <th>
-                                الإجراءات
-                            </th>
+                            <th>الإجراءات</th>
 
                         </tr>
 
@@ -1622,11 +1449,9 @@ const setTeacherActive =
                         "click",
                         () => {
 
-                            const id =
-                                button.dataset.id;
-
-
-                            openEditTeacher(id);
+                            openEditTeacher(
+                                button.dataset.id
+                            );
 
                         }
                     );
@@ -1646,11 +1471,9 @@ const setTeacherActive =
                         "click",
                         () => {
 
-                            const id =
-                                button.dataset.id;
-
-
-                            toggleTeacher(id);
+                            toggleTeacher(
+                                button.dataset.id
+                            );
 
                         }
                     );
@@ -1671,24 +1494,30 @@ const setTeacherActive =
 
         teacherId.value = "";
 
+        teacherUid.value = "";
+
+        teacherName.value = "";
+
+        teacherEmail.value = "";
+
         teacherActive.checked = true;
+
+        teacherUid.disabled = false;
 
         teacherEmail.disabled = false;
 
-        passwordGroup.style.display =
-            "block";
-
-
-        teacherPassword.required =
-            true;
-
+        teacherUid.required = true;
 
         modalTitle.textContent =
             "إضافة معلم";
 
 
         saveTeacherButton.textContent =
-            "إنشاء المعلم";
+            "إضافة المعلم";
+
+
+        accountHelp.style.display =
+            "block";
 
 
         modalError.textContent = "";
@@ -1704,7 +1533,7 @@ const setTeacherActive =
         );
 
 
-        teacherName.focus();
+        teacherUid.focus();
 
     }
 
@@ -1732,6 +1561,18 @@ const setTeacherActive =
             teacher.id;
 
 
+        teacherUid.value =
+            teacher.id;
+
+
+        teacherUid.disabled =
+            true;
+
+
+        teacherUid.required =
+            false;
+
+
         teacherName.value =
             teacher.name || "";
 
@@ -1741,23 +1582,11 @@ const setTeacherActive =
 
 
         teacherEmail.disabled =
-            true;
+            false;
 
 
         teacherActive.checked =
             teacher.isActive === true;
-
-
-        teacherPassword.value =
-            "";
-
-
-        teacherPassword.required =
-            false;
-
-
-        passwordGroup.style.display =
-            "none";
 
 
         modalTitle.textContent =
@@ -1766,6 +1595,10 @@ const setTeacherActive =
 
         saveTeacherButton.textContent =
             "حفظ التعديلات";
+
+
+        accountHelp.style.display =
+            "none";
 
 
         modalError.textContent = "";
@@ -1816,9 +1649,7 @@ const setTeacherActive =
     // Get Selected IDs
     // =====================================================
 
-    function getSelectedValues(
-        selector
-    ) {
+    function getSelectedValues(selector) {
 
         return Array.from(
             document.querySelectorAll(
@@ -1846,16 +1677,22 @@ const setTeacherActive =
             modalError.textContent = "";
 
 
+            const isEdit =
+                Boolean(
+                    teacherId.value
+                );
+
+
+            const uid =
+                teacherUid.value.trim();
+
+
             const name =
                 teacherName.value.trim();
 
 
             const email =
                 teacherEmail.value.trim();
-
-
-            const password =
-                teacherPassword.value;
 
 
             const active =
@@ -1874,6 +1711,20 @@ const setTeacherActive =
                 );
 
 
+            // =================================================
+            // Validation
+            // =================================================
+
+            if (!uid) {
+
+                modalError.textContent =
+                    "من فضلك أدخل Firebase Auth UID.";
+
+                return;
+
+            }
+
+
             if (!name) {
 
                 modalError.textContent =
@@ -1884,23 +1735,13 @@ const setTeacherActive =
             }
 
 
-            if (!email) {
-
-                modalError.textContent =
-                    "من فضلك اكتب البريد الإلكتروني.";
-
-                return;
-
-            }
-
-
             if (
-                !teacherId.value &&
-                password.length < 6
+                email &&
+                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
             ) {
 
                 modalError.textContent =
-                    "كلمة المرور يجب أن تكون 6 أحرف على الأقل.";
+                    "البريد الإلكتروني غير صحيح.";
 
                 return;
 
@@ -1931,37 +1772,107 @@ const setTeacherActive =
             }
 
 
+            // =================================================
+            // Prevent duplicate teacher
+            // =================================================
+
+            if (!isEdit) {
+
+                const alreadyExists =
+                    teachers.some(
+                        teacher =>
+                            teacher.id === uid
+                    );
+
+
+                if (alreadyExists) {
+
+                    modalError.textContent =
+                        "هذا الـ UID موجود بالفعل كمعلم.";
+
+                    return;
+
+                }
+
+            }
+
+
             saveTeacherButton.disabled =
                 true;
 
 
             saveTeacherButton.textContent =
-                teacherId.value
+                isEdit
                 ? "جاري الحفظ..."
-                : "جاري إنشاء الحساب...";
+                : "جاري إضافة المعلم...";
 
 
             try {
 
+                const teacherRef =
+                    doc(
+                        db,
+                        "users",
+                        uid
+                    );
+
+
                 // =================================================
-                // Edit Existing Teacher
+                // Create Teacher Profile
                 // =================================================
 
-                if (teacherId.value) {
+                if (!isEdit) {
 
-                    const teacherRef =
-                        doc(
-                            db,
-                            "users",
-                            teacherId.value
-                        );
+                    await setDoc(
+                        teacherRef,
+                        {
 
+                            role:
+                                "teacher",
+
+                            name,
+
+                            email,
+
+                            isActive:
+                                active,
+
+                            stageIds:
+                                selectedStageIds,
+
+                            subjectIds:
+                                selectedSubjectIds,
+
+                            createdAt:
+                                serverTimestamp(),
+
+                            updatedAt:
+                                serverTimestamp()
+
+                        }
+                    );
+
+
+                    showToast(
+                        "تمت إضافة المعلم بنجاح."
+                    );
+
+                }
+
+
+                // =================================================
+                // Update Teacher Profile
+                // =================================================
+
+                else {
 
                     await updateDoc(
                         teacherRef,
                         {
 
                             name,
+
+                            email,
 
                             stageIds:
                                 selectedStageIds,
@@ -1985,50 +1896,52 @@ const setTeacherActive =
 
                 }
 
-                // =================================================
-                // Create New Teacher
-                // =================================================
 
-else {
+                closeModal();
 
-    const result =
-        await createTeacher({
-
-            name,
-
-            email,
-
-            password,
-
-            stageIds:
-                selectedStageIds,
-
-            subjectIds:
-                selectedSubjectIds,
-
-            isActive:
-                active
-
-        });
+                await loadTeachers();
 
 
-    if (
-        !result.data ||
-        result.data.success !== true
-    ) {
+            } catch (error) {
 
-        throw new Error(
-            "فشل إنشاء حساب المعلم."
-        );
-
-    }
+                console.error(
+                    "Save teacher error:",
+                    error
+                );
 
 
-    showToast(
-        "تم إنشاء حساب المعلم بنجاح."
+                if (
+                    error.code ===
+                    "permission-denied"
+                ) {
+
+                    modalError.textContent =
+                        "ليس لديك صلاحية لتنفيذ هذا الإجراء.";
+
+                } else {
+
+                    modalError.textContent =
+                        error.message ||
+                        "حدث خطأ أثناء حفظ بيانات المعلم.";
+
+                }
+
+            } finally {
+
+                saveTeacherButton.disabled =
+                    false;
+
+
+                saveTeacherButton.textContent =
+                    isEdit
+                    ? "حفظ التعديلات"
+                    : "إضافة المعلم";
+
+            }
+
+        }
     );
 
-}
 
     // =====================================================
     // Toggle Teacher
@@ -2073,27 +1986,23 @@ else {
 
 
         try {
-const result =
-    await setTeacherActive({
 
-        uid: id,
+            await updateDoc(
+                doc(
+                    db,
+                    "users",
+                    id
+                ),
+                {
 
-        isActive:
-            newStatus
+                    isActive:
+                        newStatus,
 
-    });
+                    updatedAt:
+                        serverTimestamp()
 
-
-if (
-    !result.data ||
-    result.data.success !== true
-) {
-
-    throw new Error(
-        "فشل تغيير حالة المعلم."
-    );
-
-}
+                }
+            );
 
 
             showToast(
@@ -2104,6 +2013,7 @@ if (
 
 
             await loadTeachers();
+
 
         } catch (error) {
 
