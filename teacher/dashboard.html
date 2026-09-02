@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ar" dir="rtl">
 
 <head>
@@ -7,488 +6,259 @@
 <meta charset="UTF-8">
 
 <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
 >
 
-<title>
-لوحة تحكم المعلم | بوابة التمريض
-</title>
-
+<title>لوحة المعلم | بوابة التمريض</title>
 
 <style>
 
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-
-    font-family:
-        Arial,
-        Tahoma,
-        sans-serif;
-
-    background: #f1f5f9;
-
-    color: #0f172a;
-
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f7fb;
+  color: #172033;
 }
 
-
-.teacher-header {
-
-    height: 75px;
-
-    background: white;
-
-    border-bottom: 1px solid #e2e8f0;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    padding: 0 25px;
-
+#teacher-layout {
+  display: flex;
+  min-height: 100vh;
 }
-
-
-.header-right {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 15px;
-
-}
-
-
-.menu-button {
-
-    display: none;
-
-    border: 0;
-
-    background: transparent;
-
-    font-size: 25px;
-
-}
-
-
-.brand {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-
-}
-
-
-.brand-icon {
-
-    width: 48px;
-    height: 48px;
-
-    border-radius: 14px;
-
-    background: #0f766e;
-
-    color: white;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 25px;
-
-}
-
-
-.brand h2 {
-
-    font-size: 18px;
-
-}
-
-
-.brand span {
-
-    color: #64748b;
-
-    font-size: 12px;
-
-}
-
-
-.teacher-mini-profile {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-}
-
-
-.teacher-avatar {
-
-    width: 42px;
-    height: 42px;
-
-    border-radius: 50%;
-
-    background: #ccfbf1;
-
-    color: #0f766e;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-weight: bold;
-
-}
-
-
-.teacher-mini-info span {
-
-    display: block;
-
-    font-size: 12px;
-
-    color: #64748b;
-
-}
-
-
-.teacher-system {
-
-    display: flex;
-
-    min-height: calc(100vh - 75px);
-
-}
-
 
 .teacher-sidebar {
-
-    width: 250px;
-
-    background: #0f172a;
-
-    color: white;
-
+  width: 260px;
+  background: #0b1f3a;
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
-
-.sidebar-profile {
-
-    padding: 30px 20px;
-
-    text-align: center;
-
-    border-bottom: 1px solid #1e293b;
-
+.teacher-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ffffff20;
 }
 
-
-.large-avatar {
-
-    width: 70px;
-    height: 70px;
-
-    margin: auto auto 12px;
-
-    border-radius: 50%;
-
-    background: #0f766e;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 25px;
-
+.teacher-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: #1e88e5;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
 }
 
-
-.sidebar-profile span {
-
-    display: block;
-
-    margin-top: 5px;
-
-    color: #94a3b8;
-
-    font-size: 13px;
-
+.teacher-brand strong,
+.teacher-brand span {
+  display: block;
 }
 
+.teacher-brand span {
+  color: #b9c7d8;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.teacher-account {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 0;
+}
+
+.teacher-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #fff;
+  color: #0b1f3a;
+  display: grid;
+  place-items: center;
+  font-weight: bold;
+}
+
+.teacher-account strong,
+.teacher-account small {
+  display: block;
+}
+
+.teacher-account small {
+  color: #aebbd0;
+  margin-top: 4px;
+}
 
 .teacher-nav {
-
-    padding: 15px;
-
+  display: grid;
+  gap: 8px;
 }
 
-
-.teacher-nav a,
-.logout-button {
-
-    width: 100%;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-
-    padding: 13px;
-
-    border-radius: 10px;
-
-    margin-bottom: 7px;
-
-    color: #cbd5e1;
-
-    text-decoration: none;
-
-    border: 0;
-
-    background: transparent;
-
-    cursor: pointer;
-
-    font-size: 15px;
-
+.teacher-nav a {
+  color: #dce6f2;
+  text-decoration: none;
+  padding: 13px;
+  border-radius: 10px;
 }
-
 
 .teacher-nav a:hover,
 .teacher-nav a.active {
-
-    background: #1e293b;
-
-    color: white;
-
+  background: #1e88e5;
+  color: white;
 }
 
-
-.logout-button:hover {
-
-    background: #7f1d1d;
-
-    color: white;
-
+.teacher-logout {
+  margin-top: auto;
+  border: 0;
+  padding: 13px;
+  border-radius: 10px;
+  background: #d32f2f;
+  color: white;
+  cursor: pointer;
 }
-
-
-.nav-divider {
-
-    height: 1px;
-
-    background: #1e293b;
-
-    margin: 20px 0;
-
-}
-
 
 .teacher-main {
-
-    flex: 1;
-
-    padding: 30px;
-
+  flex: 1;
 }
 
-
-.page-title {
-
-    margin-bottom: 25px;
-
+.teacher-topbar {
+  background: white;
+  padding: 20px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 8px #00000010;
 }
 
-
-.page-title h1 {
-
-    font-size: 28px;
-
+.teacher-topbar h1 {
+  margin: 0 0 6px;
 }
 
-
-.page-title p {
-
-    margin-top: 8px;
-
-    color: #64748b;
-
+.teacher-topbar p {
+  margin: 0;
+  color: #718096;
 }
 
+.teacher-top-user {
+  font-weight: bold;
+}
+
+#teacher-content {
+  padding: 30px;
+}
 
 .stats {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    gap: 20px;
-
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
 }
 
-
-.stat-card {
-
-    background: white;
-
-    padding: 25px;
-
-    border-radius: 18px;
-
-    border: 1px solid #e2e8f0;
-
+.stat {
+  background: white;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 3px 15px #00000008;
 }
 
-
-.stat-icon {
-
-    font-size: 28px;
-
-    margin-bottom: 15px;
-
+.stat span {
+  display: block;
+  color: #718096;
+  margin-bottom: 10px;
 }
 
-
-.stat-card span {
-
-    color: #64748b;
-
-    font-size: 14px;
-
+.stat strong {
+  font-size: 30px;
 }
 
-
-.stat-card strong {
-
-    display: block;
-
-    font-size: 32px;
-
-    margin-top: 5px;
-
+.section {
+  background: white;
+  border-radius: 16px;
+  margin-top: 25px;
+  padding: 22px;
 }
 
-
-.quick-actions {
-
-    margin-top: 25px;
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, 1fr);
-
-    gap: 20px;
-
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-
-.quick-card {
-
-    background: white;
-
-    border-radius: 18px;
-
-    padding: 25px;
-
-    border: 1px solid #e2e8f0;
-
-    text-decoration: none;
-
-    color: #0f172a;
-
+.btn {
+  border: 0;
+  padding: 11px 18px;
+  border-radius: 9px;
+  cursor: pointer;
+  background: #1976d2;
+  color: white;
+  text-decoration: none;
 }
 
-
-.quick-card:hover {
-
-    border-color: #0f766e;
-
+.list-item {
+  border-bottom: 1px solid #eee;
+  padding: 15px 0;
 }
 
-
-.quick-card h3 {
-
-    margin-bottom: 8px;
-
+.list-item:last-child {
+  border-bottom: 0;
 }
 
-
-.quick-card p {
-
-    color: #64748b;
-
+.badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
 }
 
+.badge-green {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
 
-@media(max-width: 800px) {
+.badge-red {
+  background: #ffebee;
+  color: #c62828;
+}
 
-    .menu-button {
-        display: block;
-    }
+@media(max-width:800px) {
 
-    .teacher-sidebar {
+  .teacher-sidebar {
+    width: 75px;
+    padding: 10px;
+  }
 
-        position: fixed;
+  .teacher-brand div:not(.teacher-logo),
+  .teacher-account div:not(.teacher-avatar),
+  .teacher-nav span {
+    display: none;
+  }
 
-        right: -270px;
+  .teacher-nav a {
+    text-align: center;
+  }
 
-        top: 75px;
+  .teacher-logout {
+    font-size: 0;
+  }
 
-        bottom: 0;
+  .teacher-logout::before {
+    content: "🚪";
+    font-size: 18px;
+  }
 
-        z-index: 10;
+  .stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
-        transition: .3s;
-
-    }
-
-    .teacher-sidebar.open {
-        right: 0;
-    }
-
-    .teacher-main {
-        width: 100%;
-        padding: 20px;
-    }
-
-    .stats {
-        grid-template-columns: 1fr;
-    }
-
-    .quick-actions {
-        grid-template-columns: 1fr;
-    }
-
-    .teacher-mini-info {
-        display: none;
-    }
+  #teacher-content {
+    padding: 15px;
+  }
 
 }
 
@@ -496,308 +266,182 @@ body {
 
 </head>
 
-
 <body>
 
-
-<div id="teacherLayout">
-
-    <div
-        id="teacherContent"
-        style="display:none"
-    ></div>
-
-</div>
-
+<div id="teacher-layout"></div>
 
 <script type="module">
 
 import {
-    protectTeacherPage,
-    createTeacherLayout,
-    getTeacherLectures,
-    getTeacherExams
+  protectTeacherPage,
+  createTeacherLayout,
+  getTeacherLectures,
+  getTeacherExams,
+  getRecentLectures,
+  getRecentExams,
+  escapeHtml,
+  formatDate
 } from "../src/teacher/teacher.js";
 
+const teacher = await protectTeacherPage();
 
-protectTeacherPage(async (teacher) => {
+createTeacherLayout("dashboard");
 
-    const layout =
-        document.getElementById(
-            "teacherLayout"
-        );
+document.querySelector("#teacher-page-title").textContent =
+  "لوحة التحكم";
 
-    const lectures =
-        await getTeacherLectures(
-            teacher.uid
-        );
+const content =
+  document.querySelector("#teacher-content");
 
-    const exams =
-        await getTeacherExams(
-            teacher.uid
-        );
+const lectures =
+  await getTeacherLectures(teacher.uid);
 
+const exams =
+  await getTeacherExams(teacher.uid);
 
-    layout.innerHTML = `
+const publishedLectures =
+  lectures.filter(x => x.isPublished === true).length;
 
-        <header class="teacher-header">
+const publishedExams =
+  exams.filter(x => x.isPublished === true).length;
 
-            <div class="header-right">
+content.innerHTML = `
 
-                <button
-                    class="menu-button"
-                    id="menuButton"
-                >
-                    ☰
-                </button>
+<div class="stats">
 
-                <div class="brand">
+  <div class="stat">
+    <span>إجمالي المحاضرات</span>
+    <strong>${lectures.length}</strong>
+  </div>
 
-                    <div class="brand-icon">
-                        🩺
-                    </div>
+  <div class="stat">
+    <span>المحاضرات المنشورة</span>
+    <strong>${publishedLectures}</strong>
+  </div>
 
-                    <div>
-                        <h2>بوابة التمريض</h2>
-                        <span>لوحة تحكم المعلم</span>
-                    </div>
+  <div class="stat">
+    <span>إجمالي الاختبارات</span>
+    <strong>${exams.length}</strong>
+  </div>
 
-                </div>
+  <div class="stat">
+    <span>الاختبارات المنشورة</span>
+    <strong>${publishedExams}</strong>
+  </div>
 
-            </div>
+</div>
 
-            <div class="teacher-mini-profile">
+<div class="section">
 
-                <div class="teacher-avatar">
-                    ${teacher.name?.charAt(0) || "م"}
-                </div>
+  <div class="section-header">
 
-                <div class="teacher-mini-info">
+    <h2>آخر المحاضرات</h2>
 
-                    <strong>
-                        ${teacher.name || "المعلم"}
-                    </strong>
+    <a class="btn" href="lectures.html">
+      إدارة المحاضرات
+    </a>
 
-                    <span>
-                        معلم
-                    </span>
+  </div>
 
-                </div>
+  <div>
 
-            </div>
+    ${
+      lectures.length
+      ? lectures.slice(0, 5).map(lecture => `
 
-        </header>
+        <div class="list-item">
 
+          <strong>
+            ${escapeHtml(lecture.title)}
+          </strong>
 
-        <div class="teacher-system">
+          <br>
 
-            <aside
-                class="teacher-sidebar"
-                id="teacherSidebar"
-            >
+          <small>
+            ${formatDate(lecture.date)}
+          </small>
 
-                <div class="sidebar-profile">
+          <span class="badge ${
+            lecture.isPublished
+            ? "badge-green"
+            : "badge-red"
+          }">
 
-                    <div class="large-avatar">
-                        ${teacher.name?.charAt(0) || "م"}
-                    </div>
+            ${
+              lecture.isPublished
+              ? "منشورة"
+              : "مسودة"
+            }
 
-                    <strong>
-                        ${teacher.name || "المعلم"}
-                    </strong>
-
-                    <span>
-                        مدرس / معلم
-                    </span>
-
-                </div>
-
-
-                <nav class="teacher-nav">
-
-                    <a
-                        href="./dashboard.html"
-                        class="active"
-                    >
-                        🏠 الرئيسية
-                    </a>
-
-                    <a href="./lectures.html">
-                        🎥 المحاضرات
-                    </a>
-
-                    <a href="./exams.html">
-                        📝 الاختبارات
-                    </a>
-
-                    <a href="./profile.html">
-                        👤 حسابي
-                    </a>
-
-                    <div class="nav-divider"></div>
-
-                    <button
-                        id="logoutTeacher"
-                        class="logout-button"
-                    >
-                        🚪 تسجيل الخروج
-                    </button>
-
-                </nav>
-
-            </aside>
-
-
-            <main class="teacher-main">
-
-                <div class="page-title">
-
-                    <h1>
-                        أهلاً بك 👋
-                        ${teacher.name || "معلم"}
-                    </h1>
-
-                    <p>
-                        دي لوحة التحكم الخاصة بيك في بوابة التمريض.
-                    </p>
-
-                </div>
-
-
-                <section class="stats">
-
-                    <div class="stat-card">
-
-                        <div class="stat-icon">
-                            🎥
-                        </div>
-
-                        <span>
-                            المحاضرات
-                        </span>
-
-                        <strong>
-                            ${lectures.length}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="stat-card">
-
-                        <div class="stat-icon">
-                            📝
-                        </div>
-
-                        <span>
-                            الاختبارات
-                        </span>
-
-                        <strong>
-                            ${exams.length}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="stat-card">
-
-                        <div class="stat-icon">
-                            🩺
-                        </div>
-
-                        <span>
-                            الحالة
-                        </span>
-
-                        <strong style="font-size:22px">
-                            ${teacher.isActive === false
-                                ? "غير مفعل"
-                                : "نشط"}
-                        </strong>
-
-                    </div>
-
-                </section>
-
-
-                <section class="quick-actions">
-
-                    <a
-                        href="./lectures.html"
-                        class="quick-card"
-                    >
-
-                        <h3>
-                            🎥 إدارة المحاضرات
-                        </h3>
-
-                        <p>
-                            إنشاء وإدارة المحاضرات المباشرة والتسجيلات.
-                        </p>
-
-                    </a>
-
-
-                    <a
-                        href="./exams.html"
-                        class="quick-card"
-                    >
-
-                        <h3>
-                            📝 إدارة الاختبارات
-                        </h3>
-
-                        <p>
-                            إنشاء الاختبارات ومتابعة نتائج الطلاب.
-                        </p>
-
-                    </a>
-
-                </section>
-
-            </main>
+          </span>
 
         </div>
 
-    `;
+      `).join("")
+      : "<p>لا توجد محاضرات حتى الآن.</p>"
+    }
 
+  </div>
 
-    document
-        .getElementById("menuButton")
-        ?.addEventListener(
-            "click",
-            () => {
+</div>
 
-                document
-                    .getElementById("teacherSidebar")
-                    .classList.toggle("open");
+<div class="section">
 
+  <div class="section-header">
+
+    <h2>آخر الاختبارات</h2>
+
+    <a class="btn" href="exams.html">
+      إدارة الاختبارات
+    </a>
+
+  </div>
+
+  <div>
+
+    ${
+      exams.length
+      ? exams.slice(0, 5).map(exam => `
+
+        <div class="list-item">
+
+          <strong>
+            ${escapeHtml(exam.title)}
+          </strong>
+
+          <br>
+
+          <small>
+            عدد الأسئلة:
+            ${(exam.questions || []).length}
+          </small>
+
+          <span class="badge ${
+            exam.isPublished
+            ? "badge-green"
+            : "badge-red"
+          }">
+
+            ${
+              exam.isPublished
+              ? "منشور"
+              : "مسودة"
             }
-        );
 
+          </span>
 
-    document
-        .getElementById("logoutTeacher")
-        ?.addEventListener(
-            "click",
-            async () => {
+        </div>
 
-                const {
-                    logoutTeacher
-                } = await import(
-                    "../src/teacher/teacher.js"
-                );
+      `).join("")
+      : "<p>لا توجد اختبارات حتى الآن.</p>"
+    }
 
-                logoutTeacher();
+  </div>
 
-            }
-        );
-
-});
+</div>
+`;
 
 </script>
 
 </body>
-
 </html>
