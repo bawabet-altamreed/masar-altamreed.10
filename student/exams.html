@@ -1,621 +1,647 @@
-<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
 
 <meta
     name="viewport"
     content="width=device-width, initial-scale=1.0"
 >
 
-<title>اختباراتي | بوابة التمريض</title>
+<title>
+    الاختبارات | مسار التمريض
+</title>
 
 <style>
 
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-    body {
-        font-family: Arial, Tahoma, sans-serif;
-        background: #f4f8fa;
-        color: #243746;
-        min-height: 100vh;
-    }
+body {
+    font-family: Arial, Tahoma, sans-serif;
+    background: #f3f8fb;
+    color: #17324a;
+}
 
-    .header {
-        background: #087ea4;
-        color: white;
-        padding: 22px 18px;
-        box-shadow: 0 3px 15px rgba(0,0,0,.08);
-    }
+.exams-page {
+    padding: 25px;
+    max-width: 1100px;
+    margin: auto;
+}
 
-    .header-inner {
-        width: min(1100px, 100%);
-        margin: auto;
-    }
+.page-banner {
+    background: linear-gradient(
+        135deg,
+        #087ea4,
+        #075f7c
+    );
 
-    .header h1 {
-        font-size: 23px;
-        margin-bottom: 6px;
-    }
+    color: white;
+    border-radius: 18px;
+    padding: 28px;
+    margin-bottom: 20px;
+}
 
-    .header p {
-        font-size: 13px;
-        opacity: .9;
-    }
+.page-banner h2 {
+    font-size: 23px;
+    margin-bottom: 8px;
+}
 
-    .container {
-        width: min(1100px, 100%);
-        margin: 25px auto;
-        padding: 0 15px;
-    }
+.page-banner p {
+    font-size: 13px;
+    line-height: 1.8;
+    opacity: .92;
+}
 
-    .toolbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 15px;
-        margin-bottom: 20px;
-    }
+.exams-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
 
-    .toolbar h2 {
-        font-size: 19px;
-    }
+.exam-card {
+    background: white;
+    border: 1px solid #e4edf2;
+    border-radius: 17px;
+    padding: 20px;
+    box-shadow:
+        0 5px 18px
+        rgba(23, 50, 74, .04);
+}
 
-    .toolbar p {
-        color: #71808d;
-        font-size: 12px;
-        margin-top: 5px;
-    }
+.exam-card h3 {
+    font-size: 16px;
+    margin-bottom: 8px;
+}
 
-    .student-info {
-        background: white;
-        border: 1px solid #e2ebf0;
-        border-radius: 13px;
-        padding: 13px 15px;
-        font-size: 12px;
-        color: #60717e;
+.exam-card p {
+    color: #82919d;
+    font-size: 11px;
+    line-height: 1.8;
+    margin-bottom: 15px;
+}
+
+.exam-meta {
+    display: grid;
+    grid-template-columns:
+        repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.exam-meta div {
+    background: #f7fafc;
+    border-radius: 9px;
+    padding: 9px;
+    text-align: center;
+}
+
+.exam-meta span {
+    display: block;
+    color: #82919d;
+    font-size: 9px;
+    margin-bottom: 5px;
+}
+
+.exam-meta strong {
+    font-size: 12px;
+}
+
+.exam-button {
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    background: #087ea4;
+    color: white;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: bold;
+}
+
+.exam-button:hover {
+    background: #075f7c;
+}
+
+.exam-button.done {
+    background: #16834f;
+}
+
+.state-box {
+    background: white;
+    border: 1px solid #e4edf2;
+    border-radius: 15px;
+    padding: 40px 20px;
+    text-align: center;
+    color: #8795a0;
+    line-height: 2;
+}
+
+.error-box {
+    background: #fff1f1;
+    border-color: #ffd5d5;
+    color: #b42318;
+}
+
+@media (max-width: 700px) {
+
+    .exams-page {
+        padding: 15px;
     }
 
     .exams-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 17px;
+        grid-template-columns: 1fr;
     }
 
-    .exam-card {
-        background: white;
-        border: 1px solid #e2ebf0;
-        border-radius: 16px;
-        padding: 20px;
-        transition: .2s;
-    }
+}
 
-    .exam-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(20,70,90,.08);
-    }
-
-    .exam-card h3 {
-        font-size: 17px;
-        line-height: 1.6;
-        margin-bottom: 9px;
-    }
-
-    .exam-description {
-        color: #71808d;
-        font-size: 12px;
-        line-height: 1.8;
-        min-height: 43px;
-        margin-bottom: 15px;
-    }
+@media (max-width: 430px) {
 
     .exam-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 7px;
-        margin-bottom: 17px;
+        grid-template-columns: 1fr;
     }
 
-    .exam-meta span {
-        background: #f3f7f9;
-        color: #60717e;
-        border-radius: 8px;
-        padding: 7px 9px;
-        font-size: 10px;
-    }
-
-    .start-button {
-        width: 100%;
-        border: none;
-        border-radius: 9px;
-        padding: 11px;
-        background: #087ea4;
-        color: white;
-        cursor: pointer;
-        font-family: inherit;
-        font-size: 12px;
-        font-weight: bold;
-    }
-
-    .start-button:hover {
-        background: #076d8e;
-    }
-
-    .empty-state {
-        grid-column: 1 / -1;
-        background: white;
-        border: 1px solid #e2ebf0;
-        border-radius: 15px;
-        padding: 40px 20px;
-        text-align: center;
-        color: #71808d;
-        line-height: 2;
-        font-size: 13px;
-    }
-
-    .loading {
-        text-align: center;
-        padding: 40px;
-        color: #71808d;
-    }
-
-    .error-box {
-        background: #fff1f1;
-        border: 1px solid #ffd7d7;
-        color: #b42318;
-        border-radius: 12px;
-        padding: 17px;
-        text-align: center;
-        font-size: 12px;
-    }
-
-    @media (max-width: 700px) {
-
-        .exams-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .toolbar {
-            flex-direction: column;
-            align-items: stretch;
-        }
-
-        .student-info {
-            width: 100%;
-        }
-
-    }
+}
 
 </style>
 
-</head><body><header class="header">
+</head>
 
-    <div class="header-inner">
+<body>
 
-        <h1>بوابة التمريض</h1>
+<div id="studentApp">
+    جاري تحميل المنصة...
+</div>
 
-        <p>
-            الاختبارات الإلكترونية
-        </p>
-
-    </div>
-
-</header>
-
-
-<main class="container">
-
-    <div class="toolbar">
-
-        <div>
-
-            <h2>
-                الاختبارات المتاحة
-            </h2>
-
-            <p>
-                اختر الاختبار الذي تريد البدء فيه.
-            </p>
-
-        </div>
-
-        <div
-            id="studentInfo"
-            class="student-info"
-        >
-            جاري تحميل بيانات الطالب...
-        </div>
-
-    </div>
-
-
-    <div
-        id="examsContainer"
-        class="exams-grid"
-    >
-
-        <div class="loading">
-            ⏳ جاري تحميل الاختبارات...
-        </div>
-
-    </div>
-
-</main>
 
 <script type="module">
 
-    import {
-        auth,
-        db
-    } from "../src/firebase/init.js";
-
-    import {
-        onAuthStateChanged
-    } from
-        "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
-    import {
-        doc,
-        getDoc,
-        collection,
-        query,
-        where,
-        getDocs
-    } from
-        "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import {
+    protectStudentPage,
+    createStudentLayout,
+    getStudentExams,
+    getStudentResults,
+    escapeHtml,
+    studentErrorMessage
+} from "../src/student/student.js";
 
 
-    const examsContainer =
+let student = null;
+let exams = [];
+let results = [];
+
+
+try {
+
+    const result =
+        await protectStudentPage();
+
+    student =
+        result.student;
+
+
+    createStudentLayout(
+        student,
+        "exams"
+    );
+
+
+    document.getElementById(
+        "studentPageTitle"
+    ).textContent =
+        "الاختبارات";
+
+
+    document.getElementById(
+        "studentPageSubtitle"
+    ).textContent =
+        "اختبارات المرحلة الخاصة بك";
+
+
+    const content =
+        document.getElementById(
+            "studentPageContent"
+        );
+
+
+    content.innerHTML = `
+
+        <div class="exams-page">
+
+            <div class="page-banner">
+
+                <h2>
+                    📝 الاختبارات
+                </h2>
+
+                <p>
+                    جميع الاختبارات المنشورة
+                    الخاصة بمرحلتك الدراسية.
+                </p>
+
+            </div>
+
+
+            <div id="examsContainer">
+
+                <div class="state-box">
+
+                    ⏳
+                    <br>
+                    جاري تحميل الاختبارات...
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    exams =
+        await getStudentExams(
+            student.stageId
+        );
+
+
+    results =
+        await getStudentResults(
+            student.id
+        );
+
+
+    renderExams();
+
+
+} catch (error) {
+
+    console.error(
+        "Student exams error:",
+        error
+    );
+
+
+    const app =
+        document.getElementById(
+            "studentApp"
+        );
+
+
+    app.innerHTML = `
+
+        <div class="state-box error-box">
+
+            ⚠️
+
+            <br>
+
+            ${escapeHtml(
+                studentErrorMessage(
+                    error
+                )
+            )}
+
+        </div>
+
+    `;
+
+}
+
+
+// =====================================================
+// Render
+// =====================================================
+
+function renderExams() {
+
+    const container =
         document.getElementById(
             "examsContainer"
         );
 
-    const studentInfo =
-        document.getElementById(
-            "studentInfo"
-        );
+
+    if (!container) {
+        return;
+    }
 
 
-    onAuthStateChanged(
-        auth,
-        async user => {
+    exams.sort(
+        (a, b) => {
 
-            if (!user) {
-
-                window.location.href =
-                    "../login.html";
-
-                return;
-
-            }
-
-
-            try {
-
-                const userSnapshot =
-                    await getDoc(
-                        doc(
-                            db,
-                            "users",
-                            user.uid
-                        )
-                    );
-
-
-                if (!userSnapshot.exists()) {
-
-                    throw new Error(
-                        "بيانات الطالب غير موجودة."
-                    );
-
-                }
-
-
-                const userData =
-                    userSnapshot.data();
-
-
-                if (
-                    userData.role !== "student" ||
-                    userData.isActive !== true
-                ) {
-
-                    throw new Error(
-                        "هذا الحساب غير مسموح له بالدخول إلى صفحة الطلاب."
-                    );
-
-                }
-
-
-                const stageId =
-                    userData.stageId;
-
-
-                studentInfo.textContent =
-                    userData.name ||
-                    userData.displayName ||
-                    user.email ||
-                    "الطالب";
-
-
-                await loadExams(
-                    stageId
+            const aTime =
+                getTime(
+                    a.createdAt
                 );
 
-
-            } catch (error) {
-
-                console.error(
-                    "Student exams error:",
-                    error
+            const bTime =
+                getTime(
+                    b.createdAt
                 );
 
-                examsContainer.innerHTML = `
-                    <div class="error-box">
-                        ⚠️ ${escapeHtml(
-                            error.message ||
-                            "تعذر تحميل الاختبارات."
-                        )}
-                    </div>
-                `;
-
-            }
+            return bTime - aTime;
 
         }
     );
 
 
-    async function loadExams(
-        stageId
-    ) {
+    if (!exams.length) {
 
-        if (!stageId) {
+        container.innerHTML = `
 
-            examsContainer.innerHTML = `
-                <div class="empty-state">
-                    ⚠️ لم يتم تحديد المرحلة الدراسية لهذا الحساب.
-                </div>
-            `;
+            <div class="state-box">
 
-            return;
+                📝
 
-        }
+                <br>
 
-
-        /*
-         * مهم جدًا:
-         * الاستعلام متوافق مع Firestore Rules:
-         *
-         * isPublished == true
-         * stageId == student.stageId
-         */
-
-        const examsQuery =
-            query(
-                collection(
-                    db,
-                    "exams"
-                ),
-
-                where(
-                    "isPublished",
-                    "==",
-                    true
-                ),
-
-                where(
-                    "stageId",
-                    "==",
-                    stageId
-                )
-            );
-
-
-        const snapshot =
-            await getDocs(
-                examsQuery
-            );
-
-
-        const exams =
-            snapshot.docs.map(
-                item => ({
-                    id: item.id,
-                    ...item.data()
-                })
-            );
-
-
-        if (!exams.length) {
-
-            examsContainer.innerHTML = `
-                <div class="empty-state">
-
-                    📋 لا توجد اختبارات متاحة حاليًا.
-
-                    <br>
-
-                    سيتم ظهور الاختبارات هنا
-                    عند نشرها للمرحلة الخاصة بك.
-
-                </div>
-            `;
-
-            return;
-
-        }
-
-
-        examsContainer.innerHTML =
-            exams
-                .map(
-                    exam =>
-                        renderExamCard(
-                            exam
-                        )
-                )
-                .join("");
-
-
-        document
-            .querySelectorAll(
-                "[data-start-exam]"
-            )
-            .forEach(
-                button => {
-
-                    button.addEventListener(
-                        "click",
-                        () => {
-
-                            const id =
-                                button.dataset.startExam;
-
-                            window.location.href =
-                                `exam.html?id=${encodeURIComponent(id)}`;
-
-                        }
-                    );
-
-                }
-            );
-
-    }
-
-
-    function renderExamCard(
-        exam
-    ) {
-
-        const title =
-            escapeHtml(
-                exam.title ||
-                exam.name ||
-                "اختبار بدون عنوان"
-            );
-
-
-        const description =
-            escapeHtml(
-                exam.description ||
-                "لا يوجد وصف للاختبار."
-            );
-
-
-        const subject =
-            escapeHtml(
-                exam.subject ||
-                exam.subjectId ||
-                "غير محدد"
-            );
-
-
-        const duration =
-            Number(
-                exam.duration ||
-                exam.durationMinutes ||
-                0
-            );
-
-
-        const questions =
-            Array.isArray(
-                exam.questions
-            )
-                ? exam.questions.length
-                : 0;
-
-
-        return `
-
-            <div class="exam-card">
-
-                <h3>
-                    ${title}
-                </h3>
-
-                <div class="exam-description">
-                    ${description}
-                </div>
-
-                <div class="exam-meta">
-
-                    <span>
-                        📚 ${subject}
-                    </span>
-
-                    <span>
-                        📋 ${questions} سؤال
-                    </span>
-
-                    ${
-                        duration
-                            ? `
-                                <span>
-                                    ⏱️ ${duration} دقيقة
-                                </span>
-                            `
-                            : ""
-                    }
-
-                </div>
-
-                <button
-                    class="start-button"
-                    data-start-exam="${escapeAttribute(
-                        exam.id
-                    )}"
-                >
-                    🚀 بدء الاختبار
-                </button>
+                لا توجد اختبارات منشورة
+                لمرحلتك حاليًا.
 
             </div>
 
         `;
 
-    }
-
-
-    function escapeHtml(
-        value
-    ) {
-
-        return String(
-            value ?? ""
-        )
-            .replace(
-                /&/g,
-                "&amp;"
-            )
-            .replace(
-                /</g,
-                "&lt;"
-            )
-            .replace(
-                />/g,
-                "&gt;"
-            )
-            .replace(
-                /"/g,
-                "&quot;"
-            )
-            .replace(
-                /'/g,
-                "&#039;"
-            );
+        return;
 
     }
 
 
-    function escapeAttribute(
-        value
-    ) {
+    container.innerHTML = `
 
-        return escapeHtml(
-            value
+        <div class="exams-grid">
+
+            ${exams.map(
+                exam =>
+                    createExamCard(
+                        exam
+                    )
+            ).join("")}
+
+        </div>
+
+    `;
+
+}
+
+
+// =====================================================
+// Card
+// =====================================================
+
+function createExamCard(
+    exam
+) {
+
+    const result =
+        results.find(
+            item =>
+                item.examId ===
+                exam.id
         );
 
+
+    const completed =
+        Boolean(result);
+
+
+    const title =
+        exam.title ||
+        "اختبار";
+
+
+    const subject =
+        exam.subjectId ||
+        "غير محدد";
+
+
+    const questionCount =
+        Array.isArray(
+            exam.questions
+        )
+            ? exam.questions.length
+            : 0;
+
+
+    const duration =
+        Number(
+            exam.duration || 0
+        );
+
+
+    return `
+
+        <article class="exam-card">
+
+            <h3>
+
+                📝
+                ${escapeHtml(title)}
+
+            </h3>
+
+
+            <p>
+
+                📚 المادة:
+                ${escapeHtml(subject)}
+
+                <br>
+
+                ${exam.lectureId
+                    ? "🎓 اختبار مرتبط بمحاضرة"
+                    : "🎓 اختبار عام"
+                }
+
+            </p>
+
+
+            <div class="exam-meta">
+
+                <div>
+
+                    <span>
+                        الأسئلة
+                    </span>
+
+                    <strong>
+                        ${questionCount}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        الدرجة
+                    </span>
+
+                    <strong>
+                        ${getTotalScore(exam)}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        المدة
+                    </span>
+
+                    <strong>
+                        ${duration > 0
+                            ? duration + " دقيقة"
+                            : "مفتوح"
+                        }
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="exam-button ${completed ? "done" : ""}"
+                type="button"
+                onclick="openExam('${exam.id}')"
+            >
+
+                ${completed
+                    ? "✅ تمت الإجابة"
+                    : "🚀 بدء الاختبار"
+                }
+
+            </button>
+
+        </article>
+
+    `;
+
+}
+
+
+// =====================================================
+// Total Score
+// =====================================================
+
+function getTotalScore(
+    exam
+) {
+
+    if (
+        !Array.isArray(
+            exam.questions
+        )
+    ) {
+        return 0;
     }
 
-</script></body></html>
+
+    return exam.questions.reduce(
+        (
+            total,
+            question
+        ) =>
+            total +
+            getQuestionPoints(
+                question
+            ),
+        0
+    );
+
+}
+
+
+function getQuestionPoints(
+    question
+) {
+
+    const points =
+        Number(
+            question?.points
+        );
+
+
+    if (
+        Number.isFinite(points) &&
+        points > 0
+    ) {
+
+        return points;
+
+    }
+
+
+    return 1;
+
+}
+
+
+// =====================================================
+// Open Exam
+// =====================================================
+
+window.openExam =
+    function(examId) {
+
+        window.location.href =
+            `exam.html?id=${encodeURIComponent(examId)}`;
+
+    };
+
+
+// =====================================================
+// Time
+// =====================================================
+
+function getTime(value) {
+
+    if (!value) {
+        return 0;
+    }
+
+    if (
+        typeof value.toMillis ===
+        "function"
+    ) {
+        return value.toMillis();
+    }
+
+    if (
+        typeof value.toDate ===
+        "function"
+    ) {
+        return value.toDate().getTime();
+    }
+
+    if (
+        value.seconds !== undefined
+    ) {
+        return Number(
+            value.seconds
+        ) * 1000;
+    }
+
+    const date =
+        new Date(value);
+
+    return Number.isNaN(
+        date.getTime()
+    )
+        ? 0
+        : date.getTime();
+
+}
+
+</script>
+
+</body>
+</html>
