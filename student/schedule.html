@@ -23,7 +23,11 @@
         }
 
         body {
-            font-family: Arial, Tahoma, sans-serif;
+            font-family:
+                Arial,
+                Tahoma,
+                sans-serif;
+
             background: #f3f8fb;
             color: #17324a;
         }
@@ -32,6 +36,10 @@
             min-height: 100vh;
             display: flex;
         }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
 
         .student-sidebar {
             width: 250px;
@@ -149,6 +157,10 @@
             font-weight: bold;
         }
 
+        /* =========================
+           MAIN
+        ========================= */
+
         .student-main {
             flex: 1;
             margin-right: 250px;
@@ -186,12 +198,17 @@
             padding: 25px;
         }
 
+        /* =========================
+           INTRO
+        ========================= */
+
         .page-intro {
             background: linear-gradient(
                 135deg,
                 #087ea4,
                 #075f7c
             );
+
             color: white;
             border-radius: 18px;
             padding: 25px;
@@ -208,6 +225,10 @@
             opacity: .9;
             line-height: 1.8;
         }
+
+        /* =========================
+           FILTERS
+        ========================= */
 
         .filters {
             background: #ffffff;
@@ -240,10 +261,15 @@
             min-width: 170px;
         }
 
+        /* =========================
+           LECTURES GRID
+        ========================= */
+
         .lectures-grid {
             display: grid;
             grid-template-columns:
                 repeat(2, minmax(0, 1fr));
+
             gap: 18px;
         }
 
@@ -290,6 +316,10 @@
             font-size: 11px;
         }
 
+        /* =========================
+           STATUS
+        ========================= */
+
         .lecture-status {
             display: inline-block;
             padding: 5px 9px;
@@ -299,7 +329,7 @@
             white-space: nowrap;
         }
 
-        .status-scheduled {
+        .status-upcoming {
             background: #eef8fb;
             color: #087ea4;
         }
@@ -314,10 +344,9 @@
             color: #687783;
         }
 
-        .status-cancelled {
-            background: #fff1f1;
-            color: #b42318;
-        }
+        /* =========================
+           DETAILS
+        ========================= */
 
         .lecture-details {
             border-top: 1px solid #edf1f4;
@@ -346,6 +375,10 @@
             color: #34495e;
         }
 
+        /* =========================
+           ACTIONS
+        ========================= */
+
         .lecture-actions {
             display: flex;
             gap: 8px;
@@ -354,16 +387,16 @@
 
         .lecture-button {
             flex: 1;
-            height: 40px;
+            min-height: 40px;
             border: none;
             border-radius: 9px;
-            cursor: pointer;
             font-size: 12px;
             font-weight: bold;
             text-decoration: none;
             display: flex;
             align-items: center;
             justify-content: center;
+            text-align: center;
         }
 
         .live-button {
@@ -371,16 +404,19 @@
             color: #ffffff;
         }
 
-        .disabled-button {
-            background: #edf1f4;
-            color: #8795a0;
-            cursor: not-allowed;
-        }
-
         .recording-button {
             background: #eef8fb;
             color: #087ea4;
         }
+
+        .disabled-button {
+            background: #edf1f4;
+            color: #8795a0;
+        }
+
+        /* =========================
+           EMPTY / LOADING / ERROR
+        ========================= */
 
         .empty,
         .loading,
@@ -409,6 +445,10 @@
             color: #b42318;
         }
 
+        /* =========================
+           MOBILE
+        ========================= */
+
         @media (max-width: 900px) {
 
             .student-sidebar {
@@ -427,14 +467,14 @@
 
         @media (max-width: 650px) {
 
+            .student-app {
+                display: block;
+            }
+
             .student-sidebar {
                 position: static;
                 width: 100%;
                 min-height: auto;
-            }
-
-            .student-app {
-                display: block;
             }
 
             .student-main {
@@ -443,7 +483,8 @@
 
             .student-nav {
                 display: grid;
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns:
+                    repeat(3, 1fr);
             }
 
             .student-logout {
@@ -466,6 +507,10 @@
             .filter-select {
                 width: 100%;
                 min-width: 0;
+            }
+
+            .lecture-top {
+                flex-wrap: wrap;
             }
 
         }
@@ -504,130 +549,270 @@
         collection,
         query,
         where,
-        getDocs
+        getDocs,
+        doc,
+        getDoc
     } from
         "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-    try {
+    /* =====================================================
+       STATE
+    ===================================================== */
 
-        const {
-            student
-        } =
-            await protectStudentPage();
+    let student = null;
 
+    let lectures = [];
 
-        createStudentLayout(
-            student,
-            "schedule"
-        );
+    const subjectsCache =
+        new Map();
 
 
-        document.getElementById(
-            "studentPageTitle"
-        ).textContent =
-            "جدول المحاضرات";
+    /* =====================================================
+       FIREBASE DATE
+    ===================================================== */
+
+    function getDateValue(value) {
+
+        if (!value) {
+            return null;
+        }
 
 
-        const content =
-            document.getElementById(
-                "studentPageContent"
+        if (
+            typeof value.toDate ===
+            "function"
+        ) {
+
+            return value.toDate();
+
+        }
+
+
+        if (
+            value instanceof Date
+        ) {
+
+            return value;
+
+        }
+
+
+        const date =
+            new Date(value);
+
+
+        if (
+            Number.isNaN(
+                date.getTime()
+            )
+        ) {
+
+            return null;
+
+        }
+
+
+        return date;
+
+    }
+
+
+    function getTime(value) {
+
+        const date =
+            getDateValue(value);
+
+
+        return date
+            ? date.getTime()
+            : 0;
+
+    }
+
+
+    /* =====================================================
+       SUBJECT
+    ===================================================== */
+
+    async function getSubjectName(
+        subjectId
+    ) {
+
+        if (!subjectId) {
+
+            return "غير محدد";
+
+        }
+
+
+        if (
+            subjectsCache.has(
+                subjectId
+            )
+        ) {
+
+            return subjectsCache.get(
+                subjectId
+            );
+
+        }
+
+
+        try {
+
+            const subjectRef =
+                doc(
+                    db,
+                    "subjects",
+                    subjectId
+                );
+
+
+            const subjectSnap =
+                await getDoc(
+                    subjectRef
+                );
+
+
+            if (
+                subjectSnap.exists()
+            ) {
+
+                const data =
+                    subjectSnap.data();
+
+
+                const name =
+                    data.name ||
+                    data.title ||
+                    "غير محدد";
+
+
+                subjectsCache.set(
+                    subjectId,
+                    name
+                );
+
+
+                return name;
+
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "Subject loading error:",
+                error
+            );
+
+        }
+
+
+        return "غير محدد";
+
+    }
+
+
+    /* =====================================================
+       LECTURE STATUS
+       يعتمد فقط على date + isLive
+    ===================================================== */
+
+    function getLectureStatus(
+        lecture
+    ) {
+
+        if (
+            lecture.isLive === true
+        ) {
+
+            return "live";
+
+        }
+
+
+        const date =
+            getDateValue(
+                lecture.date
             );
 
 
-        content.innerHTML = `
+        if (!date) {
 
-            <div class="page-intro">
+            return "upcoming";
 
-                <h2>
-                    📅 جدول المحاضرات
-                </h2>
-
-                <p>
-                    تابع مواعيد محاضراتك القادمة
-                    وادخل إلى المحاضرة المباشرة
-                    عند توفر البث.
-                </p>
-
-            </div>
+        }
 
 
-            <div class="filters">
+        if (
+            date.getTime() <=
+            Date.now()
+        ) {
 
-                <input
-                    type="search"
-                    id="lectureSearch"
-                    class="filter-input"
-                    placeholder="ابحث عن محاضرة أو مادة أو مدرس..."
-                >
+            return "ended";
 
-
-                <select
-                    id="statusFilter"
-                    class="filter-select"
-                >
-
-                    <option value="all">
-                        كل المحاضرات
-                    </option>
-
-                    <option value="scheduled">
-                        القادمة
-                    </option>
-
-                    <option value="live">
-                        مباشر الآن
-                    </option>
-
-                    <option value="ended">
-                        انتهت
-                    </option>
-
-                    <option value="cancelled">
-                        ملغاة
-                    </option>
-
-                </select>
-
-            </div>
+        }
 
 
-            <div
-                id="lecturesContainer"
-                class="lectures-grid"
-            >
+        return "upcoming";
 
-                <div class="loading">
-                    ⏳ جاري تحميل المحاضرات...
-                </div>
-
-            </div>
-
-        `;
+    }
 
 
-        const container =
-            document.getElementById(
-                "lecturesContainer"
-            );
+    function getStatusInfo(
+        status
+    ) {
+
+        if (
+            status === "live"
+        ) {
+
+            return {
+
+                label: "مباشر الآن",
+
+                className:
+                    "status-live"
+
+            };
+
+        }
 
 
-        const searchInput =
-            document.getElementById(
-                "lectureSearch"
-            );
+        if (
+            status === "ended"
+        ) {
+
+            return {
+
+                label: "انتهت",
+
+                className:
+                    "status-ended"
+
+            };
+
+        }
 
 
-        const statusFilter =
-            document.getElementById(
-                "statusFilter"
-            );
+        return {
+
+            label: "قادمة",
+
+            className:
+                "status-upcoming"
+
+        };
+
+    }
 
 
-        // =================================================
-        // IMPORTANT
-        // Query مطابق تمامًا للـFirestore Rules
-        // =================================================
+    /* =====================================================
+       LOAD LECTURES
+    ===================================================== */
+
+    async function loadLectures() {
 
         const lecturesQuery =
             query(
@@ -658,340 +843,295 @@
             );
 
 
-        const lectures =
+        lectures =
             snapshot.docs
                 .map(
-                    item => ({
-                        id: item.id,
-                        ...item.data()
+                    lectureDoc => ({
+
+                        id:
+                            lectureDoc.id,
+
+                        ...lectureDoc.data()
+
                     })
-                )
-                .sort(
-                    (a, b) =>
-                        getTime(
-                            a.scheduledAt
-                        ) -
-                        getTime(
-                            b.scheduledAt
+                );
+
+
+        lectures.sort(
+            (a, b) =>
+                getTime(a.date) -
+                getTime(b.date)
+        );
+
+
+        /*
+         * تحميل أسماء المواد
+         * من subjects/{subjectId}
+         */
+
+        const subjectIds =
+            [
+                ...new Set(
+                    lectures
+                        .map(
+                            lecture =>
+                                lecture.subjectId
                         )
-                );
+                        .filter(Boolean)
+                )
+            ];
 
 
-        render();
-
-
-        searchInput.addEventListener(
-            "input",
-            render
-        );
-
-
-        statusFilter.addEventListener(
-            "change",
-            render
-        );
-
-
-        function render() {
-
-            const search =
-                searchInput.value
-                    .trim()
-                    .toLowerCase();
-
-
-            const selectedStatus =
-                statusFilter.value;
-
-
-            const filtered =
-                lectures.filter(
-                    lecture => {
-
-                        const title =
-                            String(
-                                lecture.title ||
-                                ""
-                            ).toLowerCase();
-
-
-                        const subject =
-                            String(
-                                lecture.subject ||
-                                lecture.subjectId ||
-                                ""
-                            ).toLowerCase();
-
-
-                        // =================================================
-                        // Schema الجديد:
-                        // teacherId فقط
-                        // =================================================
-
-                        const teacherId =
-                            String(
-                                lecture.teacherId ||
-                                ""
-                            ).toLowerCase();
-
-
-                        const matchesSearch =
-                            !search ||
-                            title.includes(search) ||
-                            subject.includes(search) ||
-                            teacherId.includes(search);
-
-
-                        const status =
-                            getStatus(
-                                lecture
-                            );
-
-
-                        const matchesStatus =
-                            selectedStatus ===
-                                "all" ||
-                            selectedStatus ===
-                                status;
-
-
-                        return (
-                            matchesSearch &&
-                            matchesStatus
-                        );
-
-                    }
-                );
-
-
-            if (!filtered.length) {
-
-                container.innerHTML = `
-
-                    <div class="empty">
-
-                        📅
-
-                        <br>
-
-                        لا توجد محاضرات مطابقة حاليًا.
-
-                    </div>
-
-                `;
-
-                return;
-
-            }
-
-
-            container.innerHTML =
-                filtered
-                    .map(
-                        lecture =>
-                            lectureCard(
-                                lecture
-                            )
+        await Promise.all(
+            subjectIds.map(
+                subjectId =>
+                    getSubjectName(
+                        subjectId
                     )
-                    .join("");
+            )
+        );
+
+    }
+
+
+    /* =====================================================
+       FILTER
+    ===================================================== */
+
+    function matchesSearch(
+        lecture,
+        search
+    ) {
+
+        if (!search) {
+
+            return true;
 
         }
 
 
-        function lectureCard(
-            lecture
+        const title =
+            String(
+                lecture.title ||
+                ""
+            ).toLowerCase();
+
+
+        const teacher =
+            String(
+                lecture.teacherName ||
+                ""
+            ).toLowerCase();
+
+
+        const subject =
+            String(
+                subjectsCache.get(
+                    lecture.subjectId
+                ) ||
+                ""
+            ).toLowerCase();
+
+
+        return (
+            title.includes(search) ||
+            teacher.includes(search) ||
+            subject.includes(search)
+        );
+
+    }
+
+
+    /* =====================================================
+       CARD
+    ===================================================== */
+
+    function createLectureCard(
+        lecture
+    ) {
+
+        const status =
+            getLectureStatus(
+                lecture
+            );
+
+
+        const statusInfo =
+            getStatusInfo(
+                status
+            );
+
+
+        const title =
+            lecture.title ||
+            "محاضرة";
+
+
+        const subject =
+            subjectsCache.get(
+                lecture.subjectId
+            ) ||
+            "غير محدد";
+
+
+        const teacher =
+            lecture.teacherName ||
+            "غير محدد";
+
+
+        const date =
+            getDateValue(
+                lecture.date
+            );
+
+
+        const dateText =
+            date
+                ? formatDateTime(date)
+                : "الموعد غير محدد";
+
+
+        const recordingUrl =
+            lecture.recordingUrl ||
+            "";
+
+
+        const recordingStatus =
+            lecture.recordingStatus ||
+            "pending";
+
+
+        const roomName =
+            lecture.roomName ||
+            "";
+
+
+        let actionHtml = "";
+
+
+        /* =========================
+           LIVE
+        ========================= */
+
+        if (
+            status === "live" &&
+            roomName
         ) {
 
-            const status =
-                getStatus(
-                    lecture
-                );
+            /*
+             * roomName موجود في الـSchema.
+             *
+             * الدخول الفعلي لـLiveKit يحتاج
+             * صفحة/واجهة LiveKit في المشروع.
+             *
+             * لا نستخدم liveUrl لأنه غير موجود
+             * في الـSchema الجديدة.
+             */
 
+            actionHtml = `
 
-            const statusInfo =
-                getStatusInfo(
-                    status
-                );
+                <div
+                    class="
+                        lecture-button
+                        live-button
+                    "
+                    title="غرفة المحاضرة: ${escapeHtml(roomName)}"
+                >
+                    🔴 مباشر الآن
+                </div>
 
+            `;
 
-            const title =
-                lecture.title ||
-                "محاضرة";
+        }
 
+        /* =========================
+           LIVE WITHOUT ROOM
+        ========================= */
 
-            const subject =
-                lecture.subject ||
-                lecture.subjectId ||
-                "غير محدد";
+        else if (
+            status === "live"
+        ) {
 
+            actionHtml = `
 
-            // =================================================
-            // Schema الجديد:
-            // teacherId فقط
-            // =================================================
+                <div
+                    class="
+                        lecture-button
+                        disabled-button
+                    "
+                >
+                    🔴 البث غير متاح
+                </div>
 
-            const teacherId =
-                lecture.teacherId ||
-                "غير محدد";
+            `;
 
+        }
 
-            const liveUrl =
-                lecture.liveUrl ||
-                "";
+        /* =========================
+           RECORDING
+        ========================= */
 
+        else if (
+            recordingUrl &&
+            recordingStatus === "ready"
+        ) {
 
-            const recordingUrl =
-                lecture.recordingUrl ||
-                "";
+            actionHtml = `
 
+                <a
+                    class="
+                        lecture-button
+                        recording-button
+                    "
+                    href="${escapeHtml(recordingUrl)}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    ▶️ مشاهدة التسجيل
+                </a>
 
-            return `
+            `;
 
-                <div class="lecture-card">
+        }
 
-                    <div class="lecture-top">
+        /* =========================
+           UPCOMING
+        ========================= */
 
-                        <div class="lecture-icon">
-                            🎥
-                        </div>
+        else if (
+            status === "upcoming"
+        ) {
 
+            actionHtml = `
 
-                        <div class="lecture-title">
+                <div
+                    class="
+                        lecture-button
+                        disabled-button
+                    "
+                >
+                    🕒 لم تبدأ بعد
+                </div>
 
-                            <h3>
-                                ${escapeHtml(title)}
-                            </h3>
+            `;
 
-                            <p>
-                                ${escapeHtml(subject)}
-                            </p>
+        }
 
-                        </div>
+        /* =========================
+           ENDED WITHOUT RECORDING
+        ========================= */
 
+        else {
 
-                        <span
-                            class="
-                                lecture-status
-                                ${statusInfo.className}
-                            "
-                        >
-                            ${statusInfo.label}
-                        </span>
+            actionHtml = `
 
-                    </div>
-
-
-                    <div class="lecture-details">
-
-                        <div class="detail-row">
-
-                            <span class="detail-icon">
-                                📚
-                            </span>
-
-                            <span>
-                                المادة:
-                                <strong>
-                                    ${escapeHtml(subject)}
-                                </strong>
-                            </span>
-
-                        </div>
-
-
-                        <div class="detail-row">
-
-                            <span class="detail-icon">
-                                👨‍🏫
-                            </span>
-
-                            <span>
-                                المدرس:
-                                <strong>
-                                    ${escapeHtml(teacherId)}
-                                </strong>
-                            </span>
-
-                        </div>
-
-
-                        <div class="detail-row">
-
-                            <span class="detail-icon">
-                                🕒
-                            </span>
-
-                            <span>
-                                الموعد:
-                                <strong>
-                                    ${escapeHtml(
-                                        formatDateTime(
-                                            lecture.scheduledAt
-                                        )
-                                    )}
-                                </strong>
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="lecture-actions">
-
-                        ${
-                            status === "live" &&
-                            liveUrl
-
-                            ? `
-
-                                <a
-                                    class="lecture-button live-button"
-                                    href="${escapeHtml(liveUrl)}"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    🔴 دخول Live
-                                </a>
-
-                            `
-
-                            : status === "ended" &&
-                              recordingUrl
-
-                            ? `
-
-                                <a
-                                    class="lecture-button recording-button"
-                                    href="${escapeHtml(recordingUrl)}"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    ▶️ مشاهدة التسجيل
-                                </a>
-
-                            `
-
-                            : `
-
-                                <button
-                                    class="lecture-button disabled-button"
-                                    disabled
-                                >
-                                    ${
-                                        status === "cancelled"
-                                            ? "المحاضرة ملغاة"
-                                            : status === "live"
-                                                ? "البث غير متاح"
-                                                : "لم يبدأ البث بعد"
-                                    }
-                                </button>
-
-                            `
-                        }
-
-                    </div>
-
+                <div
+                    class="
+                        lecture-button
+                        disabled-button
+                    "
+                >
+                    لا يوجد تسجيل حاليًا
                 </div>
 
             `;
@@ -999,157 +1139,398 @@
         }
 
 
-        function getStatus(
-            lecture
-        ) {
+        return `
 
-            if (
-                lecture.status ===
-                "cancelled"
-            ) {
+            <article
+                class="lecture-card"
+            >
 
-                return "cancelled";
+                <div
+                    class="lecture-top"
+                >
 
-            }
-
-
-            if (
-                lecture.status ===
-                "live"
-            ) {
-
-                return "live";
-
-            }
+                    <div
+                        class="lecture-icon"
+                    >
+                        📚
+                    </div>
 
 
-            if (
-                lecture.status ===
-                "ended"
-            ) {
+                    <div
+                        class="lecture-title"
+                    >
 
-                return "ended";
+                        <h3>
+                            ${escapeHtml(title)}
+                        </h3>
 
-            }
+                        <p>
+                            ${escapeHtml(subject)}
+                        </p>
 
-
-            const start =
-                getTime(
-                    lecture.scheduledAt
-                );
-
-
-            const end =
-                getTime(
-                    lecture.endAt
-                );
+                    </div>
 
 
-            const now =
-                Date.now();
+                    <span
+                        class="
+                            lecture-status
+                            ${statusInfo.className}
+                        "
+                    >
+                        ${statusInfo.label}
+                    </span>
+
+                </div>
 
 
-            if (
-                end &&
-                now > end
-            ) {
+                <div
+                    class="lecture-details"
+                >
 
-                return "ended";
+                    <div
+                        class="detail-row"
+                    >
 
-            }
+                        <span
+                            class="detail-icon"
+                        >
+                            📚
+                        </span>
 
+                        <span>
+                            المادة:
+                            <strong>
+                                ${escapeHtml(subject)}
+                            </strong>
+                        </span>
 
-            if (
-                start &&
-                now >= start &&
-                (
-                    !end ||
-                    now <= end
-                )
-            ) {
-
-                return "live";
-
-            }
-
-
-            return "scheduled";
-
-        }
+                    </div>
 
 
-        function getStatusInfo(
-            status
-        ) {
+                    <div
+                        class="detail-row"
+                    >
 
-            const data = {
+                        <span
+                            class="detail-icon"
+                        >
+                            👨‍🏫
+                        </span>
 
-                scheduled: {
-                    label: "قادمة",
-                    className:
-                        "status-scheduled"
-                },
+                        <span>
+                            المدرس:
+                            <strong>
+                                ${escapeHtml(teacher)}
+                            </strong>
+                        </span>
 
-                live: {
-                    label: "مباشر الآن",
-                    className:
-                        "status-live"
-                },
-
-                ended: {
-                    label: "انتهت",
-                    className:
-                        "status-ended"
-                },
-
-                cancelled: {
-                    label: "ملغاة",
-                    className:
-                        "status-cancelled"
-                }
-
-            };
+                    </div>
 
 
-            return (
-                data[status] ||
-                data.scheduled
+                    <div
+                        class="detail-row"
+                    >
+
+                        <span
+                            class="detail-icon"
+                        >
+                            🕒
+                        </span>
+
+                        <span>
+                            الموعد:
+                            <strong>
+                                ${escapeHtml(dateText)}
+                            </strong>
+                        </span>
+
+                    </div>
+
+
+                    ${
+                        roomName
+                            ? `
+
+                                <div
+                                    class="detail-row"
+                                >
+
+                                    <span
+                                        class="detail-icon"
+                                    >
+                                        🎥
+                                    </span>
+
+                                    <span>
+                                        غرفة البث:
+                                        <strong>
+                                            ${escapeHtml(roomName)}
+                                        </strong>
+                                    </span>
+
+                                </div>
+
+                            `
+                            : ""
+                    }
+
+                </div>
+
+
+                <div
+                    class="lecture-actions"
+                >
+
+                    ${actionHtml}
+
+                </div>
+
+            </article>
+
+        `;
+
+    }
+
+
+    /* =====================================================
+       RENDER
+    ===================================================== */
+
+    function renderLectures() {
+
+        const container =
+            document.getElementById(
+                "lecturesContainer"
             );
 
-        }
+
+        const searchInput =
+            document.getElementById(
+                "lectureSearch"
+            );
 
 
-        function getTime(
-            value
+        const statusFilter =
+            document.getElementById(
+                "statusFilter"
+            );
+
+
+        const search =
+            searchInput
+                .value
+                .trim()
+                .toLowerCase();
+
+
+        const selectedStatus =
+            statusFilter.value;
+
+
+        const filtered =
+            lectures.filter(
+                lecture => {
+
+                    const status =
+                        getLectureStatus(
+                            lecture
+                        );
+
+
+                    const searchMatch =
+                        matchesSearch(
+                            lecture,
+                            search
+                        );
+
+
+                    const statusMatch =
+                        selectedStatus ===
+                            "all" ||
+                        selectedStatus ===
+                            status;
+
+
+                    return (
+                        searchMatch &&
+                        statusMatch
+                    );
+
+                }
+            );
+
+
+        if (
+            filtered.length === 0
         ) {
 
-            if (!value) {
-                return 0;
-            }
+            container.innerHTML = `
 
+                <div
+                    class="empty"
+                >
 
-            if (
-                typeof value.toDate ===
-                "function"
-            ) {
+                    📅
 
-                return value.toDate()
-                    .getTime();
+                    <br>
 
-            }
+                    لا توجد محاضرات مطابقة حاليًا.
 
+                </div>
 
-            const date =
-                new Date(value);
+            `;
 
-
-            return isNaN(
-                date.getTime()
-            )
-                ? 0
-                : date.getTime();
+            return;
 
         }
+
+
+        container.innerHTML =
+            filtered
+                .map(
+                    lecture =>
+                        createLectureCard(
+                            lecture
+                        )
+                )
+                .join("");
+
+    }
+
+
+    /* =====================================================
+       INIT
+    ===================================================== */
+
+    try {
+
+        const result =
+            await protectStudentPage();
+
+
+        student =
+            result.student;
+
+
+        createStudentLayout(
+            student,
+            "schedule"
+        );
+
+
+        document.getElementById(
+            "studentPageTitle"
+        ).textContent =
+            "جدول المحاضرات";
+
+
+        const content =
+            document.getElementById(
+                "studentPageContent"
+            );
+
+
+        content.innerHTML = `
+
+            <div
+                class="page-intro"
+            >
+
+                <h2>
+                    📅 جدول المحاضرات
+                </h2>
+
+                <p>
+                    تابع مواعيد محاضراتك
+                    والمحاضرات المباشرة
+                    والتسجيلات المتاحة.
+                </p>
+
+            </div>
+
+
+            <div
+                class="filters"
+            >
+
+                <input
+                    type="search"
+                    id="lectureSearch"
+                    class="filter-input"
+                    placeholder="ابحث عن محاضرة أو مادة أو مدرس..."
+                >
+
+
+                <select
+                    id="statusFilter"
+                    class="filter-select"
+                >
+
+                    <option value="all">
+                        كل المحاضرات
+                    </option>
+
+                    <option value="upcoming">
+                        القادمة
+                    </option>
+
+                    <option value="live">
+                        مباشر الآن
+                    </option>
+
+                    <option value="ended">
+                        انتهت
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div
+                id="lecturesContainer"
+                class="lectures-grid"
+            >
+
+                <div
+                    class="loading"
+                >
+                    ⏳ جاري تحميل المحاضرات...
+                </div>
+
+            </div>
+
+        `;
+
+
+        const searchInput =
+            document.getElementById(
+                "lectureSearch"
+            );
+
+
+        const statusFilter =
+            document.getElementById(
+                "statusFilter"
+            );
+
+
+        searchInput.addEventListener(
+            "input",
+            renderLectures
+        );
+
+
+        statusFilter.addEventListener(
+            "change",
+            renderLectures
+        );
+
+
+        await loadLectures();
+
+
+        renderLectures();
 
 
     } catch (error) {
@@ -1181,18 +1562,27 @@
                         text-align:center;
                         font-family:Arial,Tahoma,sans-serif;
                         color:#b42318;
+                        line-height:2;
                     "
                 >
 
-                    ⚠️ حدث خطأ أثناء تحميل جدول المحاضرات.
+                    <div>
 
-                    <br><br>
+                        ⚠️
 
-                    ${escapeHtml(
-                        studentErrorMessage(
-                            error
-                        )
-                    )}
+                        <br>
+
+                        حدث خطأ أثناء تحميل جدول المحاضرات.
+
+                        <br>
+
+                        ${escapeHtml(
+                            studentErrorMessage(
+                                error
+                            )
+                        )}
+
+                    </div>
 
                 </div>
 
@@ -1205,4 +1595,5 @@
 </script>
 
 </body>
+
 </html>
