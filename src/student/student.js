@@ -1,6 +1,6 @@
 // =====================================================
-// Masar Al-Tamreed
 // Student Core
+// Masar Al-Tamreed
 // =====================================================
 
 import {
@@ -9,7 +9,8 @@ import {
 } from "../firebase/init.js";
 
 import {
-    onAuthStateChanged
+    onAuthStateChanged,
+    signOut
 } from
     "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
@@ -25,7 +26,7 @@ import {
 
 
 // =====================================================
-// Student State
+// State
 // =====================================================
 
 let currentStudent = null;
@@ -33,116 +34,131 @@ let currentSubscription = null;
 
 
 // =====================================================
-// Helpers
+// Escape HTML
 // =====================================================
 
 export function escapeHtml(value) {
 
     return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-}
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
-
-export function formatDate(timestamp) {
-
-    if (!timestamp) {
-        return "—";
-    }
-
-    try {
-
-        if (
-            typeof timestamp.toDate ===
-            "function"
-        ) {
-
-            return timestamp
-                .toDate()
-                .toLocaleDateString("ar-EG");
-
-        }
-
-        const date = new Date(timestamp);
-
-        if (isNaN(date.getTime())) {
-            return "—";
-        }
-
-        return date.toLocaleDateString("ar-EG");
-
-    } catch {
-
-        return "—";
-
-    }
-}
-
-
-export function formatDateTime(timestamp) {
-
-    if (!timestamp) {
-        return "—";
-    }
-
-    try {
-
-        const date =
-            typeof timestamp.toDate === "function"
-                ? timestamp.toDate()
-                : new Date(timestamp);
-
-        if (isNaN(date.getTime())) {
-            return "—";
-        }
-
-        return date.toLocaleString("ar-EG");
-
-    } catch {
-
-        return "—";
-
-    }
-}
-
-
-export function getDateValue(timestamp) {
-
-    if (!timestamp) {
-        return null;
-    }
-
-    try {
-
-        if (
-            typeof timestamp.toDate ===
-            "function"
-        ) {
-
-            return timestamp.toDate();
-
-        }
-
-        const date =
-            new Date(timestamp);
-
-        return isNaN(date.getTime())
-            ? null
-            : date;
-
-    } catch {
-
-        return null;
-
-    }
 }
 
 
 // =====================================================
-// Subscription Validation
+// Date Helpers
+// =====================================================
+
+export function getDateValue(value) {
+
+    if (!value) {
+        return null;
+    }
+
+    if (
+        typeof value.toDate === "function"
+    ) {
+        return value.toDate();
+    }
+
+    if (
+        typeof value.toMillis === "function"
+    ) {
+        return new Date(value.toMillis());
+    }
+
+    if (
+        value.seconds !== undefined
+    ) {
+        return new Date(
+            Number(value.seconds) * 1000
+        );
+    }
+
+    const date =
+        new Date(value);
+
+    if (
+        Number.isNaN(date.getTime())
+    ) {
+        return null;
+    }
+
+    return date;
+
+}
+
+
+export function formatDate(value) {
+
+    const date =
+        getDateValue(value);
+
+    if (!date) {
+        return "—";
+    }
+
+    return new Intl.DateTimeFormat(
+        "ar-EG",
+        {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        }
+    ).format(date);
+
+}
+
+
+export function formatDateTime(value) {
+
+    const date =
+        getDateValue(value);
+
+    if (!date) {
+        return "—";
+    }
+
+    return new Intl.DateTimeFormat(
+        "ar-EG",
+        {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit"
+        }
+    ).format(date);
+
+}
+
+
+export function formatTime(value) {
+
+    const date =
+        getDateValue(value);
+
+    if (!date) {
+        return "—";
+    }
+
+    return new Intl.DateTimeFormat(
+        "ar-EG",
+        {
+            hour: "numeric",
+            minute: "2-digit"
+        }
+    ).format(date);
+
+}
+
+
+// =====================================================
+// Subscription
 // =====================================================
 
 export function isSubscriptionActive(
@@ -157,48 +173,39 @@ export function isSubscriptionActive(
         subscription.status !==
         "active"
     ) {
-
         return false;
-
     }
 
     const now =
         new Date();
 
-    const startDate =
+    const start =
         getDateValue(
             subscription.startDate
         );
 
-    const endDate =
+    const end =
         getDateValue(
             subscription.endDate
         );
 
     if (
-        startDate &&
-        now < startDate
+        !start ||
+        !end
     ) {
-
         return false;
-
     }
 
-    if (
-        endDate &&
-        now > endDate
-    ) {
+    return (
+        start <= now &&
+        end >= now
+    );
 
-        return false;
-
-    }
-
-    return true;
 }
 
 
 // =====================================================
-// Get Current Student
+// Current Student
 // =====================================================
 
 export async function getCurrentStudent() {
@@ -207,7 +214,11 @@ export async function getCurrentStudent() {
         auth.currentUser;
 
     if (!firebaseUser) {
-        throw new Error("NOT_AUTHENTICATED");
+
+        throw new Error(
+            "AUTH_REQUIRED"
+        );
+
     }
 
 
@@ -220,26 +231,26 @@ export async function getCurrentStudent() {
 
 
     const userSnapshot =
-        await getDoc(userRef);
+        await getDoc(
+            userRef
+        );
 
 
-    if (
-        !userSnapshot.exists()
-    ) {
+    if (!userSnapshot.exists()) {
 
         throw new Error(
-            "USER_NOT_FOUND"
+            "STUDENT_PROFILE_NOT_FOUND"
         );
 
     }
 
 
-    const user =
+    const student =
         userSnapshot.data();
 
 
     if (
-        user.role !==
+        student.role !==
         "student"
     ) {
 
@@ -251,30 +262,37 @@ export async function getCurrentStudent() {
 
 
     if (
-        user.isActive !== true
+        student.isActive !==
+        true
     ) {
 
         throw new Error(
-            "ACCOUNT_DISABLED"
+            "STUDENT_INACTIVE"
         );
 
     }
 
 
-    const code =
-        String(
-            user.subscriptionCode ||
-            user.username ||
-            ""
-        )
-        .trim()
-        .toUpperCase();
-
-
-    if (!code) {
+    if (
+        !student.stageId
+    ) {
 
         throw new Error(
-            "NO_SUBSCRIPTION_CODE"
+            "STAGE_NOT_ASSIGNED"
+        );
+
+    }
+
+
+    const subscriptionCode =
+        student.subscriptionCode ||
+        student.username;
+
+
+    if (!subscriptionCode) {
+
+        throw new Error(
+            "SUBSCRIPTION_REQUIRED"
         );
 
     }
@@ -284,7 +302,7 @@ export async function getCurrentStudent() {
         doc(
             db,
             "subscriptions",
-            code
+            subscriptionCode
         );
 
 
@@ -315,7 +333,7 @@ export async function getCurrentStudent() {
     ) {
 
         throw new Error(
-            "SUBSCRIPTION_MISMATCH"
+            "SUBSCRIPTION_NOT_BELONG_TO_STUDENT"
         );
 
     }
@@ -328,28 +346,33 @@ export async function getCurrentStudent() {
     ) {
 
         throw new Error(
-            "SUBSCRIPTION_INACTIVE"
+            "SUBSCRIPTION_EXPIRED"
         );
 
     }
 
 
     currentStudent = {
-        id: firebaseUser.uid,
-        ...user
+        ...student,
+        id: firebaseUser.uid
     };
 
-
     currentSubscription = {
-        id: code,
-        ...subscription
+        ...subscription,
+        id: subscriptionCode
     };
 
 
     return {
+
         firebaseUser,
-        student: currentStudent,
-        subscription: currentSubscription
+
+        student:
+            currentStudent,
+
+        subscription:
+            currentSubscription
+
     };
 
 }
@@ -359,50 +382,84 @@ export async function getCurrentStudent() {
 // Protect Student Page
 // =====================================================
 
-export function protectStudentPage() {
+export async function protectStudentPage() {
 
     return new Promise(
-        (resolve, reject) => {
+        (
+            resolve,
+            reject
+        ) => {
 
-            onAuthStateChanged(
-                auth,
-                async firebaseUser => {
+            let finished = false;
 
-                    if (!firebaseUser) {
 
-                        window.location.href =
-                            "../login.html";
+            const unsubscribe =
+                onAuthStateChanged(
+                    auth,
+                    async user => {
 
-                        return;
+                        if (!user) {
+
+                            if (!finished) {
+
+                                finished = true;
+
+                                unsubscribe();
+
+                                window.location.href =
+                                    "../login.html";
+
+                            }
+
+                            return;
+
+                        }
+
+
+                        try {
+
+                            const result =
+                                await getCurrentStudent();
+
+
+                            if (!finished) {
+
+                                finished = true;
+
+                                unsubscribe();
+
+                                resolve(
+                                    result
+                                );
+
+                            }
+
+                        } catch (error) {
+
+                            console.error(
+                                "Student protection error:",
+                                error
+                            );
+
+
+                            if (!finished) {
+
+                                finished = true;
+
+                                unsubscribe();
+
+                                try {
+                                    await signOut(auth);
+                                } catch {}
+
+                                window.location.href =
+                                    "../login.html";
+                            }
+
+                        }
 
                     }
-
-
-                    try {
-
-                        const data =
-                            await getCurrentStudent();
-
-                        resolve(data);
-
-                    } catch (error) {
-
-                        console.error(
-                            "Student Guard:",
-                            error
-                        );
-
-                        await auth.signOut();
-
-                        window.location.href =
-                            "../login.html";
-
-                        reject(error);
-
-                    }
-
-                }
-            );
+                );
 
         }
     );
@@ -416,7 +473,7 @@ export function protectStudentPage() {
 
 export async function logoutStudent() {
 
-    await auth.signOut();
+    await signOut(auth);
 
     window.location.href =
         "../login.html";
@@ -430,7 +487,7 @@ export async function logoutStudent() {
 
 export function createStudentLayout(
     student,
-    activePage
+    activePage = ""
 ) {
 
     const app =
@@ -443,175 +500,182 @@ export function createStudentLayout(
     }
 
 
+    const name =
+        student.name ||
+        student.fullName ||
+        student.username ||
+        "الطالب";
+
+
+    const initial =
+        String(name)
+            .trim()
+            .charAt(0) ||
+        "ط";
+
+
+    const stage =
+        student.stageName ||
+        student.stageId ||
+        "غير محدد";
+
+
     app.innerHTML = `
 
-        <aside class="student-sidebar">
+        <div class="student-app">
 
-            <div class="student-brand">
+            <aside class="student-sidebar">
 
-                <div class="student-brand-icon">
-                    🩺
-                </div>
+                <div class="student-brand">
 
-                <div>
-                    <strong>
-                        مسار التمريض
-                    </strong>
+                    <div class="student-brand-icon">
+                        🩺
+                    </div>
 
-                    <small>
-                        Masar Al-Tamreed
-                    </small>
-                </div>
+                    <div>
 
-            </div>
+                        <strong>
+                            مسار التمريض
+                        </strong>
 
+                        <small>
+                            MASAR AL-TAMREED
+                        </small>
 
-            <div class="student-user">
-
-                <div class="student-avatar">
-                    ${escapeHtml(
-                        String(
-                            student.name ||
-                            "ط"
-                        ).charAt(0)
-                    )}
-                </div>
-
-                <div>
-
-                    <strong>
-                        ${escapeHtml(
-                            student.name ||
-                            "الطالب"
-                        )}
-                    </strong>
-
-                    <small>
-                        ${escapeHtml(
-                            student.stageId ||
-                            "—"
-                        )}
-                    </small>
-
-                </div>
-
-            </div>
-
-
-            <nav class="student-nav">
-
-                <a
-                    href="dashboard.html"
-                    class="${activePage === "dashboard" ? "active" : ""}"
-                >
-                    🏠
-                    <span>الرئيسية</span>
-                </a>
-
-
-                <a
-                    href="schedule.html"
-                    class="${activePage === "schedule" ? "active" : ""}"
-                >
-                    📅
-                    <span>الجدول</span>
-                </a>
-
-
-                <a
-                    href="lectures.html"
-                    class="${activePage === "lectures" ? "active" : ""}"
-                >
-                    🎥
-                    <span>المحاضرات</span>
-                </a>
-
-
-                <a
-                    href="exams.html"
-                    class="${activePage === "exams" ? "active" : ""}"
-                >
-                    📝
-                    <span>الاختبارات</span>
-                </a>
-
-
-                <a
-                    href="leaderboard.html"
-                    class="${activePage === "leaderboard" ? "active" : ""}"
-                >
-                    🏆
-                    <span>الترتيب</span>
-                </a>
-
-
-                <a
-                    href="profile.html"
-                    class="${activePage === "profile" ? "active" : ""}"
-                >
-                    👤
-                    <span>حسابي</span>
-                </a>
-
-            </nav>
-
-
-            <button
-                id="studentLogout"
-                class="student-logout"
-            >
-                🚪 تسجيل الخروج
-            </button>
-
-        </aside>
-
-
-        <main class="student-main">
-
-            <header class="student-header">
-
-                <div>
-
-                    <h1 id="studentPageTitle">
-                        مسار التمريض
-                    </h1>
-
-                    <p>
-                        مرحبًا بك في منصة مسار التمريض
-                    </p>
+                    </div>
 
                 </div>
 
 
-                <div class="student-header-user">
+                <div class="student-user">
 
-                    <span>
-                        ${escapeHtml(
-                            student.name ||
-                            "الطالب"
-                        )}
-                    </span>
+                    <div class="student-avatar">
 
-                    <span class="header-avatar">
-                        ${escapeHtml(
-                            String(
-                                student.name ||
-                                "ط"
-                            ).charAt(0)
-                        )}
-                    </span>
+                        ${escapeHtml(initial)}
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            ${escapeHtml(name)}
+                        </strong>
+
+                        <small>
+                            ${escapeHtml(stage)}
+                        </small>
+
+                    </div>
 
                 </div>
 
-            </header>
+
+                <nav class="student-nav">
+
+                    <a
+                        href="dashboard.html"
+                        class="${activePage === "dashboard" ? "active" : ""}"
+                    >
+                        🏠
+                        <span>الرئيسية</span>
+                    </a>
+
+                    <a
+                        href="schedule.html"
+                        class="${activePage === "schedule" ? "active" : ""}"
+                    >
+                        📅
+                        <span>الجدول</span>
+                    </a>
+
+                    <a
+                        href="lectures.html"
+                        class="${activePage === "lectures" ? "active" : ""}"
+                    >
+                        🎓
+                        <span>المحاضرات</span>
+                    </a>
+
+                    <a
+                        href="exams.html"
+                        class="${activePage === "exams" ? "active" : ""}"
+                    >
+                        📝
+                        <span>الاختبارات</span>
+                    </a>
+
+                    <a
+                        href="leaderboard.html"
+                        class="${activePage === "leaderboard" ? "active" : ""}"
+                    >
+                        🏆
+                        <span>نتائجي</span>
+                    </a>
+
+                    <a
+                        href="profile.html"
+                        class="${activePage === "profile" ? "active" : ""}"
+                    >
+                        👤
+                        <span>حسابي</span>
+                    </a>
+
+                </nav>
 
 
-            <section
-                id="studentPageContent"
-                class="student-content"
-            ></section>
+                <button
+                    id="studentLogout"
+                    class="student-logout"
+                    type="button"
+                >
+                    🚪 تسجيل الخروج
+                </button>
 
-        </main>
+            </aside>
+
+
+            <main class="student-main">
+
+                <header class="student-header">
+
+                    <div>
+
+                        <h1 id="studentPageTitle">
+                            مسار التمريض
+                        </h1>
+
+                        <p id="studentPageSubtitle">
+                            منصة التعلم الخاصة بك
+                        </p>
+
+                    </div>
+
+
+                    <div class="student-header-user">
+
+                        <div class="header-avatar">
+
+                            ${escapeHtml(initial)}
+
+                        </div>
+
+                        ${escapeHtml(name)}
+
+                    </div>
+
+                </header>
+
+
+                <section
+                    id="studentPageContent"
+                    class="student-content"
+                >
+
+                </section>
+
+            </main>
+
+        </div>
 
     `;
 
@@ -635,7 +699,7 @@ export function createStudentLayout(
 
 
 // =====================================================
-// Load Collection
+// Collections
 // =====================================================
 
 export async function getCollection(
@@ -661,27 +725,101 @@ export async function getCollection(
 
 
 // =====================================================
-// Get Stage Subjects
+// Stages
 // =====================================================
+
+export async function getStages() {
+
+    const snapshot =
+        await getDocs(
+            collection(
+                db,
+                "stages"
+            )
+        );
+
+    return snapshot.docs.map(
+        item => ({
+            id: item.id,
+            ...item.data()
+        })
+    );
+
+}
+
+
+// =====================================================
+// Subjects
+// =====================================================
+
+export async function getSubjects() {
+
+    const snapshot =
+        await getDocs(
+            collection(
+                db,
+                "subjects"
+            )
+        );
+
+    return snapshot.docs.map(
+        item => ({
+            id: item.id,
+            ...item.data()
+        })
+    );
+
+}
+
 
 export async function getStageSubjects(
     stageId
 ) {
 
-    const snapshot =
-        await getDocs(
-            query(
-                collection(
-                    db,
-                    "subjects"
-                ),
-                where(
-                    "stageId",
-                    "==",
-                    stageId
-                )
+    const subjects =
+        await getSubjects();
+
+
+    return subjects.filter(
+        subject =>
+            !subject.stageId ||
+            subject.stageId === stageId
+    );
+
+}
+
+
+// =====================================================
+// Student Lectures
+// =====================================================
+
+export async function getStudentLectures(
+    stageId
+) {
+
+    const q =
+        query(
+            collection(
+                db,
+                "lectures"
+            ),
+
+            where(
+                "stageId",
+                "==",
+                stageId
+            ),
+
+            where(
+                "isPublished",
+                "==",
+                true
             )
         );
+
+
+    const snapshot =
+        await getDocs(q);
 
 
     return snapshot.docs.map(
@@ -695,6 +833,260 @@ export async function getStageSubjects(
 
 
 // =====================================================
+// Student Exams
+// =====================================================
+
+export async function getStudentExams(
+    stageId
+) {
+
+    const q =
+        query(
+            collection(
+                db,
+                "exams"
+            ),
+
+            where(
+                "stageId",
+                "==",
+                stageId
+            ),
+
+            where(
+                "isPublished",
+                "==",
+                true
+            )
+        );
+
+
+    const snapshot =
+        await getDocs(q);
+
+
+    return snapshot.docs.map(
+        item => ({
+            id: item.id,
+            ...item.data()
+        })
+    );
+
+}
+
+
+// =====================================================
+// Lecture Exams
+// =====================================================
+
+export async function getLectureExams(
+    lectureId
+) {
+
+    const q =
+        query(
+            collection(
+                db,
+                "exams"
+            ),
+
+            where(
+                "lectureId",
+                "==",
+                lectureId
+            ),
+
+            where(
+                "isPublished",
+                "==",
+                true
+            )
+        );
+
+
+    const snapshot =
+        await getDocs(q);
+
+
+    return snapshot.docs.map(
+        item => ({
+            id: item.id,
+            ...item.data()
+        })
+    );
+
+}
+
+
+// =====================================================
+// Student Results
+// =====================================================
+
+export async function getStudentResults(
+    studentId
+) {
+
+    const q =
+        query(
+            collection(
+                db,
+                "examResults"
+            ),
+
+            where(
+                "studentId",
+                "==",
+                studentId
+            )
+        );
+
+
+    const snapshot =
+        await getDocs(q);
+
+
+    return snapshot.docs.map(
+        item => ({
+            id: item.id,
+            ...item.data()
+        })
+    );
+
+}
+
+
+// =====================================================
+// Recent Results
+// =====================================================
+
+export async function getRecentResults(
+    studentId,
+    limit = 5
+) {
+
+    const results =
+        await getStudentResults(
+            studentId
+        );
+
+
+    results.sort(
+        (
+            a,
+            b
+        ) =>
+            getTimestamp(
+                b.submittedAt
+            ) -
+            getTimestamp(
+                a.submittedAt
+            )
+    );
+
+
+    return results.slice(
+        0,
+        limit
+    );
+
+}
+
+
+// =====================================================
+// Recent Lectures
+// =====================================================
+
+export async function getRecentLectures(
+    stageId,
+    limit = 5
+) {
+
+    const lectures =
+        await getStudentLectures(
+            stageId
+        );
+
+
+    lectures.sort(
+        (
+            a,
+            b
+        ) =>
+            getTimestamp(
+                a.date
+            ) -
+            getTimestamp(
+                b.date
+            )
+    );
+
+
+    return lectures.slice(
+        0,
+        limit
+    );
+
+}
+
+
+// =====================================================
+// Recent Exams
+// =====================================================
+
+export async function getRecentExams(
+    stageId,
+    limit = 5
+) {
+
+    const exams =
+        await getStudentExams(
+            stageId
+        );
+
+
+    exams.sort(
+        (
+            a,
+            b
+        ) =>
+            getTimestamp(
+                b.createdAt
+            ) -
+            getTimestamp(
+                a.createdAt
+            )
+    );
+
+
+    return exams.slice(
+        0,
+        limit
+    );
+
+}
+
+
+// =====================================================
+// Timestamp
+// =====================================================
+
+export function getTimestamp(
+    value
+) {
+
+    const date =
+        getDateValue(value);
+
+    if (!date) {
+        return 0;
+    }
+
+    return date.getTime();
+
+}
+
+
+// =====================================================
 // Error Message
 // =====================================================
 
@@ -703,47 +1095,63 @@ export function studentErrorMessage(
 ) {
 
     const code =
-        error?.message ||
         error?.code ||
+        error?.message ||
         "";
 
 
-    const messages = {
+    if (
+        code.includes(
+            "permission-denied"
+        )
+    ) {
 
-        NOT_AUTHENTICATED:
-            "يجب تسجيل الدخول أولًا.",
+        return "ليس لديك صلاحية للوصول إلى هذه البيانات.";
 
-        USER_NOT_FOUND:
-            "لم يتم العثور على حساب الطالب.",
-
-        NOT_STUDENT:
-            "هذا الحساب ليس حساب طالب.",
-
-        ACCOUNT_DISABLED:
-            "حسابك موقوف حاليًا.",
-
-        NO_SUBSCRIPTION_CODE:
-            "لا يوجد كود اشتراك مرتبط بالحساب.",
-
-        SUBSCRIPTION_NOT_FOUND:
-            "لم يتم العثور على الاشتراك.",
-
-        SUBSCRIPTION_MISMATCH:
-            "بيانات الاشتراك غير متطابقة.",
-
-        SUBSCRIPTION_INACTIVE:
-            "الاشتراك غير فعال أو منتهي.",
-
-        "permission-denied":
-            "ليس لديك صلاحية للوصول إلى هذه البيانات."
-
-    };
+    }
 
 
-    return (
-        messages[code] ||
-        "حدث خطأ أثناء تحميل البيانات."
-    );
+    switch (code) {
+
+        case "AUTH_REQUIRED":
+            return "يجب تسجيل الدخول أولًا.";
+
+        case "STUDENT_PROFILE_NOT_FOUND":
+            return "لم يتم العثور على حساب الطالب.";
+
+        case "NOT_STUDENT":
+            return "هذا الحساب ليس حساب طالب.";
+
+        case "STUDENT_INACTIVE":
+            return "حساب الطالب غير مفعل.";
+
+        case "STAGE_NOT_ASSIGNED":
+            return "لم يتم تحديد المرحلة الدراسية للحساب.";
+
+        case "SUBSCRIPTION_REQUIRED":
+            return "لا يوجد اشتراك مرتبط بالحساب.";
+
+        case "SUBSCRIPTION_NOT_FOUND":
+            return "الاشتراك غير موجود.";
+
+        case "SUBSCRIPTION_NOT_BELONG_TO_STUDENT":
+            return "الاشتراك غير مرتبط بهذا الحساب.";
+
+        case "SUBSCRIPTION_EXPIRED":
+            return "الاشتراك غير نشط أو انتهت صلاحيته.";
+
+        default:
+            return error?.message ||
+                "حدث خطأ غير متوقع.";
+    }
 
 }
 
+
+// =====================================================
+// Current Teacher-style compatibility exports
+// =====================================================
+
+export {
+    currentStudent
+};
