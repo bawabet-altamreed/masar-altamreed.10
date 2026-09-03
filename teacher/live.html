@@ -14,13 +14,11 @@
     بث المحاضرة | مسار التمريض
 </title>
 
-
 <style>
 
 * {
     box-sizing: border-box;
 }
-
 
 body {
 
@@ -39,7 +37,6 @@ body {
 
 }
 
-
 .live-page {
 
     min-height:
@@ -52,7 +49,6 @@ body {
         column;
 
 }
-
 
 .header {
 
@@ -80,7 +76,6 @@ body {
 
 }
 
-
 .title {
 
     font-size:
@@ -90,7 +85,6 @@ body {
         bold;
 
 }
-
 
 .status {
 
@@ -111,7 +105,6 @@ body {
 
 }
 
-
 .status.connected {
 
     background:
@@ -121,7 +114,6 @@ body {
         #72e3a8;
 
 }
-
 
 .status.error {
 
@@ -133,7 +125,6 @@ body {
 
 }
 
-
 .main {
 
     flex:
@@ -143,7 +134,6 @@ body {
         18px;
 
 }
-
 
 .video-grid {
 
@@ -167,7 +157,6 @@ body {
 
 }
 
-
 .video-box {
 
     position:
@@ -187,37 +176,66 @@ body {
 
 }
 
-
-#screenVideo {
-
-    position:
-        absolute;
-
-    inset:
-        0;
+.video-box video {
 
     width:
         100%;
 
     height:
         100%;
+
+    min-height:
+        560px;
+
+    object-fit:
+        contain;
+
+}
+
+.video-layer {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+}
+
+.video-layer video {
+
+    display:
+        block;
+
+}
+
+.screen-layer {
 
     display:
         none;
 
-    align-items:
-        center;
+    position:
+        absolute;
 
-    justify-content:
-        center;
+    inset:
+        0;
+
+    z-index:
+        5;
 
     background:
         #000;
 
 }
 
+.screen-layer.active {
 
-#screenVideo video {
+    display:
+        block;
+
+}
+
+.screen-layer video {
 
     width:
         100%;
@@ -225,13 +243,15 @@ body {
     height:
         100%;
 
+    min-height:
+        560px;
+
     object-fit:
         contain;
 
 }
 
-
-#cameraVideo {
+.camera-layer {
 
     position:
         absolute;
@@ -239,108 +259,17 @@ body {
     inset:
         0;
 
-    width:
-        100%;
-
-    height:
-        100%;
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    justify-content:
-        center;
-
-    background:
-        #000;
-
-}
-
-
-#cameraVideo video {
-
-    width:
-        100%;
-
-    height:
-        100%;
-
-    object-fit:
-        contain;
-
-}
-
-
-/*
-   عند مشاركة الشاشة:
-   الكاميرا تصبح نافذة صغيرة
-*/
-
-.video-box.screen-sharing
-#cameraVideo {
-
-    width:
-        210px;
-
-    height:
-        150px;
-
-    right:
-        15px;
-
-    bottom:
-        15px;
-
-    left:
-        auto;
-
-    top:
-        auto;
-
     z-index:
-        10;
-
-    border-radius:
-        14px;
-
-    overflow:
-        hidden;
-
-    border:
-        2px solid
-        rgba(255,255,255,.25);
-
-    box-shadow:
-        0 8px 30px
-        rgba(0,0,0,.5);
+        2;
 
 }
 
-
-/*
-   Screen share becomes main
-*/
-
-.video-box.screen-sharing
-#screenVideo {
+.camera-layer.hidden {
 
     display:
-        flex;
+        none;
 
 }
-
-
-.video-box.screen-sharing
-#cameraVideo video {
-
-    object-fit:
-        cover;
-
-}
-
 
 .placeholder {
 
@@ -350,14 +279,8 @@ body {
     inset:
         0;
 
-    z-index:
-        20;
-
     display:
         flex;
-
-    flex-direction:
-        column;
 
     align-items:
         center;
@@ -374,22 +297,13 @@ body {
     line-height:
         2;
 
+    z-index:
+        10;
+
     pointer-events:
         none;
 
 }
-
-
-.placeholder-icon {
-
-    font-size:
-        45px;
-
-    margin-bottom:
-        10px;
-
-}
-
 
 .controls {
 
@@ -412,7 +326,6 @@ body {
         wrap;
 
 }
-
 
 .button {
 
@@ -442,14 +355,12 @@ body {
 
 }
 
-
 .button.start {
 
     background:
         #16834f;
 
 }
-
 
 .button.end {
 
@@ -458,30 +369,19 @@ body {
 
 }
 
+.button.screen {
+
+    background:
+        #6b46c1;
+
+}
 
 .button.camera {
 
     background:
-        #6750a4;
+        #087ea4;
 
 }
-
-
-.button.screen {
-
-    background:
-        #0b7285;
-
-}
-
-
-.button.stop-screen {
-
-    background:
-        #a15c00;
-
-}
-
 
 .button:disabled {
 
@@ -492,7 +392,6 @@ body {
         not-allowed;
 
 }
-
 
 .message {
 
@@ -519,14 +418,12 @@ body {
 
 }
 
-
 .message.show {
 
     display:
         block;
 
 }
-
 
 @media (max-width:700px) {
 
@@ -537,33 +434,19 @@ body {
 
     }
 
-
-    #screenVideo,
-    #cameraVideo {
+    .video-box video {
 
         min-height:
             350px;
 
     }
 
+    .screen-layer video {
 
-    .video-box.screen-sharing
-    #cameraVideo {
-
-        width:
-            125px;
-
-        height:
-            95px;
-
-        right:
-            10px;
-
-        bottom:
-            10px;
+        min-height:
+            350px;
 
     }
-
 
     .header {
 
@@ -575,11 +458,21 @@ body {
 
     }
 
+    .controls {
+
+        padding:
+            12px;
+
+    }
 
     .button {
 
-        padding:
-            11px 15px;
+        flex:
+            1 1
+            45%;
+
+        min-width:
+            140px;
 
     }
 
@@ -588,7 +481,6 @@ body {
 </style>
 
 </head>
-
 
 <body>
 
@@ -620,51 +512,46 @@ body {
 
         <div class="video-grid">
 
-            <div
-                class="video-box"
-                id="videoBox"
-            >
-
-
-                <!-- =========================
-                     Screen Share
-                ========================== -->
+            <div class="video-box">
 
                 <div
-                    id="screenVideo"
-                ></div>
+                    id="cameraLayer"
+                    class="camera-layer"
+                >
 
+                    <div
+                        id="teacherVideo"
+                        class="video-layer"
+                    ></div>
 
-                <!-- =========================
-                     Camera
-                ========================== -->
+                </div>
+
 
                 <div
-                    id="cameraVideo"
-                ></div>
+                    id="screenLayer"
+                    class="screen-layer"
+                >
 
+                    <div
+                        id="screenVideo"
+                        class="video-layer"
+                    ></div>
 
-                <!-- =========================
-                     Placeholder
-                ========================== -->
+                </div>
+
 
                 <div
                     id="placeholder"
                     class="placeholder"
                 >
 
-                    <div
-                        class="placeholder-icon"
-                    >
-                        🎥
-                    </div>
+                    🎥
 
-                    <div>
-                        الكاميرا لم تبدأ بعد
-                    </div>
+                    <br>
+
+                    الكاميرا لم تبدأ بعد
 
                 </div>
-
 
             </div>
 
@@ -683,10 +570,6 @@ body {
     <footer class="controls">
 
 
-        <!-- =========================
-             Start
-        ========================== -->
-
         <button
             id="startButton"
             class="button start"
@@ -695,22 +578,23 @@ body {
         </button>
 
 
-        <!-- =========================
-             Camera Switch
-        ========================== -->
+        <button
+            id="frontCameraButton"
+            class="button camera"
+            disabled
+        >
+            🤳 الكاميرا الأمامية
+        </button>
+
 
         <button
-            id="cameraButton"
+            id="backCameraButton"
             class="button camera"
             disabled
         >
             🔄 الكاميرا الخلفية
         </button>
 
-
-        <!-- =========================
-             Screen Share
-        ========================== -->
 
         <button
             id="screenButton"
@@ -721,22 +605,14 @@ body {
         </button>
 
 
-        <!-- =========================
-             Stop Screen
-        ========================== -->
-
         <button
             id="stopScreenButton"
-            class="button stop-screen"
+            class="button screen"
             disabled
         >
-            ⏹️ إيقاف الشاشة
+            ⏹️ إيقاف مشاركة الشاشة
         </button>
 
-
-        <!-- =========================
-             End
-        ========================== -->
 
         <button
             id="endButton"
@@ -747,17 +623,12 @@ body {
         </button>
 
 
-        <!-- =========================
-             Leave
-        ========================== -->
-
         <button
             id="leaveButton"
             class="button"
         >
             خروج
         </button>
-
 
     </footer>
 
@@ -797,26 +668,24 @@ import {
 
     enableTeacherMedia,
 
-    attachCameraTrack,
+    attachLocalTracks,
 
-    attachScreenTrack,
+    attachLocalCamera,
+
+    attachLocalScreenShare,
+
+    switchTeacherCamera,
 
     startScreenShare,
 
     stopScreenShare,
 
-    switchTeacherCamera,
+    getCurrentRoom,
 
-    leaveLiveKit,
-
-    getCurrentRoom
+    leaveLiveKit
 
 } from "../src/livekit/client.js";
 
-
-/* =====================================================
-   URL
-===================================================== */
 
 const params =
     new URLSearchParams(
@@ -830,10 +699,6 @@ const lectureId =
     );
 
 
-/* =====================================================
-   DOM
-===================================================== */
-
 const lectureTitle =
     document.getElementById(
         "lectureTitle"
@@ -846,21 +711,27 @@ const connectionStatus =
     );
 
 
-const videoBox =
+const teacherVideo =
     document.getElementById(
-        "videoBox"
-    );
-
-
-const cameraVideo =
-    document.getElementById(
-        "cameraVideo"
+        "teacherVideo"
     );
 
 
 const screenVideo =
     document.getElementById(
         "screenVideo"
+    );
+
+
+const cameraLayer =
+    document.getElementById(
+        "cameraLayer"
+    );
+
+
+const screenLayer =
+    document.getElementById(
+        "screenLayer"
     );
 
 
@@ -882,9 +753,15 @@ const startButton =
     );
 
 
-const cameraButton =
+const frontCameraButton =
     document.getElementById(
-        "cameraButton"
+        "frontCameraButton"
+    );
+
+
+const backCameraButton =
+    document.getElementById(
+        "backCameraButton"
     );
 
 
@@ -912,10 +789,6 @@ const leaveButton =
     );
 
 
-/* =====================================================
-   State
-===================================================== */
-
 let teacher =
     null;
 
@@ -928,11 +801,11 @@ let room =
     null;
 
 
-let usingBackCamera =
-    false;
+let currentFacingMode =
+    "user";
 
 
-let sharingScreen =
+let screenSharing =
     false;
 
 
@@ -981,96 +854,52 @@ function clearError() {
 
 
 /* =====================================================
-   Update Camera Button
+   Show Camera
 ===================================================== */
 
-function updateCameraButton() {
+function showCamera() {
 
-    if (usingBackCamera) {
+    screenLayer.classList.remove(
+        "active"
+    );
 
-        cameraButton.textContent =
-            "🔄 الكاميرا الأمامية";
 
-    } else {
+    cameraLayer.classList.remove(
+        "hidden"
+    );
 
-        cameraButton.textContent =
-            "🔄 الكاميرا الخلفية";
 
-    }
+    screenSharing =
+        false;
+
+
+    screenButton.disabled =
+        !room;
+
+
+    stopScreenButton.disabled =
+        true;
 
 }
 
 
 /* =====================================================
-   Attach Camera
+   Show Screen
 ===================================================== */
 
-function refreshCameraVideo() {
+function showScreen() {
 
-    if (!room) {
-
-        return;
-
-    }
-
-
-    cameraVideo.innerHTML =
-        "";
-
-
-    attachCameraTrack(
-        room,
-        cameraVideo
+    screenLayer.classList.add(
+        "active"
     );
 
 
-    placeholder.style.display =
-        "none";
-
-}
-
-
-/* =====================================================
-   Attach Screen
-===================================================== */
-
-function refreshScreenVideo() {
-
-    if (!room) {
-
-        return;
-
-    }
-
-
-    screenVideo.innerHTML =
-        "";
-
-
-    const element =
-        attachScreenTrack(
-            room,
-            screenVideo
-        );
-
-
-    if (!element) {
-
-        return;
-
-    }
-
-
-    videoBox.classList.add(
-        "screen-sharing"
+    cameraLayer.classList.remove(
+        "hidden"
     );
 
 
-    screenVideo.style.display =
-        "flex";
-
-
-    sharingScreen =
+    screenSharing =
         true;
 
 
@@ -1080,39 +909,6 @@ function refreshScreenVideo() {
 
     stopScreenButton.disabled =
         false;
-
-}
-
-
-/* =====================================================
-   Stop Screen UI
-===================================================== */
-
-function resetScreenUI() {
-
-    sharingScreen =
-        false;
-
-
-    videoBox.classList.remove(
-        "screen-sharing"
-    );
-
-
-    screenVideo.innerHTML =
-        "";
-
-
-    screenVideo.style.display =
-        "none";
-
-
-    screenButton.disabled =
-        false;
-
-
-    stopScreenButton.disabled =
-        true;
 
 }
 
@@ -1233,6 +1029,58 @@ async function loadLecture() {
 
 
 /* =====================================================
+   Enable Live Controls
+===================================================== */
+
+function enableLiveControls() {
+
+    frontCameraButton.disabled =
+        false;
+
+
+    backCameraButton.disabled =
+        false;
+
+
+    screenButton.disabled =
+        false;
+
+
+    stopScreenButton.disabled =
+        true;
+
+
+    endButton.disabled =
+        false;
+
+}
+
+
+/* =====================================================
+   Disable Live Controls
+===================================================== */
+
+function disableLiveControls() {
+
+    frontCameraButton.disabled =
+        true;
+
+
+    backCameraButton.disabled =
+        true;
+
+
+    screenButton.disabled =
+        true;
+
+
+    stopScreenButton.disabled =
+        true;
+
+}
+
+
+/* =====================================================
    Start Broadcast
 ===================================================== */
 
@@ -1266,13 +1114,8 @@ async function startBroadcast() {
     startButton.disabled =
         true;
 
+
     endButton.disabled =
-        true;
-
-    cameraButton.disabled =
-        true;
-
-    screenButton.disabled =
         true;
 
 
@@ -1288,7 +1131,9 @@ async function startBroadcast() {
 
         room =
             await connectLiveKit(
+
                 lecture.roomName,
+
                 {
 
                     onConnected() {
@@ -1322,48 +1167,10 @@ async function startBroadcast() {
                             error
                         );
 
-                    },
-
-
-                    onLocalTrackPublished(
-                        publication
-                    ) {
-
-                        if (
-                            publication.source ===
-                            "screen_share"
-                        ) {
-
-                            setTimeout(
-                                () => {
-
-                                    refreshScreenVideo();
-
-                                },
-                                100
-                            );
-
-                        }
-
-                    },
-
-
-                    onLocalTrackUnpublished(
-                        publication
-                    ) {
-
-                        if (
-                            publication.source ===
-                            "screen_share"
-                        ) {
-
-                            resetScreenUI();
-
-                        }
-
                     }
 
                 }
+
             );
 
 
@@ -1389,13 +1196,13 @@ async function startBroadcast() {
         );
 
 
-        cameraVideo.innerHTML =
+        teacherVideo.innerHTML =
             "";
 
 
-        attachCameraTrack(
+        attachLocalCamera(
             room,
-            cameraVideo
+            teacherVideo
         );
 
 
@@ -1403,17 +1210,23 @@ async function startBroadcast() {
             room.localParticipant;
 
 
-        const cameraPublication =
-            localParticipant.getTrackPublication(
-                "camera"
-            );
-
-
         const hasVideo =
-            Boolean(
-                cameraPublication &&
-                cameraPublication.track
-            );
+            Array
+                .from(
+                    localParticipant
+                        .trackPublications
+                        .values()
+                )
+                .some(
+
+                    publication =>
+
+                        publication.track &&
+
+                        publication.kind ===
+                        "video"
+
+                );
 
 
         if (!hasVideo) {
@@ -1429,12 +1242,28 @@ async function startBroadcast() {
             "none";
 
 
+        cameraLayer.classList.remove(
+            "hidden"
+        );
+
+
+        screenLayer.classList.remove(
+            "active"
+        );
+
+
+        currentFacingMode =
+            "user";
+
+
         await updateDoc(
+
             doc(
                 db,
                 "lectures",
                 lectureId
             ),
+
             {
 
                 isLive:
@@ -1450,11 +1279,15 @@ async function startBroadcast() {
                     serverTimestamp()
 
             }
+
         );
 
 
         lecture.isLive =
             true;
+
+
+        enableLiveControls();
 
 
         startButton.disabled =
@@ -1463,21 +1296,6 @@ async function startBroadcast() {
 
         endButton.disabled =
             false;
-
-
-        cameraButton.disabled =
-            false;
-
-
-        screenButton.disabled =
-            false;
-
-
-        stopScreenButton.disabled =
-            true;
-
-
-        updateCameraButton();
 
 
         connectionStatus.textContent =
@@ -1503,31 +1321,15 @@ async function startBroadcast() {
             null;
 
 
+        disableLiveControls();
+
+
         startButton.disabled =
             false;
 
 
         endButton.disabled =
             true;
-
-
-        cameraButton.disabled =
-            true;
-
-
-        screenButton.disabled =
-            true;
-
-
-        stopScreenButton.disabled =
-            true;
-
-
-        resetScreenUI();
-
-
-        cameraVideo.innerHTML =
-            "";
 
 
         placeholder.style.display =
@@ -1545,11 +1347,13 @@ async function startBroadcast() {
 
 
 /* =====================================================
-   Switch Camera
+   Front Camera
 ===================================================== */
 
-cameraButton.addEventListener(
+frontCameraButton.addEventListener(
+
     "click",
+
     async () => {
 
         if (!room) {
@@ -1562,42 +1366,42 @@ cameraButton.addEventListener(
         clearError();
 
 
-        cameraButton.disabled =
+        frontCameraButton.disabled =
             true;
 
 
-        const nextFacingMode =
-            usingBackCamera
-                ? "user"
-                : "environment";
+        backCameraButton.disabled =
+            true;
 
 
         try {
 
             connectionStatus.textContent =
-                "جاري تبديل الكاميرا...";
+                "🔄 جاري تشغيل الكاميرا الأمامية...";
+
+
+            const activeRoom =
+                getCurrentRoom();
 
 
             await switchTeacherCamera(
-                room,
-                nextFacingMode
+                activeRoom,
+                "user"
             );
 
 
-            usingBackCamera =
-                !usingBackCamera;
+            currentFacingMode =
+                "user";
 
 
-            refreshCameraVideo();
-
-
-            updateCameraButton();
+            attachLocalCamera(
+                activeRoom,
+                teacherVideo
+            );
 
 
             connectionStatus.textContent =
-                sharingScreen
-                    ? "🔴 البث مباشر — الشاشة مشاركة"
-                    : "🔴 البث مباشر الآن";
+                "🔴 البث مباشر — الكاميرا الأمامية";
 
 
             connectionStatus.className =
@@ -1607,24 +1411,120 @@ cameraButton.addEventListener(
         } catch (error) {
 
             console.error(
-                "Switch camera error:",
+                "Front camera error:",
                 error
             );
 
 
             showError(
                 error?.message ||
-                "تعذر تبديل الكاميرا."
+                "تعذر تشغيل الكاميرا الأمامية."
             );
 
         } finally {
 
-            cameraButton.disabled =
+            frontCameraButton.disabled =
+                false;
+
+
+            backCameraButton.disabled =
                 false;
 
         }
 
     }
+
+);
+
+
+/* =====================================================
+   Back Camera
+===================================================== */
+
+backCameraButton.addEventListener(
+
+    "click",
+
+    async () => {
+
+        if (!room) {
+
+            return;
+
+        }
+
+
+        clearError();
+
+
+        frontCameraButton.disabled =
+            true;
+
+
+        backCameraButton.disabled =
+            true;
+
+
+        try {
+
+            connectionStatus.textContent =
+                "🔄 جاري تشغيل الكاميرا الخلفية...";
+
+
+            const activeRoom =
+                getCurrentRoom();
+
+
+            await switchTeacherCamera(
+                activeRoom,
+                "environment"
+            );
+
+
+            currentFacingMode =
+                "environment";
+
+
+            attachLocalCamera(
+                activeRoom,
+                teacherVideo
+            );
+
+
+            connectionStatus.textContent =
+                "🔴 البث مباشر — الكاميرا الخلفية";
+
+
+            connectionStatus.className =
+                "status connected";
+
+
+        } catch (error) {
+
+            console.error(
+                "Back camera error:",
+                error
+            );
+
+
+            showError(
+                error?.message ||
+                "تعذر تشغيل الكاميرا الخلفية."
+            );
+
+        } finally {
+
+            frontCameraButton.disabled =
+                false;
+
+
+            backCameraButton.disabled =
+                false;
+
+        }
+
+    }
+
 );
 
 
@@ -1633,7 +1533,9 @@ cameraButton.addEventListener(
 ===================================================== */
 
 screenButton.addEventListener(
+
     "click",
+
     async () => {
 
         if (!room) {
@@ -1653,26 +1555,47 @@ screenButton.addEventListener(
         try {
 
             connectionStatus.textContent =
-                "جاري بدء مشاركة الشاشة...";
+                "🖥️ جاري تشغيل مشاركة الشاشة...";
+
+
+            const activeRoom =
+                getCurrentRoom();
 
 
             await startScreenShare(
-                room
+                activeRoom
             );
 
 
-            setTimeout(
-                () => {
+            screenVideo.innerHTML =
+                "";
 
-                    refreshScreenVideo();
 
-                },
-                300
-            );
+            const screenElement =
+                attachLocalScreenShare(
+                    activeRoom,
+                    screenVideo
+                );
+
+
+            if (!screenElement) {
+
+                throw new Error(
+                    "تم تشغيل مشاركة الشاشة لكن تعذر عرضها على شاشة المدرس."
+                );
+
+            }
+
+
+            showScreen();
+
+
+            placeholder.style.display =
+                "none";
 
 
             connectionStatus.textContent =
-                "🔴 البث مباشر — الشاشة مشاركة";
+                "🖥️ مشاركة الشاشة مباشرة";
 
 
             connectionStatus.className =
@@ -1687,8 +1610,13 @@ screenButton.addEventListener(
             );
 
 
-            screenButton.disabled =
+            screenSharing =
                 false;
+
+
+            screenLayer.classList.remove(
+                "active"
+            );
 
 
             showError(
@@ -1696,9 +1624,18 @@ screenButton.addEventListener(
                 "تعذر بدء مشاركة الشاشة."
             );
 
+
+            screenButton.disabled =
+                false;
+
+
+            stopScreenButton.disabled =
+                true;
+
         }
 
     }
+
 );
 
 
@@ -1707,7 +1644,9 @@ screenButton.addEventListener(
 ===================================================== */
 
 stopScreenButton.addEventListener(
+
     "click",
+
     async () => {
 
         if (!room) {
@@ -1723,31 +1662,51 @@ stopScreenButton.addEventListener(
 
         try {
 
+            const activeRoom =
+                getCurrentRoom();
+
+
             await stopScreenShare(
-                room
+                activeRoom
             );
+
+
+            screenVideo.innerHTML =
+                "";
+
+
+            showCamera();
+
+
+            connectionStatus.textContent =
+                "🔴 البث مباشر — الكاميرا";
+
+
+            connectionStatus.className =
+                "status connected";
+
 
         } catch (error) {
 
             console.error(
-                "Stop screen error:",
+                "Stop screen share error:",
                 error
             );
 
+
+            showError(
+                error?.message ||
+                "تعذر إيقاف مشاركة الشاشة."
+            );
+
+
+            stopScreenButton.disabled =
+                false;
+
         }
 
-
-        resetScreenUI();
-
-
-        connectionStatus.textContent =
-            "🔴 البث مباشر الآن";
-
-
-        connectionStatus.className =
-            "status connected";
-
     }
+
 );
 
 
@@ -1756,7 +1715,9 @@ stopScreenButton.addEventListener(
 ===================================================== */
 
 endButton.addEventListener(
+
     "click",
+
     async () => {
 
         if (
@@ -1776,21 +1737,14 @@ endButton.addEventListener(
 
         try {
 
-            if (room) {
-
-                await stopScreenShare(
-                    room
-                );
-
-            }
-
-
             await updateDoc(
+
                 doc(
                     db,
                     "lectures",
                     lectureId
                 ),
+
                 {
 
                     isLive:
@@ -1800,6 +1754,12 @@ endButton.addEventListener(
                         serverTimestamp()
 
                 }
+
+            );
+
+
+            await stopScreenShare(
+                room
             );
 
 
@@ -1814,8 +1774,30 @@ endButton.addEventListener(
                 false;
 
 
-            sharingScreen =
+            screenSharing =
                 false;
+
+
+            screenVideo.innerHTML =
+                "";
+
+
+            teacherVideo.innerHTML =
+                "";
+
+
+            cameraLayer.classList.remove(
+                "hidden"
+            );
+
+
+            screenLayer.classList.remove(
+                "active"
+            );
+
+
+            placeholder.style.display =
+                "flex";
 
 
             connectionStatus.textContent =
@@ -1834,31 +1816,7 @@ endButton.addEventListener(
                 true;
 
 
-            cameraButton.disabled =
-                true;
-
-
-            screenButton.disabled =
-                true;
-
-
-            stopScreenButton.disabled =
-                true;
-
-
-            cameraVideo.innerHTML =
-                "";
-
-
-            screenVideo.innerHTML =
-                "";
-
-
-            resetScreenUI();
-
-
-            placeholder.style.display =
-                "flex";
+            disableLiveControls();
 
 
         } catch (error) {
@@ -1881,6 +1839,7 @@ endButton.addEventListener(
         }
 
     }
+
 );
 
 
@@ -1889,7 +1848,9 @@ endButton.addEventListener(
 ===================================================== */
 
 leaveButton.addEventListener(
+
     "click",
+
     async () => {
 
         await leaveLiveKit();
@@ -1899,6 +1860,7 @@ leaveButton.addEventListener(
             "lectures.html";
 
     }
+
 );
 
 
@@ -1907,12 +1869,15 @@ leaveButton.addEventListener(
 ===================================================== */
 
 window.addEventListener(
+
     "beforeunload",
+
     () => {
 
         leaveLiveKit();
 
     }
+
 );
 
 
@@ -1940,16 +1905,7 @@ try {
         true;
 
 
-    cameraButton.disabled =
-        true;
-
-
-    screenButton.disabled =
-        true;
-
-
-    stopScreenButton.disabled =
-        true;
+    disableLiveControls();
 
 
     showError(
@@ -1961,6 +1917,6 @@ try {
 
 </script>
 
-
 </body>
+
 </html>
