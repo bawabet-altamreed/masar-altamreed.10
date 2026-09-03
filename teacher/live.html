@@ -1,491 +1,469 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+
+<html
+    lang="ar"
+    dir="rtl"
+>
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>
-    بث المحاضرة | مسار التمريض
-</title>
+    <title>
+        بث المحاضرة | مسار التمريض
+    </title>
 
-<style>
 
-* {
-    box-sizing: border-box;
-}
+    <style>
 
-body {
+        * {
+            box-sizing: border-box;
+        }
 
-    margin: 0;
 
-    font-family:
-        Arial,
-        Tahoma,
-        sans-serif;
+        body {
 
-    background:
-        #071923;
+            margin: 0;
 
-    color:
-        white;
+            min-height: 100vh;
 
-}
+            background:
+                #0f172a;
 
-.live-page {
+            color: #ffffff;
 
-    min-height:
-        100vh;
+            font-family:
+                Arial,
+                Tahoma,
+                sans-serif;
 
-    display:
-        flex;
+            display: flex;
 
-    flex-direction:
-        column;
+            flex-direction: column;
+        }
 
-}
 
-.header {
+        .header {
 
-    background:
-        #0c2735;
+            width: 100%;
 
-    padding:
-        15px 20px;
+            padding: 18px;
 
-    display:
-        flex;
+            background:
+                #111827;
 
-    justify-content:
-        space-between;
+            border-bottom:
+                1px solid #334155;
 
-    align-items:
-        center;
+            display: flex;
 
-    gap:
-        15px;
+            align-items: center;
 
-    border-bottom:
-        1px solid
-        rgba(255,255,255,.08);
+            justify-content: space-between;
 
-}
+            gap: 15px;
 
-.title {
+            flex-wrap: wrap;
+        }
 
-    font-size:
-        18px;
 
-    font-weight:
-        bold;
+        .title {
 
-}
+            font-size: 20px;
 
-.status {
+            font-weight: bold;
+        }
 
-    padding:
-        7px 12px;
 
-    border-radius:
-        20px;
+        .status {
 
-    background:
-        #253b45;
+            color:
+                #94a3b8;
 
-    color:
-        #b8c8cf;
+            font-size: 14px;
+        }
 
-    font-size:
-        11px;
 
-}
+        .main {
 
-.status.connected {
+            flex: 1;
 
-    background:
-        #123b2a;
+            padding: 20px;
 
-    color:
-        #72e3a8;
+            width: 100%;
+        }
 
-}
 
-.status.error {
+        .video-grid {
 
-    background:
-        #401d1d;
+            width: 100%;
 
-    color:
-        #ff9b9b;
+            max-width: 1100px;
 
-}
+            margin: 0 auto;
 
-.main {
+            display: grid;
 
-    flex:
-        1;
+            gap: 15px;
+        }
 
-    padding:
-        18px;
 
-}
+        .video-box {
 
-.video-grid {
+            position: relative;
 
-    width:
-        100%;
+            width: 100%;
 
-    max-width:
-        1200px;
+            min-height: 350px;
 
-    margin:
-        auto;
+            background:
+                #020617;
 
-    display:
-        grid;
+            border:
+                1px solid #334155;
 
-    grid-template-columns:
-        1fr;
+            border-radius: 16px;
 
-    gap:
-        15px;
+            overflow: hidden;
 
-}
+            display: flex;
 
-.video-box {
+            align-items: center;
 
-    position:
-        relative;
+            justify-content: center;
+        }
 
-    background:
-        #000;
 
-    border-radius:
-        16px;
+        #teacherVideo {
 
-    overflow:
-        hidden;
+            width: 100%;
 
-    min-height:
-        560px;
+            height: 100%;
 
-}
+            min-height: 350px;
 
-.video-box video {
+            display: flex;
 
-    width:
-        100%;
+            align-items: center;
 
-    height:
-        100%;
+            justify-content: center;
+        }
 
-    min-height:
-        560px;
 
-    object-fit:
-        contain;
+        #teacherVideo video {
 
-}
+            width: 100%;
 
-.video-layer {
+            height: 100%;
 
-    width:
-        100%;
+            min-height: 350px;
 
-    height:
-        100%;
+            object-fit: cover;
 
-}
+            display: block;
+        }
 
-.video-layer video {
 
-    display:
-        block;
+        .placeholder {
 
-}
+            position: absolute;
 
-.screen-layer {
+            inset: 0;
 
-    display:
-        none;
+            display: flex;
 
-    position:
-        absolute;
+            align-items: center;
 
-    inset:
-        0;
+            justify-content: center;
 
-    z-index:
-        5;
+            flex-direction: column;
 
-    background:
-        #000;
+            text-align: center;
 
-}
+            color:
+                #94a3b8;
 
-.screen-layer.active {
+            font-size: 18px;
 
-    display:
-        block;
+            line-height: 2;
+        }
 
-}
 
-.screen-layer video {
+        /*
+         * شاشة مشاركة الكتاب / PDF
+         */
 
-    width:
-        100%;
+        .screen-share-box {
 
-    height:
-        100%;
+            display: none;
 
-    min-height:
-        560px;
+            width: 100%;
 
-    object-fit:
-        contain;
+            max-width: 1100px;
 
-}
+            margin: 15px auto 0;
 
-.camera-layer {
+            background:
+                #020617;
 
-    position:
-        absolute;
+            border:
+                1px solid #334155;
 
-    inset:
-        0;
+            border-radius: 16px;
 
-    z-index:
-        2;
+            overflow: hidden;
 
-}
+            position: relative;
+        }
 
-.camera-layer.hidden {
 
-    display:
-        none;
+        .screen-share-box.active {
 
-}
+            display: block;
+        }
 
-.placeholder {
 
-    position:
-        absolute;
+        .screen-share-title {
 
-    inset:
-        0;
+            padding: 10px 15px;
 
-    display:
-        flex;
+            background:
+                #1e293b;
 
-    align-items:
-        center;
+            color:
+                #e2e8f0;
 
-    justify-content:
-        center;
+            font-size: 14px;
 
-    color:
-        #8da0aa;
+            font-weight: bold;
+        }
 
-    text-align:
-        center;
 
-    line-height:
-        2;
+        #screenShareVideo {
 
-    z-index:
-        10;
+            width: 100%;
 
-    pointer-events:
-        none;
+            min-height: 300px;
 
-}
+            background:
+                #000;
 
-.controls {
+            display: flex;
 
-    background:
-        #0c2735;
+            align-items: center;
 
-    padding:
-        15px;
+            justify-content: center;
+        }
 
-    display:
-        flex;
 
-    justify-content:
-        center;
+        #screenShareVideo video {
 
-    gap:
-        10px;
+            width: 100%;
 
-    flex-wrap:
-        wrap;
+            height: auto;
 
-}
+            max-height: 70vh;
 
-.button {
+            object-fit: contain;
 
-    border:
-        none;
+            display: block;
 
-    border-radius:
-        10px;
+            background:
+                #000;
+        }
 
-    padding:
-        12px 20px;
 
-    cursor:
-        pointer;
+        .message {
 
-    font-family:
-        inherit;
+            width: 100%;
 
-    font-weight:
-        bold;
+            max-width: 1100px;
 
-    background:
-        #087ea4;
+            margin: 15px auto 0;
 
-    color:
-        white;
+            padding: 12px 15px;
 
-}
+            border-radius: 10px;
 
-.button.start {
+            display: none;
 
-    background:
-        #16834f;
+            background:
+                #7f1d1d;
 
-}
+            color:
+                #fecaca;
 
-.button.end {
+            font-size: 14px;
+        }
 
-    background:
-        #b42318;
 
-}
+        .message.show {
 
-.button.screen {
+            display: block;
+        }
 
-    background:
-        #6b46c1;
 
-}
+        .controls {
 
-.button.camera {
+            width: 100%;
 
-    background:
-        #087ea4;
+            padding: 15px;
 
-}
+            background:
+                #111827;
 
-.button:disabled {
+            border-top:
+                1px solid #334155;
 
-    opacity:
-        .5;
+            display: flex;
 
-    cursor:
-        not-allowed;
+            justify-content: center;
 
-}
+            align-items: center;
 
-.message {
+            gap: 10px;
 
-    max-width:
-        1200px;
+            flex-wrap: wrap;
+        }
 
-    margin:
-        15px auto 0;
 
-    padding:
-        12px;
+        .button {
 
-    border-radius:
-        10px;
+            border: 0;
 
-    background:
-        #401d1d;
+            border-radius: 10px;
 
-    color:
-        #ffb1b1;
+            padding: 12px 18px;
 
-    display:
-        none;
+            font-size: 14px;
 
-}
+            font-weight: bold;
 
-.message.show {
+            cursor: pointer;
 
-    display:
-        block;
+            background:
+                #334155;
 
-}
+            color:
+                #ffffff;
 
-@media (max-width:700px) {
+            transition:
+                0.2s ease;
+        }
 
-    .video-box {
 
-        min-height:
-            350px;
+        .button:hover {
 
-    }
+            opacity: 0.9;
+        }
 
-    .video-box video {
 
-        min-height:
-            350px;
+        .button:disabled {
 
-    }
+            opacity: 0.45;
 
-    .screen-layer video {
+            cursor: not-allowed;
+        }
 
-        min-height:
-            350px;
 
-    }
+        .button.start {
 
-    .header {
+            background:
+                #dc2626;
+        }
 
-        flex-direction:
-            column;
 
-        align-items:
-            stretch;
+        .button.end {
 
-    }
+            background:
+                #475569;
+        }
 
-    .controls {
 
-        padding:
-            12px;
+        .button.camera {
 
-    }
+            background:
+                #2563eb;
+        }
 
-    .button {
 
-        flex:
-            1 1
-            45%;
+        .button.screen {
 
-        min-width:
-            140px;
+            background:
+                #7c3aed;
+        }
 
-    }
 
-}
+        .button.stop-screen {
 
-</style>
+            background:
+                #b91c1c;
+
+            display: none;
+        }
+
+
+        @media (
+            max-width: 600px
+        ) {
+
+            .header {
+
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+
+            .title {
+
+                font-size: 17px;
+            }
+
+
+            .main {
+
+                padding: 10px;
+            }
+
+
+            .video-box {
+
+                min-height: 240px;
+            }
+
+
+            #teacherVideo {
+
+                min-height: 240px;
+            }
+
+
+            #teacherVideo video {
+
+                min-height: 240px;
+            }
+
+
+            .button {
+
+                flex: 1 1 calc(50% - 10px);
+
+                min-width: 140px;
+            }
+        }
+
+    </style>
 
 </head>
 
+
 <body>
-
-
-<div class="live-page">
 
 
     <header class="header">
@@ -508,36 +486,19 @@ body {
     </header>
 
 
+
     <main class="main">
+
 
         <div class="video-grid">
 
+
             <div class="video-box">
 
-                <div
-                    id="cameraLayer"
-                    class="camera-layer"
-                >
-
-                    <div
-                        id="teacherVideo"
-                        class="video-layer"
-                    ></div>
-
-                </div>
-
 
                 <div
-                    id="screenLayer"
-                    class="screen-layer"
-                >
-
-                    <div
-                        id="screenVideo"
-                        class="video-layer"
-                    ></div>
-
-                </div>
+                    id="teacherVideo"
+                ></div>
 
 
                 <div
@@ -555,20 +516,47 @@ body {
 
             </div>
 
+
+            <!--
+                شاشة مشاركة الكتاب / PDF
+            -->
+
+            <div
+                id="screenShareBox"
+                class="screen-share-box"
+            >
+
+                <div
+                    class="screen-share-title"
+                >
+                    🖥️ مشاركة الشاشة — افتح الكتاب أو الـPDF على جهازك
+                </div>
+
+
+                <div
+                    id="screenShareVideo"
+                ></div>
+
+            </div>
+
+
         </div>
 
 
         <div
             id="message"
             class="message"
-        >
-        </div>
+        ></div>
+
 
     </main>
 
 
+
     <footer class="controls">
 
+
+        <!-- بدء البث -->
 
         <button
             id="startButton"
@@ -578,41 +566,7 @@ body {
         </button>
 
 
-        <button
-            id="frontCameraButton"
-            class="button camera"
-            disabled
-        >
-            🤳 الكاميرا الأمامية
-        </button>
-
-
-        <button
-            id="backCameraButton"
-            class="button camera"
-            disabled
-        >
-            🔄 الكاميرا الخلفية
-        </button>
-
-
-        <button
-            id="screenButton"
-            class="button screen"
-            disabled
-        >
-            🖥️ مشاركة الشاشة
-        </button>
-
-
-        <button
-            id="stopScreenButton"
-            class="button screen"
-            disabled
-        >
-            ⏹️ إيقاف مشاركة الشاشة
-        </button>
-
+        <!-- إنهاء البث -->
 
         <button
             id="endButton"
@@ -623,6 +577,52 @@ body {
         </button>
 
 
+        <!-- الكاميرا الأمامية -->
+
+        <button
+            id="frontCameraButton"
+            class="button camera"
+            disabled
+        >
+            🤳 الكاميرا الأمامية
+        </button>
+
+
+        <!-- الكاميرا الخلفية -->
+
+        <button
+            id="backCameraButton"
+            class="button camera"
+            disabled
+        >
+            🔄 الكاميرا الخلفية
+        </button>
+
+
+        <!-- مشاركة الشاشة -->
+
+        <button
+            id="screenShareButton"
+            class="button screen"
+            disabled
+        >
+            🖥️ مشاركة الشاشة
+        </button>
+
+
+        <!-- إيقاف مشاركة الشاشة -->
+
+        <button
+            id="stopScreenShareButton"
+            class="button stop-screen"
+            disabled
+        >
+            ⛔ إيقاف مشاركة الشاشة
+        </button>
+
+
+        <!-- خروج -->
+
         <button
             id="leaveButton"
             class="button"
@@ -630,1292 +630,1154 @@ body {
             خروج
         </button>
 
+
     </footer>
 
-</div>
 
 
-<script type="module">
+    <script type="module">
 
+        import {
+            doc,
+            getDoc,
+            updateDoc,
+            serverTimestamp
+        } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-import {
 
-    doc,
-    getDoc,
-    updateDoc,
-    serverTimestamp
+        import {
+            db
+        } from "../src/firebase/init.js";
 
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
+        import {
+            protectTeacherPage
+        } from "../src/teacher/teacher.js";
 
-import {
 
-    db
+        import {
+            connectLiveKit,
+            enableTeacherMedia,
+            attachLocalTracks,
+            attachLocalCamera,
+            attachLocalScreenShare,
+            getLocalScreenSharePublication,
+            switchTeacherCamera,
+            startScreenShare,
+            stopScreenShare,
+            leaveLiveKit
+        } from "../src/livekit/client.js";
 
-} from "../src/firebase/init.js";
 
 
-import {
+        /* =====================================================
+           DOM
+        ===================================================== */
 
-    protectTeacherPage
-
-} from "../src/teacher/teacher.js";
-
-
-import {
-
-    connectLiveKit,
-
-    enableTeacherMedia,
-
-    attachLocalTracks,
-
-    attachLocalCamera,
-
-    attachLocalScreenShare,
-
-    switchTeacherCamera,
-
-    startScreenShare,
-
-    stopScreenShare,
-
-    getCurrentRoom,
-
-    leaveLiveKit
-
-} from "../src/livekit/client.js";
-
-
-const params =
-    new URLSearchParams(
-        window.location.search
-    );
-
-
-const lectureId =
-    params.get(
-        "lectureId"
-    );
-
-
-const lectureTitle =
-    document.getElementById(
-        "lectureTitle"
-    );
-
-
-const connectionStatus =
-    document.getElementById(
-        "connectionStatus"
-    );
-
-
-const teacherVideo =
-    document.getElementById(
-        "teacherVideo"
-    );
-
-
-const screenVideo =
-    document.getElementById(
-        "screenVideo"
-    );
-
-
-const cameraLayer =
-    document.getElementById(
-        "cameraLayer"
-    );
-
-
-const screenLayer =
-    document.getElementById(
-        "screenLayer"
-    );
-
-
-const placeholder =
-    document.getElementById(
-        "placeholder"
-    );
-
-
-const message =
-    document.getElementById(
-        "message"
-    );
-
-
-const startButton =
-    document.getElementById(
-        "startButton"
-    );
-
-
-const frontCameraButton =
-    document.getElementById(
-        "frontCameraButton"
-    );
-
-
-const backCameraButton =
-    document.getElementById(
-        "backCameraButton"
-    );
-
-
-const screenButton =
-    document.getElementById(
-        "screenButton"
-    );
-
-
-const stopScreenButton =
-    document.getElementById(
-        "stopScreenButton"
-    );
-
-
-const endButton =
-    document.getElementById(
-        "endButton"
-    );
-
-
-const leaveButton =
-    document.getElementById(
-        "leaveButton"
-    );
-
-
-let teacher =
-    null;
-
-
-let lecture =
-    null;
-
-
-let room =
-    null;
-
-
-let currentFacingMode =
-    "user";
-
-
-let screenSharing =
-    false;
-
-
-/* =====================================================
-   Error
-===================================================== */
-
-function showError(
-    text
-) {
-
-    message.textContent =
-        text;
-
-
-    message.classList.add(
-        "show"
-    );
-
-
-    connectionStatus.textContent =
-        "حدث خطأ";
-
-
-    connectionStatus.className =
-        "status error";
-
-}
-
-
-/* =====================================================
-   Clear Error
-===================================================== */
-
-function clearError() {
-
-    message.textContent =
-        "";
-
-
-    message.classList.remove(
-        "show"
-    );
-
-}
-
-
-/* =====================================================
-   Show Camera
-===================================================== */
-
-function showCamera() {
-
-    screenLayer.classList.remove(
-        "active"
-    );
-
-
-    cameraLayer.classList.remove(
-        "hidden"
-    );
-
-
-    screenSharing =
-        false;
-
-
-    screenButton.disabled =
-        !room;
-
-
-    stopScreenButton.disabled =
-        true;
-
-}
-
-
-/* =====================================================
-   Show Screen
-===================================================== */
-
-function showScreen() {
-
-    screenLayer.classList.add(
-        "active"
-    );
-
-
-    cameraLayer.classList.remove(
-        "hidden"
-    );
-
-
-    screenSharing =
-        true;
-
-
-    screenButton.disabled =
-        true;
-
-
-    stopScreenButton.disabled =
-        false;
-
-}
-
-
-/* =====================================================
-   Load Lecture
-===================================================== */
-
-async function loadLecture() {
-
-    if (!lectureId) {
-
-        throw new Error(
-            "معرّف المحاضرة غير موجود."
-        );
-
-    }
-
-
-    connectionStatus.textContent =
-        "جاري تحميل المحاضرة...";
-
-
-    teacher =
-        await protectTeacherPage();
-
-
-    if (!teacher) {
-
-        throw new Error(
-            "تعذر التحقق من حساب المدرس."
-        );
-
-    }
-
-
-    const lectureSnap =
-        await getDoc(
-            doc(
-                db,
-                "lectures",
-                lectureId
-            )
-        );
-
-
-    if (
-        !lectureSnap.exists()
-    ) {
-
-        throw new Error(
-            "المحاضرة غير موجودة."
-        );
-
-    }
-
-
-    lecture = {
-
-        id:
-            lectureSnap.id,
-
-        ...lectureSnap.data()
-
-    };
-
-
-    if (
-        lecture.teacherId !==
-        teacher.uid
-    ) {
-
-        throw new Error(
-            "هذه المحاضرة ليست تابعة لحسابك."
-        );
-
-    }
-
-
-    if (
-        !lecture.roomName
-    ) {
-
-        throw new Error(
-            "غرفة المحاضرة غير مجهزة. ارجع إلى صفحة المحاضرات وأنشئ المحاضرة من جديد."
-        );
-
-    }
-
-
-    lectureTitle.textContent =
-        lecture.title ||
-        "المحاضرة المباشرة";
-
-
-    if (
-        lecture.isLive ===
-        true
-    ) {
-
-        startButton.disabled =
-            false;
-
-        endButton.disabled =
-            false;
-
-        connectionStatus.textContent =
-            "🔴 المحاضرة مباشرة";
-
-    } else {
-
-        connectionStatus.textContent =
-            "جاهز لبدء البث";
-
-    }
-
-}
-
-
-/* =====================================================
-   Enable Live Controls
-===================================================== */
-
-function enableLiveControls() {
-
-    frontCameraButton.disabled =
-        false;
-
-
-    backCameraButton.disabled =
-        false;
-
-
-    screenButton.disabled =
-        false;
-
-
-    stopScreenButton.disabled =
-        true;
-
-
-    endButton.disabled =
-        false;
-
-}
-
-
-/* =====================================================
-   Disable Live Controls
-===================================================== */
-
-function disableLiveControls() {
-
-    frontCameraButton.disabled =
-        true;
-
-
-    backCameraButton.disabled =
-        true;
-
-
-    screenButton.disabled =
-        true;
-
-
-    stopScreenButton.disabled =
-        true;
-
-}
-
-
-/* =====================================================
-   Start Broadcast
-===================================================== */
-
-async function startBroadcast() {
-
-    if (!lecture) {
-
-        showError(
-            "لم يتم تحميل بيانات المحاضرة."
-        );
-
-        return;
-
-    }
-
-
-    if (!lecture.roomName) {
-
-        showError(
-            "اسم غرفة LiveKit غير موجود."
-        );
-
-        return;
-
-    }
-
-
-    clearError();
-
-
-    startButton.disabled =
-        true;
-
-
-    endButton.disabled =
-        true;
-
-
-    try {
-
-        connectionStatus.textContent =
-            "جاري الاتصال بـ LiveKit...";
-
-
-        connectionStatus.className =
-            "status";
-
-
-        room =
-            await connectLiveKit(
-
-                lecture.roomName,
-
-                {
-
-                    onConnected() {
-
-                        connectionStatus.textContent =
-                            "🟢 تم الاتصال بـ LiveKit";
-
-                        connectionStatus.className =
-                            "status connected";
-
-                    },
-
-
-                    onDisconnected() {
-
-                        connectionStatus.textContent =
-                            "تم قطع الاتصال";
-
-                        connectionStatus.className =
-                            "status error";
-
-                    },
-
-
-                    onConnectionError(
-                        error
-                    ) {
-
-                        console.error(
-                            "LiveKit connection error:",
-                            error
-                        );
-
-                    }
-
-                }
-
+        const lectureTitle =
+            document.getElementById(
+                "lectureTitle"
             );
 
 
-        if (!room) {
-
-            throw new Error(
-                "تعذر إنشاء اتصال LiveKit."
+        const connectionStatus =
+            document.getElementById(
+                "connectionStatus"
             );
 
+
+        const teacherVideo =
+            document.getElementById(
+                "teacherVideo"
+            );
+
+
+        const placeholder =
+            document.getElementById(
+                "placeholder"
+            );
+
+
+        const message =
+            document.getElementById(
+                "message"
+            );
+
+
+        const screenShareBox =
+            document.getElementById(
+                "screenShareBox"
+            );
+
+
+        const screenShareVideo =
+            document.getElementById(
+                "screenShareVideo"
+            );
+
+
+        const startButton =
+            document.getElementById(
+                "startButton"
+            );
+
+
+        const endButton =
+            document.getElementById(
+                "endButton"
+            );
+
+
+        const frontCameraButton =
+            document.getElementById(
+                "frontCameraButton"
+            );
+
+
+        const backCameraButton =
+            document.getElementById(
+                "backCameraButton"
+            );
+
+
+        const screenShareButton =
+            document.getElementById(
+                "screenShareButton"
+            );
+
+
+        const stopScreenShareButton =
+            document.getElementById(
+                "stopScreenShareButton"
+            );
+
+
+        const leaveButton =
+            document.getElementById(
+                "leaveButton"
+            );
+
+
+
+        /* =====================================================
+           State
+        ===================================================== */
+
+        let teacher = null;
+
+        let lecture = null;
+
+        let lectureId = null;
+
+        let room = null;
+
+        let isBroadcasting = false;
+
+
+
+        /* =====================================================
+           URL
+        ===================================================== */
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+
+        lectureId =
+            params.get(
+                "lectureId"
+            );
+
+
+
+        /* =====================================================
+           Message
+        ===================================================== */
+
+        function showMessage(
+            text
+        ) {
+
+            message.textContent =
+                text;
+
+            message.classList.add(
+                "show"
+            );
         }
 
 
-        connectionStatus.textContent =
-            "🟢 متصل — جاري تشغيل الكاميرا...";
+        function hideMessage() {
+
+            message.textContent =
+                "";
+
+            message.classList.remove(
+                "show"
+            );
+        }
 
 
-        connectionStatus.className =
-            "status connected";
+
+        /* =====================================================
+           Status
+        ===================================================== */
+
+        function setStatus(
+            text
+        ) {
+
+            connectionStatus.textContent =
+                text;
+        }
 
 
-        await enableTeacherMedia(
-            room
-        );
+
+        /* =====================================================
+           Enable Broadcast Controls
+        ===================================================== */
+
+        function enableBroadcastControls() {
+
+            frontCameraButton.disabled =
+                false;
+
+            backCameraButton.disabled =
+                false;
+
+            screenShareButton.disabled =
+                false;
+        }
 
 
-        teacherVideo.innerHTML =
-            "";
+
+        /* =====================================================
+           Disable Broadcast Controls
+        ===================================================== */
+
+        function disableBroadcastControls() {
+
+            frontCameraButton.disabled =
+                true;
+
+            backCameraButton.disabled =
+                true;
+
+            screenShareButton.disabled =
+                true;
+
+            stopScreenShareButton.disabled =
+                true;
+
+            stopScreenShareButton.style.display =
+                "none";
+        }
 
 
-        attachLocalCamera(
-            room,
-            teacherVideo
-        );
+
+        /* =====================================================
+           Load Lecture
+        ===================================================== */
+
+        async function loadLecture() {
+
+            try {
+
+                hideMessage();
 
 
-        const localParticipant =
-            room.localParticipant;
+                if (!lectureId) {
+
+                    throw new Error(
+                        "معرف المحاضرة غير موجود."
+                    );
+                }
 
 
-        const hasVideo =
-            Array
-                .from(
-                    localParticipant
-                        .trackPublications
-                        .values()
-                )
-                .some(
+                /*
+                 * مهم جدًا:
+                 * نفس الطريقة القديمة.
+                 */
 
-                    publication =>
+                teacher =
+                    await protectTeacherPage();
 
-                        publication.track &&
 
-                        publication.kind ===
-                        "video"
+                if (!teacher) {
 
+                    throw new Error(
+                        "تعذر التحقق من حساب المدرس."
+                    );
+                }
+
+
+                const lectureRef =
+                    doc(
+                        db,
+                        "lectures",
+                        lectureId
+                    );
+
+
+                const snapshot =
+                    await getDoc(
+                        lectureRef
+                    );
+
+
+                if (!snapshot.exists()) {
+
+                    throw new Error(
+                        "المحاضرة غير موجودة."
+                    );
+                }
+
+
+                lecture = {
+
+                    id:
+                        snapshot.id,
+
+                    ...snapshot.data()
+                };
+
+
+                if (
+                    lecture.teacherId !==
+                    teacher.uid
+                ) {
+
+                    throw new Error(
+                        "لا تملك صلاحية هذه المحاضرة."
+                    );
+                }
+
+
+                if (
+                    !lecture.roomName
+                ) {
+
+                    throw new Error(
+                        "غرفة LiveKit الخاصة بالمحاضرة غير موجودة."
+                    );
+                }
+
+
+                lectureTitle.textContent =
+                    lecture.title ||
+                    "بث المحاضرة";
+
+
+                setStatus(
+                    "جاهز لبدء البث"
                 );
 
 
-        if (!hasVideo) {
+            } catch (error) {
 
-            throw new Error(
-                "تم الاتصال بـ LiveKit لكن لم يتم تشغيل كاميرا المدرس."
-            );
+                console.error(
+                    "Load lecture error:",
+                    error
+                );
 
+
+                lectureTitle.textContent =
+                    "تعذر تحميل المحاضرة";
+
+
+                setStatus(
+                    "حدث خطأ"
+                );
+
+
+                showMessage(
+                    error?.message ||
+                    "تعذر تحميل المحاضرة."
+                );
+            }
         }
 
 
-        placeholder.style.display =
-            "none";
+
+        /* =====================================================
+           Start Broadcast
+        ===================================================== */
+
+        async function startBroadcast() {
+
+            try {
+
+                hideMessage();
 
 
-        cameraLayer.classList.remove(
-            "hidden"
-        );
+                if (!lecture) {
+
+                    throw new Error(
+                        "المحاضرة لم يتم تحميلها."
+                    );
+                }
 
 
-        screenLayer.classList.remove(
-            "active"
-        );
+                if (!lecture.roomName) {
+
+                    throw new Error(
+                        "اسم غرفة LiveKit غير موجود."
+                    );
+                }
 
 
-        currentFacingMode =
-            "user";
+                startButton.disabled =
+                    true;
 
 
-        await updateDoc(
+                setStatus(
+                    "جاري الاتصال بـ LiveKit..."
+                );
 
-            doc(
-                db,
-                "lectures",
-                lectureId
-            ),
 
-            {
+                /*
+                 * نفس الاتصال القديم
+                 */
 
-                isLive:
-                    true,
+                room =
+                    await connectLiveKit(
+                        lecture.roomName,
 
-                isPublished:
-                    true,
+                        {
 
-                roomName:
-                    lecture.roomName,
+                            onConnected:
+                                () => {
 
-                updatedAt:
-                    serverTimestamp()
+                                    setStatus(
+                                        "تم الاتصال بـ LiveKit"
+                                    );
+                                },
 
+
+                            onDisconnected:
+                                () => {
+
+                                    setStatus(
+                                        "تم قطع الاتصال"
+                                    );
+                                },
+
+
+                            onConnectionError:
+                                error => {
+
+                                    console.error(
+                                        "LiveKit connection error:",
+                                        error
+                                    );
+                                }
+
+                        }
+                    );
+
+
+                /*
+                 * نفس تشغيل الكاميرا والمايك القديم
+                 */
+
+                await enableTeacherMedia(
+                    room
+                );
+
+
+                /*
+                 * نفس إظهار الكاميرا القديم
+                 */
+
+                teacherVideo.innerHTML =
+                    "";
+
+
+                attachLocalTracks(
+                    room,
+                    teacherVideo
+                );
+
+
+                /*
+                 * التأكد أن الكاميرا موجودة
+                 */
+
+                const cameraPublication =
+                    room.localParticipant
+                        .getTrackPublication(
+                            "camera"
+                        );
+
+
+                if (
+                    !cameraPublication ||
+                    !cameraPublication.track
+                ) {
+
+                    /*
+                     * fallback باستخدام Track.Source
+                     */
+
+                    const camera =
+                        room.localParticipant
+                            .getTrackPublication(
+                                "camera"
+                            );
+
+                    if (
+                        !camera ||
+                        !camera.track
+                    ) {
+
+                        throw new Error(
+                            "تعذر تشغيل كاميرا المدرس."
+                        );
+                    }
+                }
+
+
+                placeholder.style.display =
+                    "none";
+
+
+                /*
+                 * تحديث Firestore
+                 * نفس النظام القديم
+                 */
+
+                await updateDoc(
+
+                    doc(
+                        db,
+                        "lectures",
+                        lectureId
+                    ),
+
+                    {
+
+                        isLive:
+                            true,
+
+                        isPublished:
+                            true,
+
+                        roomName:
+                            lecture.roomName,
+
+                        updatedAt:
+                            serverTimestamp()
+                    }
+                );
+
+
+                isBroadcasting =
+                    true;
+
+
+                endButton.disabled =
+                    false;
+
+
+                enableBroadcastControls();
+
+
+                setStatus(
+                    "🔴 البث مباشر الآن"
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Start broadcast error:",
+                    error
+                );
+
+
+                startButton.disabled =
+                    false;
+
+
+                endButton.disabled =
+                    true;
+
+
+                disableBroadcastControls();
+
+
+                if (room) {
+
+                    try {
+
+                        await leaveLiveKit();
+
+                    } catch (leaveError) {
+
+                        console.warn(
+                            leaveError
+                        );
+                    }
+
+                    room =
+                        null;
+                }
+
+
+                setStatus(
+                    "تعذر بدء البث"
+                );
+
+
+                showMessage(
+                    error?.message ||
+                    "تعذر بدء البث."
+                );
+            }
+        }
+
+
+
+        /* =====================================================
+           Switch Camera
+        ===================================================== */
+
+        async function changeCamera(
+            facingMode
+        ) {
+
+            if (
+                !room ||
+                !isBroadcasting
+            ) {
+
+                return;
             }
 
-        );
+
+            try {
+
+                hideMessage();
 
 
-        lecture.isLive =
-            true;
+                frontCameraButton.disabled =
+                    true;
+
+                backCameraButton.disabled =
+                    true;
 
 
-        enableLiveControls();
+                setStatus(
+                    facingMode === "environment"
+                        ? "جاري تشغيل الكاميرا الخلفية..."
+                        : "جاري تشغيل الكاميرا الأمامية..."
+                );
 
 
-        startButton.disabled =
-            true;
+                await switchTeacherCamera(
+                    room,
+                    facingMode
+                );
 
 
-        endButton.disabled =
-            false;
+                /*
+                 * إعادة عرض الكاميرا محليًا
+                 */
 
-
-        connectionStatus.textContent =
-            "🔴 البث مباشر الآن";
-
-
-        connectionStatus.className =
-            "status connected";
-
-
-    } catch (error) {
-
-        console.error(
-            "Teacher LiveKit error:",
-            error
-        );
-
-
-        await leaveLiveKit();
-
-
-        room =
-            null;
-
-
-        disableLiveControls();
-
-
-        startButton.disabled =
-            false;
-
-
-        endButton.disabled =
-            true;
-
-
-        placeholder.style.display =
-            "flex";
-
-
-        showError(
-            error?.message ||
-            "تعذر بدء البث."
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   Front Camera
-===================================================== */
-
-frontCameraButton.addEventListener(
-
-    "click",
-
-    async () => {
-
-        if (!room) {
-
-            return;
-
-        }
-
-
-        clearError();
-
-
-        frontCameraButton.disabled =
-            true;
-
-
-        backCameraButton.disabled =
-            true;
-
-
-        try {
-
-            connectionStatus.textContent =
-                "🔄 جاري تشغيل الكاميرا الأمامية...";
-
-
-            const activeRoom =
-                getCurrentRoom();
-
-
-            await switchTeacherCamera(
-                activeRoom,
-                "user"
-            );
-
-
-            currentFacingMode =
-                "user";
-
-
-            attachLocalCamera(
-                activeRoom,
                 teacherVideo
-            );
+                    .querySelectorAll(
+                        "video"
+                    )
+                    .forEach(
+                        video => {
 
+                            video.remove();
+                        }
+                    );
 
-            connectionStatus.textContent =
-                "🔴 البث مباشر — الكاميرا الأمامية";
 
+                attachLocalCamera(
+                    room,
+                    teacherVideo
+                );
 
-            connectionStatus.className =
-                "status connected";
 
+                setStatus(
+                    facingMode === "environment"
+                        ? "🔴 البث مباشر — الكاميرا الخلفية"
+                        : "🔴 البث مباشر — الكاميرا الأمامية"
+                );
 
-        } catch (error) {
 
-            console.error(
-                "Front camera error:",
-                error
-            );
+            } catch (error) {
 
+                console.error(
+                    "Change camera error:",
+                    error
+                );
 
-            showError(
-                error?.message ||
-                "تعذر تشغيل الكاميرا الأمامية."
-            );
 
-        } finally {
+                showMessage(
+                    error?.message ||
+                    "تعذر تبديل الكاميرا."
+                );
 
-            frontCameraButton.disabled =
-                false;
 
+                setStatus(
+                    "🔴 البث مباشر"
+                );
 
-            backCameraButton.disabled =
-                false;
+            } finally {
 
-        }
+                if (isBroadcasting) {
 
-    }
+                    frontCameraButton.disabled =
+                        false;
 
-);
-
-
-/* =====================================================
-   Back Camera
-===================================================== */
-
-backCameraButton.addEventListener(
-
-    "click",
-
-    async () => {
-
-        if (!room) {
-
-            return;
-
-        }
-
-
-        clearError();
-
-
-        frontCameraButton.disabled =
-            true;
-
-
-        backCameraButton.disabled =
-            true;
-
-
-        try {
-
-            connectionStatus.textContent =
-                "🔄 جاري تشغيل الكاميرا الخلفية...";
-
-
-            const activeRoom =
-                getCurrentRoom();
-
-
-            await switchTeacherCamera(
-                activeRoom,
-                "environment"
-            );
-
-
-            currentFacingMode =
-                "environment";
-
-
-            attachLocalCamera(
-                activeRoom,
-                teacherVideo
-            );
-
-
-            connectionStatus.textContent =
-                "🔴 البث مباشر — الكاميرا الخلفية";
-
-
-            connectionStatus.className =
-                "status connected";
-
-
-        } catch (error) {
-
-            console.error(
-                "Back camera error:",
-                error
-            );
-
-
-            showError(
-                error?.message ||
-                "تعذر تشغيل الكاميرا الخلفية."
-            );
-
-        } finally {
-
-            frontCameraButton.disabled =
-                false;
-
-
-            backCameraButton.disabled =
-                false;
-
-        }
-
-    }
-
-);
-
-
-/* =====================================================
-   Start Screen Share
-===================================================== */
-
-screenButton.addEventListener(
-
-    "click",
-
-    async () => {
-
-        if (!room) {
-
-            return;
-
+                    backCameraButton.disabled =
+                        false;
+                }
+            }
         }
 
 
-        clearError();
+
+        /* =====================================================
+           Start Screen Share
+        ===================================================== */
+
+        async function handleStartScreenShare() {
+
+            if (
+                !room ||
+                !isBroadcasting
+            ) {
+
+                return;
+            }
 
 
-        screenButton.disabled =
-            true;
+            try {
+
+                hideMessage();
 
 
-        try {
-
-            connectionStatus.textContent =
-                "🖥️ جاري تشغيل مشاركة الشاشة...";
+                screenShareButton.disabled =
+                    true;
 
 
-            const activeRoom =
-                getCurrentRoom();
+                setStatus(
+                    "جاري بدء مشاركة الشاشة..."
+                );
 
 
-            await startScreenShare(
-                activeRoom
-            );
+                await startScreenShare(
+                    room
+                );
 
 
-            screenVideo.innerHTML =
+                /*
+                 * الحصول على Track مشاركة الشاشة
+                 */
+
+                screenShareVideo.innerHTML =
+                    "";
+
+
+                let publication = null;
+
+
+                /*
+                 * أحيانًا publication يحتاج
+                 * لحظة بسيطة بعد setScreenShareEnabled
+                 */
+
+                for (
+                    let attempt = 0;
+                    attempt < 10;
+                    attempt++
+                ) {
+
+                    publication =
+                        getLocalScreenSharePublication(
+                            room
+                        );
+
+
+                    if (
+                        publication &&
+                        publication.track
+                    ) {
+
+                        break;
+                    }
+
+
+                    await new Promise(
+                        resolve =>
+                            setTimeout(
+                                resolve,
+                                100
+                            )
+                    );
+                }
+
+
+                if (
+                    !publication ||
+                    !publication.track
+                ) {
+
+                    throw new Error(
+                        "تم تشغيل مشاركة الشاشة لكن تعذر عرضها محليًا."
+                    );
+                }
+
+
+                attachLocalScreenShare(
+                    room,
+                    screenShareVideo
+                );
+
+
+                screenShareBox.classList.add(
+                    "active"
+                );
+
+
+                screenShareButton.style.display =
+                    "none";
+
+
+                stopScreenShareButton.style.display =
+                    "inline-block";
+
+
+                stopScreenShareButton.disabled =
+                    false;
+
+
+                setStatus(
+                    "🔴 البث مباشر — مشاركة الشاشة مفعلة"
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "Screen share error:",
+                    error
+                );
+
+
+                screenShareButton.disabled =
+                    false;
+
+
+                screenShareBox.classList.remove(
+                    "active"
+                );
+
+
+                screenShareVideo.innerHTML =
+                    "";
+
+
+                stopScreenShareButton.style.display =
+                    "none";
+
+
+                stopScreenShareButton.disabled =
+                    true;
+
+
+                showMessage(
+                    error?.message ||
+                    "تعذر بدء مشاركة الشاشة."
+                );
+
+
+                setStatus(
+                    "🔴 البث مباشر"
+                );
+            }
+        }
+
+
+
+        /* =====================================================
+           Stop Screen Share
+        ===================================================== */
+
+        async function handleStopScreenShare() {
+
+            if (!room) {
+                return;
+            }
+
+
+            try {
+
+                await stopScreenShare(
+                    room
+                );
+
+
+            } catch (error) {
+
+                console.warn(
+                    "Stop screen share error:",
+                    error
+                );
+            }
+
+
+            screenShareVideo.innerHTML =
                 "";
 
 
-            const screenElement =
-                attachLocalScreenShare(
-                    activeRoom,
-                    screenVideo
-                );
+            screenShareBox.classList.remove(
+                "active"
+            );
 
 
-            if (!screenElement) {
-
-                throw new Error(
-                    "تم تشغيل مشاركة الشاشة لكن تعذر عرضها على شاشة المدرس."
-                );
-
-            }
-
-
-            showScreen();
-
-
-            placeholder.style.display =
+            stopScreenShareButton.style.display =
                 "none";
 
 
-            connectionStatus.textContent =
-                "🖥️ مشاركة الشاشة مباشرة";
-
-
-            connectionStatus.className =
-                "status connected";
-
-
-        } catch (error) {
-
-            console.error(
-                "Screen share error:",
-                error
-            );
-
-
-            screenSharing =
-                false;
-
-
-            screenLayer.classList.remove(
-                "active"
-            );
-
-
-            showError(
-                error?.message ||
-                "تعذر بدء مشاركة الشاشة."
-            );
-
-
-            screenButton.disabled =
-                false;
-
-
-            stopScreenButton.disabled =
+            stopScreenShareButton.disabled =
                 true;
 
-        }
 
-    }
-
-);
+            screenShareButton.style.display =
+                "inline-block";
 
 
-/* =====================================================
-   Stop Screen Share
-===================================================== */
-
-stopScreenButton.addEventListener(
-
-    "click",
-
-    async () => {
-
-        if (!room) {
-
-            return;
-
-        }
-
-
-        stopScreenButton.disabled =
-            true;
-
-
-        try {
-
-            const activeRoom =
-                getCurrentRoom();
-
-
-            await stopScreenShare(
-                activeRoom
-            );
-
-
-            screenVideo.innerHTML =
-                "";
-
-
-            showCamera();
-
-
-            connectionStatus.textContent =
-                "🔴 البث مباشر — الكاميرا";
-
-
-            connectionStatus.className =
-                "status connected";
-
-
-        } catch (error) {
-
-            console.error(
-                "Stop screen share error:",
-                error
-            );
-
-
-            showError(
-                error?.message ||
-                "تعذر إيقاف مشاركة الشاشة."
-            );
-
-
-            stopScreenButton.disabled =
+            screenShareButton.disabled =
                 false;
 
-        }
 
-    }
-
-);
-
-
-/* =====================================================
-   End Broadcast
-===================================================== */
-
-endButton.addEventListener(
-
-    "click",
-
-    async () => {
-
-        if (
-            !confirm(
-                "هل أنت متأكد من إنهاء المحاضرة المباشرة؟"
-            )
-        ) {
-
-            return;
-
+            setStatus(
+                "🔴 البث مباشر"
+            );
         }
 
 
-        endButton.disabled =
-            true;
+
+        /* =====================================================
+           End Broadcast
+        ===================================================== */
+
+        async function endBroadcast() {
+
+            try {
+
+                endButton.disabled =
+                    true;
 
 
-        try {
+                /*
+                 * إيقاف مشاركة الشاشة أولًا
+                 */
 
-            await updateDoc(
+                if (
+                    room &&
+                    room.localParticipant &&
+                    room.localParticipant
+                        .isScreenShareEnabled
+                ) {
 
-                doc(
-                    db,
-                    "lectures",
-                    lectureId
-                ),
-
-                {
-
-                    isLive:
-                        false,
-
-                    updatedAt:
-                        serverTimestamp()
-
+                    await handleStopScreenShare();
                 }
 
-            );
+
+                /*
+                 * تحديث Firebase
+                 */
+
+                if (lectureId) {
+
+                    await updateDoc(
+
+                        doc(
+                            db,
+                            "lectures",
+                            lectureId
+                        ),
+
+                        {
+
+                            isLive:
+                                false,
+
+                            updatedAt:
+                                serverTimestamp()
+                        }
+                    );
+                }
 
 
-            await stopScreenShare(
-                room
-            );
+                /*
+                 * الخروج من LiveKit
+                 */
+
+                await leaveLiveKit();
 
 
-            await leaveLiveKit();
+                room =
+                    null;
 
 
-            room =
-                null;
+                isBroadcasting =
+                    false;
 
 
-            lecture.isLive =
-                false;
+                teacherVideo.innerHTML =
+                    "";
 
 
-            screenSharing =
-                false;
+                placeholder.style.display =
+                    "flex";
 
 
-            screenVideo.innerHTML =
-                "";
+                startButton.disabled =
+                    false;
 
 
-            teacherVideo.innerHTML =
-                "";
+                endButton.disabled =
+                    true;
 
 
-            cameraLayer.classList.remove(
-                "hidden"
-            );
+                disableBroadcastControls();
 
 
-            screenLayer.classList.remove(
-                "active"
-            );
+                setStatus(
+                    "تم إنهاء البث"
+                );
 
 
-            placeholder.style.display =
-                "flex";
+            } catch (error) {
+
+                console.error(
+                    "End broadcast error:",
+                    error
+                );
 
 
-            connectionStatus.textContent =
-                "تم إنهاء البث";
-
-
-            connectionStatus.className =
-                "status";
-
-
-            startButton.disabled =
-                false;
-
-
-            endButton.disabled =
-                true;
-
-
-            disableLiveControls();
-
-
-        } catch (error) {
-
-            console.error(
-                "End broadcast error:",
-                error
-            );
-
-
-            showError(
-                error?.message ||
-                "حدث خطأ أثناء إنهاء البث."
-            );
-
-
-            endButton.disabled =
-                false;
-
+                showMessage(
+                    error?.message ||
+                    "تعذر إنهاء البث."
+                );
+            }
         }
 
-    }
-
-);
 
 
-/* =====================================================
-   Leave
-===================================================== */
+        /* =====================================================
+           Leave
+        ===================================================== */
 
-leaveButton.addEventListener(
+        async function leavePage() {
 
-    "click",
+            try {
 
-    async () => {
+                await leaveLiveKit();
 
-        await leaveLiveKit();
+            } catch (error) {
 
-
-        window.location.href =
-            "lectures.html";
-
-    }
-
-);
+                console.warn(
+                    error
+                );
+            }
 
 
-/* =====================================================
-   Before Unload
-===================================================== */
-
-window.addEventListener(
-
-    "beforeunload",
-
-    () => {
-
-        leaveLiveKit();
-
-    }
-
-);
+            window.location.href =
+                "lectures.html";
+        }
 
 
-/* =====================================================
-   Init
-===================================================== */
 
-try {
+        /* =====================================================
+           Buttons
+        ===================================================== */
 
-    await loadLecture();
-
-} catch (error) {
-
-    console.error(
-        "Load lecture error:",
-        error
-    );
+        startButton.addEventListener(
+            "click",
+            startBroadcast
+        );
 
 
-    startButton.disabled =
-        true;
+        endButton.addEventListener(
+            "click",
+            endBroadcast
+        );
 
 
-    endButton.disabled =
-        true;
+        frontCameraButton.addEventListener(
+            "click",
+            () => {
+
+                changeCamera(
+                    "user"
+                );
+            }
+        );
 
 
-    disableLiveControls();
+        backCameraButton.addEventListener(
+            "click",
+            () => {
+
+                changeCamera(
+                    "environment"
+                );
+            }
+        );
 
 
-    showError(
-        error?.message ||
-        "تعذر تحميل المحاضرة."
-    );
+        screenShareButton.addEventListener(
+            "click",
+            handleStartScreenShare
+        );
 
-}
 
-</script>
+        stopScreenShareButton.addEventListener(
+            "click",
+            handleStopScreenShare
+        );
+
+
+        leaveButton.addEventListener(
+            "click",
+            leavePage
+        );
+
+
+
+        /* =====================================================
+           Before Unload
+        ===================================================== */
+
+        window.addEventListener(
+            "beforeunload",
+            () => {
+
+                leaveLiveKit();
+            }
+        );
+
+
+
+        /* =====================================================
+           Start
+        ===================================================== */
+
+        loadLecture();
+
+    </script>
 
 </body>
 
