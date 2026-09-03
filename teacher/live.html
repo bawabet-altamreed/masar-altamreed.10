@@ -611,21 +611,13 @@ async function loadLecture() {
         "جاري تحميل المحاضرة...";
 
 
-    const result =
-        await protectTeacherPage();
+    teacher = await protectTeacherPage();
 
-
-    teacher =
-        result.teacher;
-
-
-    if (!teacher) {
-
-        throw new Error(
-            "تعذر التحقق من حساب المدرس."
-        );
-
-    }
+if (!teacher) {
+    throw new Error(
+        "تعذر التحقق من حساب المدرس."
+    );
+}
 
 
     const lectureSnap =
