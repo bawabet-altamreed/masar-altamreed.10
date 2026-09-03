@@ -757,3 +757,4 @@ export function getCurrentRoom() {
 
     return currentRoom;
 }
+
