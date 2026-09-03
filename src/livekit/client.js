@@ -57,7 +57,7 @@ export async function getLiveKitToken(roomName) {
 
 /* =====================================================
    Connect Room
-   لا تغيير في الاتصال القديم
+   لا يتم تغيير اتصال LiveKit القديم
 ===================================================== */
 
 export async function connectLiveKit(
@@ -68,7 +68,6 @@ export async function connectLiveKit(
     if (currentRoom) {
 
         try {
-
             await currentRoom.disconnect();
 
         } catch (error) {
@@ -97,18 +96,19 @@ export async function connectLiveKit(
     const {
         serverUrl,
         participantToken
-    } =
-        await getLiveKitToken(
-            roomName
-        );
+    } = await getLiveKitToken(
+        roomName
+    );
 
 
     const room =
         new Room({
 
-            adaptiveStream: true,
+            adaptiveStream:
+                true,
 
-            dynacast: true
+            dynacast:
+                true
         });
 
 
@@ -203,7 +203,8 @@ export async function connectLiveKit(
 
     } catch (error) {
 
-        currentRoom = null;
+        currentRoom =
+            null;
 
         onConnectionError(
             error
@@ -219,7 +220,7 @@ export async function connectLiveKit(
 
 /* =====================================================
    Publish Camera + Microphone
-   النسخة القديمة
+   القديم كما هو
 ===================================================== */
 
 export async function enableTeacherMedia(
@@ -301,7 +302,7 @@ export async function enableTeacherMedia(
 
 
 /* =====================================================
-   Attach Track
+   Attach Track To Element
 ===================================================== */
 
 export function attachTrack(
@@ -340,7 +341,7 @@ export function attachTrack(
 
 /* =====================================================
    Attach Local Tracks
-   القديمة كما هي
+   القديم كما هو
 ===================================================== */
 
 export function attachLocalTracks(
@@ -369,20 +370,6 @@ export function attachLocalTracks(
 
         if (
             !publication.track
-        ) {
-
-            continue;
-        }
-
-
-        /*
-         * لا نضع Screen Share داخل
-         * مكان الكاميرا.
-         */
-
-        if (
-            publication.source ===
-            Track.Source.ScreenShare
         ) {
 
             continue;
@@ -426,10 +413,10 @@ export function detachTrack(
 
 
 /* =====================================================
-   Get Camera Publication
+   NEW — Get Camera Track
 ===================================================== */
 
-export function getLocalCameraPublication(
+export function getLocalCameraTrack(
     room
 ) {
 
@@ -442,40 +429,30 @@ export function getLocalCameraPublication(
     }
 
 
-    return room.localParticipant
-        .getTrackPublication(
-            Track.Source.Camera
-        ) || null;
-}
+    const publication =
+        room.localParticipant
+            .getTrackPublication(
+                Track.Source.Camera
+            );
 
-
-/* =====================================================
-   Get Screen Share Publication
-===================================================== */
-
-export function getLocalScreenSharePublication(
-    room
-) {
 
     if (
-        !room ||
-        !room.localParticipant
+        !publication ||
+        !publication.track
     ) {
 
         return null;
     }
 
 
-    return room.localParticipant
-        .getTrackPublication(
-            Track.Source.ScreenShare
-        ) || null;
+    return publication.track;
 }
 
 
 /* =====================================================
-   Switch Camera
-   الطريقة الصحيحة للموبايل
+   NEW — Switch Camera
+   Front = user
+   Back  = environment
 ===================================================== */
 
 export async function switchTeacherCamera(
@@ -505,19 +482,16 @@ export async function switchTeacherCamera(
     }
 
 
-    const publication =
-        getLocalCameraPublication(
+    const videoTrack =
+        getLocalCameraTrack(
             room
         );
 
 
-    if (
-        !publication ||
-        !publication.track
-    ) {
+    if (!videoTrack) {
 
         throw new Error(
-            "كاميرا المدرس غير مفعلة."
+            "تعذر الوصول إلى كاميرا المدرس."
         );
     }
 
@@ -526,19 +500,18 @@ export async function switchTeacherCamera(
 
         /*
          * مهم:
-         * لا نطفئ الكاميرا.
+         * لا نطفئ الكاميرا ولا ننشئ Track جديد.
          *
-         * نعيد تشغيل نفس الـtrack
-         * بالكاميرا المطلوبة.
+         * نعيد تشغيل نفس LocalVideoTrack
+         * باستخدام الكاميرا المطلوبة.
          */
 
-        await publication.track
-            .restartTrack({
-                facingMode
-            });
+        await videoTrack.restartTrack({
+            facingMode
+        });
 
 
-        return publication.track;
+        return videoTrack;
 
     } catch (error) {
 
@@ -550,14 +523,14 @@ export async function switchTeacherCamera(
 
         throw new Error(
             error?.message ||
-            "تعذر تبديل الكاميرا. تأكد أن الجهاز يحتوي على كاميرا أمامية وخلفية."
+            "تعذر تبديل الكاميرا."
         );
     }
 }
 
 
 /* =====================================================
-   Start Normal Screen Share
+   NEW — Start Screen Share
 ===================================================== */
 
 export async function startScreenShare(
@@ -575,36 +548,37 @@ export async function startScreenShare(
     }
 
 
+    /*
+     * getDisplayMedia هو ما يستخدمه LiveKit
+     * في المتصفح لالتقاط الشاشة.
+     */
+
+    if (
+        !navigator.mediaDevices ||
+        typeof navigator.mediaDevices
+            .getDisplayMedia !== "function"
+    ) {
+
+        throw new Error(
+            "مشاركة الشاشة غير مدعومة في هذا المتصفح. جرّب فتح الموقع من متصفح يدعم مشاركة الشاشة."
+        );
+    }
+
+
     try {
 
-        /*
-         * مشاركة الشاشة التقليدية.
-         *
-         * ستعمل فقط إذا كان المتصفح
-         * يدعم getDisplayMedia().
-         */
-
-        await room.localParticipant
-            .setScreenShareEnabled(
-                true,
-                {
-                    audio: false,
-
-                    contentHint:
-                        "detail",
-
-                    selfBrowserSurface:
-                        "exclude",
-
-                    surfaceSwitching:
-                        "include"
-                }
-            );
+        const publication =
+            await room.localParticipant
+                .setScreenShareEnabled(
+                    true,
+                    {
+                        contentHint:
+                            "detail"
+                    }
+                );
 
 
-        return getLocalScreenSharePublication(
-            room
-        );
+        return publication || null;
 
     } catch (error) {
 
@@ -615,24 +589,12 @@ export async function startScreenShare(
 
 
         if (
-            error?.message?.includes(
-                "getDisplayMedia"
-            )
-        ) {
-
-            throw new Error(
-                "المتصفح الحالي لا يدعم مشاركة الشاشة. استخدم مشاركة PDF المباشرة من زر PDF."
-            );
-        }
-
-
-        if (
             error?.name ===
             "NotAllowedError"
         ) {
 
             throw new Error(
-                "تم إلغاء مشاركة الشاشة."
+                "تم إلغاء مشاركة الشاشة أو رفض صلاحيتها."
             );
         }
 
@@ -646,7 +608,7 @@ export async function startScreenShare(
 
 
 /* =====================================================
-   Stop Normal Screen Share
+   NEW — Stop Screen Share
 ===================================================== */
 
 export async function stopScreenShare(
@@ -680,17 +642,16 @@ export async function stopScreenShare(
 
 
 /* =====================================================
-   Attach Local Camera
+   NEW — Get Screen Share Track
 ===================================================== */
 
-export function attachLocalCamera(
-    room,
-    container
+export function getLocalScreenShareTrack(
+    room
 ) {
 
     if (
         !room ||
-        !container
+        !room.localParticipant
     ) {
 
         return null;
@@ -698,9 +659,10 @@ export function attachLocalCamera(
 
 
     const publication =
-        getLocalCameraPublication(
-            room
-        );
+        room.localParticipant
+            .getTrackPublication(
+                Track.Source.ScreenShare
+            );
 
 
     if (
@@ -712,15 +674,12 @@ export function attachLocalCamera(
     }
 
 
-    return attachTrack(
-        publication.track,
-        container
-    );
+    return publication.track;
 }
 
 
 /* =====================================================
-   Attach Local Screen Share
+   NEW — Attach Screen Share
 ===================================================== */
 
 export function attachLocalScreenShare(
@@ -737,182 +696,33 @@ export function attachLocalScreenShare(
     }
 
 
-    const publication =
-        getLocalScreenSharePublication(
+    const track =
+        getLocalScreenShareTrack(
             room
         );
 
 
-    if (
-        !publication ||
-        !publication.track
-    ) {
+    if (!track) {
 
         return null;
     }
 
 
     return attachTrack(
-        publication.track,
+        track,
         container
     );
 }
 
 
 /* =====================================================
-   Publish PDF Canvas
-===================================================== */
-
-export async function publishPDFCanvas(
-    room,
-    canvas,
-    fps = 12
-) {
-
-    if (
-        !room ||
-        !room.localParticipant
-    ) {
-
-        throw new Error(
-            "غرفة LiveKit غير متصلة."
-        );
-    }
-
-
-    if (
-        !canvas ||
-        typeof canvas.captureStream !==
-        "function"
-    ) {
-
-        throw new Error(
-            "المتصفح لا يدعم تشغيل PDF كفيديو."
-        );
-    }
-
-
-    const stream =
-        canvas.captureStream(
-            fps
-        );
-
-
-    const videoTrack =
-        stream.getVideoTracks()[0];
-
-
-    if (!videoTrack) {
-
-        throw new Error(
-            "تعذر إنشاء مسار فيديو من ملف PDF."
-        );
-    }
-
-
-    try {
-
-        const publication =
-            await room.localParticipant
-                .publishTrack(
-                    videoTrack,
-                    {
-
-                        name:
-                            "pdf-share",
-
-                        source:
-                            Track.Source.ScreenShare,
-
-                        simulcast:
-                            false
-                    }
-                );
-
-
-        return {
-            publication,
-            videoTrack,
-            stream
-        };
-
-    } catch (error) {
-
-        videoTrack.stop();
-
-
-        console.error(
-            "PDF publish error:",
-            error
-        );
-
-
-        throw new Error(
-            error?.message ||
-            "تعذر إرسال ملف PDF إلى LiveKit."
-        );
-    }
-}
-
-
-/* =====================================================
-   Stop PDF Canvas
-===================================================== */
-
-export async function stopPDFCanvas(
-    room,
-    videoTrack
-) {
-
-    if (!videoTrack) {
-        return;
-    }
-
-
-    try {
-
-        if (
-            room &&
-            room.localParticipant
-        ) {
-
-            room.localParticipant
-                .unpublishTrack(
-                    videoTrack
-                );
-        }
-
-    } catch (error) {
-
-        console.warn(
-            "PDF unpublish error:",
-            error
-        );
-    }
-
-
-    try {
-
-        videoTrack.stop();
-
-    } catch (error) {
-
-        console.warn(
-            "PDF video track stop error:",
-            error
-        );
-    }
-}
-
-
-/* =====================================================
    Leave Room
+   القديم كما هو
 ===================================================== */
 
 export async function leaveLiveKit() {
 
     if (!currentRoom) {
-
         return;
     }
 
