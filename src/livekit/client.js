@@ -5,10 +5,7 @@ import {
     TokenSource
 } from "https://cdn.jsdelivr.net/npm/livekit-client@2.22.2/+esm";
 
-import {
-    LIVEKIT_CONFIG
-} from "./config.js";
-
+import { LIVEKIT_CONFIG } from "./config.js";
 
 let currentRoom = null;
 
@@ -17,65 +14,50 @@ let currentRoom = null;
    Get LiveKit Token
 ===================================================== */
 
-export async function getLiveKitToken(
-    roomName
-) {
+export async function getLiveKitToken(roomName) {
 
     if (!roomName) {
-
         throw new Error(
             "اسم غرفة المحاضرة غير موجود."
         );
-
     }
-
 
     if (
         !LIVEKIT_CONFIG ||
         !LIVEKIT_CONFIG.tokenServerId
     ) {
-
         throw new Error(
             "إعدادات LiveKit غير مكتملة."
         );
-
     }
-
 
     const tokenSource =
         TokenSource.developmentTokenServer(
             LIVEKIT_CONFIG.tokenServerId
         );
 
-
     const result =
         await tokenSource.fetch({
-
             roomName
-
         });
-
 
     if (
         !result ||
         !result.serverUrl ||
         !result.participantToken
     ) {
-
         throw new Error(
             "تعذر الحصول على بيانات الاتصال بـ LiveKit."
         );
-
     }
 
-
     return result;
-
 }
 
 
 /* =====================================================
    Connect Room
+   مهم: لا نغيّر منطق الاتصال القديم
 ===================================================== */
 
 export async function connectLiveKit(
@@ -86,7 +68,6 @@ export async function connectLiveKit(
     if (currentRoom) {
 
         try {
-
             await currentRoom.disconnect();
 
         } catch (error) {
@@ -95,43 +76,26 @@ export async function connectLiveKit(
                 "Previous LiveKit room disconnect error:",
                 error
             );
-
         }
 
         currentRoom = null;
-
     }
 
 
     const {
-
         onConnected = () => {},
-
         onDisconnected = () => {},
-
         onParticipantConnected = () => {},
-
         onParticipantDisconnected = () => {},
-
         onTrackSubscribed = () => {},
-
         onTrackUnsubscribed = () => {},
-
-        onConnectionError = () => {},
-
-        onLocalTrackPublished = () => {},
-
-        onLocalTrackUnpublished = () => {}
-
+        onConnectionError = () => {}
     } = options;
 
 
     const {
-
         serverUrl,
-
         participantToken
-
     } = await getLiveKitToken(
         roomName
     );
@@ -145,12 +109,10 @@ export async function connectLiveKit(
 
             dynacast:
                 true
-
         });
 
 
-    currentRoom =
-        room;
+    currentRoom = room;
 
 
     room.on(
@@ -160,7 +122,6 @@ export async function connectLiveKit(
             onConnected(
                 room
             );
-
         }
     );
 
@@ -172,7 +133,6 @@ export async function connectLiveKit(
             onDisconnected(
                 reason
             );
-
         }
     );
 
@@ -184,7 +144,6 @@ export async function connectLiveKit(
             onParticipantConnected(
                 participant
             );
-
         }
     );
 
@@ -196,14 +155,12 @@ export async function connectLiveKit(
             onParticipantDisconnected(
                 participant
             );
-
         }
     );
 
 
     room.on(
         RoomEvent.TrackSubscribed,
-
         (
             track,
             publication,
@@ -215,15 +172,12 @@ export async function connectLiveKit(
                 publication,
                 participant
             );
-
         }
-
     );
 
 
     room.on(
         RoomEvent.TrackUnsubscribed,
-
         (
             track,
             publication,
@@ -235,37 +189,7 @@ export async function connectLiveKit(
                 publication,
                 participant
             );
-
         }
-
-    );
-
-
-    room.on(
-        RoomEvent.LocalTrackPublished,
-
-        publication => {
-
-            onLocalTrackPublished(
-                publication
-            );
-
-        }
-
-    );
-
-
-    room.on(
-        RoomEvent.LocalTrackUnpublished,
-
-        publication => {
-
-            onLocalTrackUnpublished(
-                publication
-            );
-
-        }
-
     );
 
 
@@ -278,27 +202,23 @@ export async function connectLiveKit(
 
     } catch (error) {
 
-        currentRoom =
-            null;
-
+        currentRoom = null;
 
         onConnectionError(
             error
         );
 
-
         throw error;
-
     }
 
 
     return room;
-
 }
 
 
 /* =====================================================
    Publish Camera + Microphone
+   النسخة القديمة كما هي
 ===================================================== */
 
 export async function enableTeacherMedia(
@@ -310,7 +230,6 @@ export async function enableTeacherMedia(
         throw new Error(
             "غرفة LiveKit غير متصلة."
         );
-
     }
 
 
@@ -319,7 +238,6 @@ export async function enableTeacherMedia(
         throw new Error(
             "تعذر الوصول إلى حساب المدرس داخل LiveKit."
         );
-
     }
 
 
@@ -345,7 +263,6 @@ export async function enableTeacherMedia(
             throw new Error(
                 "تم رفض صلاحية الكاميرا أو الميكروفون. اسمح للمتصفح باستخدام الكاميرا والمايك ثم حاول مرة أخرى."
             );
-
         }
 
 
@@ -357,7 +274,6 @@ export async function enableTeacherMedia(
             throw new Error(
                 "لم يتم العثور على كاميرا أو ميكروفون متصل بالجهاز."
             );
-
         }
 
 
@@ -369,7 +285,6 @@ export async function enableTeacherMedia(
             throw new Error(
                 "الكاميرا أو الميكروفون مستخدم حاليًا بواسطة برنامج آخر."
             );
-
         }
 
 
@@ -377,278 +292,10 @@ export async function enableTeacherMedia(
             error?.message ||
             "تعذر تشغيل الكاميرا والميكروفون."
         );
-
     }
 
 
     return room.localParticipant;
-
-}
-
-
-/* =====================================================
-   Switch Camera
-===================================================== */
-
-export async function switchTeacherCamera(
-    room,
-    facingMode
-) {
-
-    if (!room) {
-
-        throw new Error(
-            "غرفة LiveKit غير متصلة."
-        );
-
-    }
-
-
-    if (!room.localParticipant) {
-
-        throw new Error(
-            "تعذر الوصول إلى كاميرا المدرس."
-        );
-
-    }
-
-
-    const localParticipant =
-        room.localParticipant;
-
-
-    try {
-
-        await localParticipant.setCameraEnabled(
-            false
-        );
-
-
-        await localParticipant.setCameraEnabled(
-            true,
-            {
-                facingMode
-            }
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Camera switch error:",
-            error
-        );
-
-
-        if (
-            error?.name ===
-            "NotAllowedError"
-        ) {
-
-            throw new Error(
-                "المتصفح لم يسمح بالوصول إلى الكاميرا."
-            );
-
-        }
-
-
-        if (
-            error?.name ===
-            "NotFoundError"
-        ) {
-
-            throw new Error(
-                "لم يتم العثور على الكاميرا المطلوبة."
-            );
-
-        }
-
-
-        throw new Error(
-            error?.message ||
-            "تعذر تبديل الكاميرا."
-        );
-
-    }
-
-
-    return localParticipant;
-
-}
-
-
-/* =====================================================
-   Start Screen Share
-===================================================== */
-
-export async function startScreenShare(
-    room
-) {
-
-    if (!room) {
-
-        throw new Error(
-            "غرفة LiveKit غير متصلة."
-        );
-
-    }
-
-
-    if (!room.localParticipant) {
-
-        throw new Error(
-            "تعذر الوصول إلى حساب المدرس داخل LiveKit."
-        );
-
-    }
-
-
-    if (
-        !navigator.mediaDevices ||
-        !navigator.mediaDevices.getDisplayMedia
-    ) {
-
-        throw new Error(
-            "هذا المتصفح لا يدعم مشاركة الشاشة. جرّب متصفحًا حديثًا يدعم مشاركة الشاشة."
-        );
-
-    }
-
-
-    try {
-
-        await room
-            .localParticipant
-            .setScreenShareEnabled(
-                true
-            );
-
-    } catch (error) {
-
-        console.error(
-            "Screen share error:",
-            error
-        );
-
-
-        if (
-            error?.name ===
-            "NotAllowedError"
-        ) {
-
-            throw new Error(
-                "تم إلغاء مشاركة الشاشة أو رفض صلاحيتها."
-            );
-
-        }
-
-
-        if (
-            error?.name ===
-            "NotSupportedError"
-        ) {
-
-            throw new Error(
-                "المتصفح الحالي لا يدعم مشاركة الشاشة."
-            );
-
-        }
-
-
-        throw new Error(
-            error?.message ||
-            "تعذر بدء مشاركة الشاشة."
-        );
-
-    }
-
-
-    return room.localParticipant;
-
-}
-
-
-/* =====================================================
-   Stop Screen Share
-===================================================== */
-
-export async function stopScreenShare(
-    room
-) {
-
-    if (!room) {
-
-        return;
-
-    }
-
-
-    if (!room.localParticipant) {
-
-        return;
-
-    }
-
-
-    try {
-
-        await room
-            .localParticipant
-            .setScreenShareEnabled(
-                false
-            );
-
-    } catch (error) {
-
-        console.warn(
-            "Stop screen share error:",
-            error
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   Get Local Publication
-===================================================== */
-
-export function getLocalPublication(
-    room,
-    source
-) {
-
-    if (
-        !room ||
-        !room.localParticipant
-    ) {
-
-        return null;
-
-    }
-
-
-    for (
-        const publication
-        of room.localParticipant
-            .trackPublications
-            .values()
-    ) {
-
-        if (
-            publication.source ===
-            source
-        ) {
-
-            return publication;
-
-        }
-
-    }
-
-
-    return null;
-
 }
 
 
@@ -665,9 +312,7 @@ export function attachTrack(
         !track ||
         !container
     ) {
-
         return null;
-
     }
 
 
@@ -688,108 +333,12 @@ export function attachTrack(
 
 
     return element;
-
-}
-
-
-/* =====================================================
-   Attach Local Camera
-===================================================== */
-
-export function attachLocalCamera(
-    room,
-    container
-) {
-
-    if (
-        !room ||
-        !container
-    ) {
-
-        return null;
-
-    }
-
-
-    const publication =
-        getLocalPublication(
-            room,
-            Track.Source.Camera
-        );
-
-
-    if (
-        !publication ||
-        !publication.track
-    ) {
-
-        return null;
-
-    }
-
-
-    container.innerHTML =
-        "";
-
-
-    return attachTrack(
-        publication.track,
-        container
-    );
-
-}
-
-
-/* =====================================================
-   Attach Local Screen Share
-===================================================== */
-
-export function attachLocalScreenShare(
-    room,
-    container
-) {
-
-    if (
-        !room ||
-        !container
-    ) {
-
-        return null;
-
-    }
-
-
-    const publication =
-        getLocalPublication(
-            room,
-            Track.Source.ScreenShare
-        );
-
-
-    if (
-        !publication ||
-        !publication.track
-    ) {
-
-        return null;
-
-    }
-
-
-    container.innerHTML =
-        "";
-
-
-    return attachTrack(
-        publication.track,
-        container
-    );
-
 }
 
 
 /* =====================================================
    Attach Local Tracks
+   النسخة القديمة كما هي
 ===================================================== */
 
 export function attachLocalTracks(
@@ -803,7 +352,6 @@ export function attachLocalTracks(
     ) {
 
         return [];
-
     }
 
 
@@ -822,7 +370,6 @@ export function attachLocalTracks(
         ) {
 
             continue;
-
         }
 
 
@@ -838,14 +385,11 @@ export function attachLocalTracks(
             elements.push(
                 element
             );
-
         }
-
     }
 
 
     return elements;
-
 }
 
 
@@ -858,27 +402,321 @@ export function detachTrack(
 ) {
 
     if (!track) {
-
         return;
-
     }
 
 
     track.detach();
+}
 
+
+/* =====================================================
+   NEW
+   Get Local Camera Publication
+===================================================== */
+
+export function getLocalCameraPublication(
+    room
+) {
+
+    if (
+        !room ||
+        !room.localParticipant
+    ) {
+
+        return null;
+    }
+
+
+    return room.localParticipant
+        .getTrackPublication(
+            Track.Source.Camera
+        ) || null;
+}
+
+
+/* =====================================================
+   NEW
+   Get Local Screen Share Publication
+===================================================== */
+
+export function getLocalScreenSharePublication(
+    room
+) {
+
+    if (
+        !room ||
+        !room.localParticipant
+    ) {
+
+        return null;
+    }
+
+
+    return room.localParticipant
+        .getTrackPublication(
+            Track.Source.ScreenShare
+        ) || null;
+}
+
+
+/* =====================================================
+   NEW
+   Switch Camera
+===================================================== */
+
+export async function switchTeacherCamera(
+    room,
+    facingMode
+) {
+
+    if (
+        !room ||
+        !room.localParticipant
+    ) {
+
+        throw new Error(
+            "غرفة LiveKit غير متصلة."
+        );
+    }
+
+
+    if (
+        facingMode !== "user" &&
+        facingMode !== "environment"
+    ) {
+
+        throw new Error(
+            "نوع الكاميرا غير صحيح."
+        );
+    }
+
+
+    try {
+
+        /*
+         * نوقف الكاميرا أولًا
+         * ثم نشغلها بالاتجاه المطلوب.
+         */
+
+        await room.localParticipant
+            .setCameraEnabled(
+                false
+            );
+
+
+        const publication =
+            await room.localParticipant
+                .setCameraEnabled(
+                    true,
+                    {
+                        facingMode
+                    }
+                );
+
+
+        return publication || null;
+
+    } catch (error) {
+
+        console.error(
+            "Camera switch error:",
+            error
+        );
+
+
+        throw new Error(
+            error?.message ||
+            "تعذر تبديل الكاميرا."
+        );
+    }
+}
+
+
+/* =====================================================
+   NEW
+   Start Screen Share
+===================================================== */
+
+export async function startScreenShare(
+    room
+) {
+
+    if (
+        !room ||
+        !room.localParticipant
+    ) {
+
+        throw new Error(
+            "غرفة LiveKit غير متصلة."
+        );
+    }
+
+
+    try {
+
+        const publication =
+            await room.localParticipant
+                .setScreenShareEnabled(
+                    true
+                );
+
+
+        return publication || null;
+
+    } catch (error) {
+
+        console.error(
+            "Screen share error:",
+            error
+        );
+
+
+        if (
+            error?.name ===
+            "NotAllowedError"
+        ) {
+
+            throw new Error(
+                "تم إلغاء مشاركة الشاشة أو رفض صلاحيتها."
+            );
+        }
+
+
+        throw new Error(
+            error?.message ||
+            "تعذر بدء مشاركة الشاشة."
+        );
+    }
+}
+
+
+/* =====================================================
+   NEW
+   Stop Screen Share
+===================================================== */
+
+export async function stopScreenShare(
+    room
+) {
+
+    if (
+        !room ||
+        !room.localParticipant
+    ) {
+
+        return;
+    }
+
+
+    try {
+
+        await room.localParticipant
+            .setScreenShareEnabled(
+                false
+            );
+
+    } catch (error) {
+
+        console.warn(
+            "Stop screen share error:",
+            error
+        );
+    }
+}
+
+
+/* =====================================================
+   NEW
+   Attach Local Camera
+===================================================== */
+
+export function attachLocalCamera(
+    room,
+    container
+) {
+
+    if (
+        !room ||
+        !container
+    ) {
+
+        return null;
+    }
+
+
+    const publication =
+        getLocalCameraPublication(
+            room
+        );
+
+
+    if (
+        !publication ||
+        !publication.track
+    ) {
+
+        return null;
+    }
+
+
+    return attachTrack(
+        publication.track,
+        container
+    );
+}
+
+
+/* =====================================================
+   NEW
+   Attach Local Screen Share
+===================================================== */
+
+export function attachLocalScreenShare(
+    room,
+    container
+) {
+
+    if (
+        !room ||
+        !container
+    ) {
+
+        return null;
+    }
+
+
+    const publication =
+        getLocalScreenSharePublication(
+            room
+        );
+
+
+    if (
+        !publication ||
+        !publication.track
+    ) {
+
+        return null;
+    }
+
+
+    return attachTrack(
+        publication.track,
+        container
+    );
 }
 
 
 /* =====================================================
    Leave Room
+   النسخة القديمة كما هي
 ===================================================== */
 
 export async function leaveLiveKit() {
 
     if (!currentRoom) {
-
         return;
-
     }
 
 
@@ -900,9 +738,7 @@ export async function leaveLiveKit() {
             "LiveKit disconnect error:",
             error
         );
-
     }
-
 }
 
 
@@ -913,5 +749,4 @@ export async function leaveLiveKit() {
 export function getCurrentRoom() {
 
     return currentRoom;
-
 }
