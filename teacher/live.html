@@ -35,24 +35,26 @@
             background:
                 #0f172a;
 
-            color: #ffffff;
+            color:
+                #ffffff;
 
             font-family:
                 Arial,
                 Tahoma,
                 sans-serif;
 
-            display: flex;
+            display:
+                flex;
 
-            flex-direction: column;
+            flex-direction:
+                column;
         }
 
 
         .header {
 
-            width: 100%;
-
-            padding: 18px;
+            padding:
+                16px;
 
             background:
                 #111827;
@@ -60,23 +62,30 @@
             border-bottom:
                 1px solid #334155;
 
-            display: flex;
+            display:
+                flex;
 
-            align-items: center;
+            justify-content:
+                space-between;
 
-            justify-content: space-between;
+            align-items:
+                center;
 
-            gap: 15px;
+            gap:
+                12px;
 
-            flex-wrap: wrap;
+            flex-wrap:
+                wrap;
         }
 
 
         .title {
 
-            font-size: 20px;
+            font-size:
+                20px;
 
-            font-weight: bold;
+            font-weight:
+                bold;
         }
 
 
@@ -85,41 +94,44 @@
             color:
                 #94a3b8;
 
-            font-size: 14px;
+            font-size:
+                14px;
         }
 
 
         .main {
 
-            flex: 1;
+            flex:
+                1;
 
-            padding: 20px;
-
-            width: 100%;
+            padding:
+                16px;
         }
 
 
         .video-grid {
 
-            width: 100%;
+            width:
+                100%;
 
-            max-width: 1100px;
+            max-width:
+                1100px;
 
-            margin: 0 auto;
-
-            display: grid;
-
-            gap: 15px;
+            margin:
+                0 auto;
         }
 
 
         .video-box {
 
-            position: relative;
+            position:
+                relative;
 
-            width: 100%;
+            width:
+                100%;
 
-            min-height: 350px;
+            min-height:
+                320px;
 
             background:
                 #020617;
@@ -127,86 +139,109 @@
             border:
                 1px solid #334155;
 
-            border-radius: 16px;
+            border-radius:
+                16px;
 
-            overflow: hidden;
+            overflow:
+                hidden;
 
-            display: flex;
+            display:
+                flex;
 
-            align-items: center;
+            align-items:
+                center;
 
-            justify-content: center;
+            justify-content:
+                center;
         }
 
 
         #teacherVideo {
 
-            width: 100%;
+            width:
+                100%;
 
-            height: 100%;
+            min-height:
+                320px;
 
-            min-height: 350px;
+            display:
+                flex;
 
-            display: flex;
+            align-items:
+                center;
 
-            align-items: center;
-
-            justify-content: center;
+            justify-content:
+                center;
         }
 
 
         #teacherVideo video {
 
-            width: 100%;
+            width:
+                100%;
 
-            height: 100%;
+            min-height:
+                320px;
 
-            min-height: 350px;
+            object-fit:
+                cover;
 
-            object-fit: cover;
-
-            display: block;
+            display:
+                block;
         }
 
 
         .placeholder {
 
-            position: absolute;
+            position:
+                absolute;
 
-            inset: 0;
+            inset:
+                0;
 
-            display: flex;
+            display:
+                flex;
 
-            align-items: center;
+            align-items:
+                center;
 
-            justify-content: center;
+            justify-content:
+                center;
 
-            flex-direction: column;
+            flex-direction:
+                column;
 
-            text-align: center;
+            text-align:
+                center;
 
             color:
                 #94a3b8;
 
-            font-size: 18px;
+            font-size:
+                18px;
 
-            line-height: 2;
+            line-height:
+                2;
         }
 
 
-        /*
-         * شاشة مشاركة الكتاب / PDF
-         */
+        /* =================================================
+           PDF AREA
+        ================================================= */
 
-        .screen-share-box {
+        .pdf-area {
 
-            display: none;
+            display:
+                none;
 
-            width: 100%;
+            margin:
+                16px auto 0;
 
-            max-width: 1100px;
+            width:
+                100%;
 
-            margin: 15px auto 0;
+            max-width:
+                1100px;
 
             background:
                 #020617;
@@ -214,83 +249,157 @@
             border:
                 1px solid #334155;
 
-            border-radius: 16px;
+            border-radius:
+                16px;
 
-            overflow: hidden;
-
-            position: relative;
+            overflow:
+                hidden;
         }
 
 
-        .screen-share-box.active {
+        .pdf-area.active {
 
-            display: block;
+            display:
+                block;
         }
 
 
-        .screen-share-title {
+        .pdf-header {
 
-            padding: 10px 15px;
+            padding:
+                10px 14px;
 
             background:
                 #1e293b;
 
+            display:
+                flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                center;
+
+            gap:
+                10px;
+
+            flex-wrap:
+                wrap;
+
+            font-size:
+                14px;
+
+            font-weight:
+                bold;
+        }
+
+
+        .pdf-canvas-wrapper {
+
+            width:
+                100%;
+
+            background:
+                #ffffff;
+
+            display:
+                flex;
+
+            justify-content:
+                center;
+
+            align-items:
+                center;
+
+            overflow:
+                auto;
+
+            padding:
+                10px;
+        }
+
+
+        #pdfCanvas {
+
+            display:
+                block;
+
+            max-width:
+                100%;
+
+            height:
+                auto;
+
+            background:
+                #ffffff;
+        }
+
+
+        .pdf-controls {
+
+            padding:
+                10px;
+
+            background:
+                #1e293b;
+
+            display:
+                flex;
+
+            justify-content:
+                center;
+
+            align-items:
+                center;
+
+            gap:
+                8px;
+
+            flex-wrap:
+                wrap;
+        }
+
+
+        .pdf-page-info {
+
             color:
-                #e2e8f0;
+                #cbd5e1;
 
-            font-size: 14px;
+            font-size:
+                14px;
 
-            font-weight: bold;
+            min-width:
+                100px;
+
+            text-align:
+                center;
         }
 
 
-        #screenShareVideo {
-
-            width: 100%;
-
-            min-height: 300px;
-
-            background:
-                #000;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-        }
-
-
-        #screenShareVideo video {
-
-            width: 100%;
-
-            height: auto;
-
-            max-height: 70vh;
-
-            object-fit: contain;
-
-            display: block;
-
-            background:
-                #000;
-        }
-
+        /* =================================================
+           MESSAGE
+        ================================================= */
 
         .message {
 
-            width: 100%;
+            width:
+                100%;
 
-            max-width: 1100px;
+            max-width:
+                1100px;
 
-            margin: 15px auto 0;
+            margin:
+                15px auto 0;
 
-            padding: 12px 15px;
+            padding:
+                12px 15px;
 
-            border-radius: 10px;
+            border-radius:
+                10px;
 
-            display: none;
+            display:
+                none;
 
             background:
                 #7f1d1d;
@@ -298,21 +407,26 @@
             color:
                 #fecaca;
 
-            font-size: 14px;
+            font-size:
+                14px;
         }
 
 
         .message.show {
 
-            display: block;
+            display:
+                block;
         }
 
 
+        /* =================================================
+           CONTROLS
+        ================================================= */
+
         .controls {
 
-            width: 100%;
-
-            padding: 15px;
+            padding:
+                14px;
 
             background:
                 #111827;
@@ -320,91 +434,100 @@
             border-top:
                 1px solid #334155;
 
-            display: flex;
+            display:
+                flex;
 
-            justify-content: center;
+            justify-content:
+                center;
 
-            align-items: center;
+            align-items:
+                center;
 
-            gap: 10px;
+            gap:
+                8px;
 
-            flex-wrap: wrap;
+            flex-wrap:
+                wrap;
         }
 
 
         .button {
 
-            border: 0;
+            border:
+                0;
 
-            border-radius: 10px;
+            border-radius:
+                10px;
 
-            padding: 12px 18px;
-
-            font-size: 14px;
-
-            font-weight: bold;
-
-            cursor: pointer;
-
-            background:
-                #334155;
+            padding:
+                12px 16px;
 
             color:
                 #ffffff;
 
-            transition:
-                0.2s ease;
-        }
+            background:
+                #334155;
 
+            font-size:
+                14px;
 
-        .button:hover {
+            font-weight:
+                bold;
 
-            opacity: 0.9;
+            cursor:
+                pointer;
         }
 
 
         .button:disabled {
 
-            opacity: 0.45;
+            opacity:
+                0.45;
 
-            cursor: not-allowed;
+            cursor:
+                not-allowed;
         }
 
 
-        .button.start {
+        .start {
 
             background:
                 #dc2626;
         }
 
 
-        .button.end {
+        .end {
 
             background:
                 #475569;
         }
 
 
-        .button.camera {
+        .camera {
 
             background:
                 #2563eb;
         }
 
 
-        .button.screen {
+        .screen {
 
             background:
                 #7c3aed;
         }
 
 
-        .button.stop-screen {
+        .pdf {
+
+            background:
+                #0891b2;
+        }
+
+
+        .stop {
 
             background:
                 #b91c1c;
-
-            display: none;
         }
 
 
@@ -412,49 +535,48 @@
             max-width: 600px
         ) {
 
-            .header {
-
-                align-items: flex-start;
-
-                flex-direction: column;
-            }
-
-
             .title {
 
-                font-size: 17px;
+                font-size:
+                    17px;
             }
 
 
             .main {
 
-                padding: 10px;
+                padding:
+                    10px;
             }
 
 
             .video-box {
 
-                min-height: 240px;
+                min-height:
+                    240px;
             }
 
 
             #teacherVideo {
 
-                min-height: 240px;
+                min-height:
+                    240px;
             }
 
 
             #teacherVideo video {
 
-                min-height: 240px;
+                min-height:
+                    240px;
             }
 
 
             .button {
 
-                flex: 1 1 calc(50% - 10px);
+                flex:
+                    1 1 calc(50% - 8px);
 
-                min-width: 140px;
+                min-width:
+                    135px;
             }
         }
 
@@ -495,7 +617,6 @@
 
             <div class="video-box">
 
-
                 <div
                     id="teacherVideo"
                 ></div>
@@ -517,30 +638,77 @@
             </div>
 
 
-            <!--
-                شاشة مشاركة الكتاب / PDF
-            -->
+            <!-- =================================================
+                 PDF
+            ================================================== -->
 
             <div
-                id="screenShareBox"
-                class="screen-share-box"
+                id="pdfArea"
+                class="pdf-area"
             >
 
                 <div
-                    class="screen-share-title"
+                    class="pdf-header"
                 >
-                    🖥️ مشاركة الشاشة — افتح الكتاب أو الـPDF على جهازك
+
+                    <span>
+                        📖 شرح الكتاب / PDF
+                    </span>
+
+
+                    <span
+                        id="pdfFileName"
+                    ></span>
+
                 </div>
 
 
                 <div
-                    id="screenShareVideo"
-                ></div>
+                    class="pdf-canvas-wrapper"
+                >
+
+                    <canvas
+                        id="pdfCanvas"
+                    ></canvas>
+
+                </div>
+
+
+                <div
+                    class="pdf-controls"
+                >
+
+                    <button
+                        id="pdfPreviousButton"
+                        class="button"
+                        disabled
+                    >
+                        ◀ الصفحة السابقة
+                    </button>
+
+
+                    <span
+                        id="pdfPageInfo"
+                        class="pdf-page-info"
+                    >
+                        0 / 0
+                    </span>
+
+
+                    <button
+                        id="pdfNextButton"
+                        class="button"
+                        disabled
+                    >
+                        الصفحة التالية ▶
+                    </button>
+
+                </div>
 
             </div>
 
-
         </div>
+
 
 
         <div
@@ -556,8 +724,6 @@
     <footer class="controls">
 
 
-        <!-- بدء البث -->
-
         <button
             id="startButton"
             class="button start"
@@ -565,8 +731,6 @@
             🔴 بدء البث
         </button>
 
-
-        <!-- إنهاء البث -->
 
         <button
             id="endButton"
@@ -577,8 +741,6 @@
         </button>
 
 
-        <!-- الكاميرا الأمامية -->
-
         <button
             id="frontCameraButton"
             class="button camera"
@@ -587,8 +749,6 @@
             🤳 الكاميرا الأمامية
         </button>
 
-
-        <!-- الكاميرا الخلفية -->
 
         <button
             id="backCameraButton"
@@ -599,8 +759,6 @@
         </button>
 
 
-        <!-- مشاركة الشاشة -->
-
         <button
             id="screenShareButton"
             class="button screen"
@@ -610,18 +768,23 @@
         </button>
 
 
-        <!-- إيقاف مشاركة الشاشة -->
-
         <button
-            id="stopScreenShareButton"
-            class="button stop-screen"
+            id="pdfButton"
+            class="button pdf"
             disabled
         >
-            ⛔ إيقاف مشاركة الشاشة
+            📖 فتح PDF للطلاب
         </button>
 
 
-        <!-- خروج -->
+        <button
+            id="stopShareButton"
+            class="button stop"
+            disabled
+        >
+            ⛔ إيقاف مشاركة PDF
+        </button>
+
 
         <button
             id="leaveButton"
@@ -630,8 +793,18 @@
             خروج
         </button>
 
-
     </footer>
+
+
+
+    <!-- =====================================================
+         PDF.JS
+    ====================================================== -->
+
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs"
+        type="module"
+    ></script>
 
 
 
@@ -661,13 +834,28 @@
             enableTeacherMedia,
             attachLocalTracks,
             attachLocalCamera,
-            attachLocalScreenShare,
-            getLocalScreenSharePublication,
             switchTeacherCamera,
             startScreenShare,
             stopScreenShare,
+            getLocalScreenSharePublication,
+            publishPDFCanvas,
+            stopPDFCanvas,
             leaveLiveKit
         } from "../src/livekit/client.js";
+
+
+
+        /* =====================================================
+           PDF.JS
+        ===================================================== */
+
+        import * as pdfjsLib
+            from
+            "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs";
+
+
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+            "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
 
 
 
@@ -705,18 +893,6 @@
             );
 
 
-        const screenShareBox =
-            document.getElementById(
-                "screenShareBox"
-            );
-
-
-        const screenShareVideo =
-            document.getElementById(
-                "screenShareVideo"
-            );
-
-
         const startButton =
             document.getElementById(
                 "startButton"
@@ -747,15 +923,57 @@
             );
 
 
-        const stopScreenShareButton =
+        const pdfButton =
             document.getElementById(
-                "stopScreenShareButton"
+                "pdfButton"
+            );
+
+
+        const stopShareButton =
+            document.getElementById(
+                "stopShareButton"
             );
 
 
         const leaveButton =
             document.getElementById(
                 "leaveButton"
+            );
+
+
+        const pdfArea =
+            document.getElementById(
+                "pdfArea"
+            );
+
+
+        const pdfCanvas =
+            document.getElementById(
+                "pdfCanvas"
+            );
+
+
+        const pdfFileName =
+            document.getElementById(
+                "pdfFileName"
+            );
+
+
+        const pdfPageInfo =
+            document.getElementById(
+                "pdfPageInfo"
+            );
+
+
+        const pdfPreviousButton =
+            document.getElementById(
+                "pdfPreviousButton"
+            );
+
+
+        const pdfNextButton =
+            document.getElementById(
+                "pdfNextButton"
             );
 
 
@@ -772,7 +990,21 @@
 
         let room = null;
 
-        let isBroadcasting = false;
+        let isBroadcasting =
+            false;
+
+
+        let pdfDocument =
+            null;
+
+        let pdfPage =
+            1;
+
+        let pdfRendering =
+            false;
+
+        let pdfVideoTrack =
+            null;
 
 
 
@@ -837,7 +1069,7 @@
 
 
         /* =====================================================
-           Enable Broadcast Controls
+           Broadcast Controls
         ===================================================== */
 
         function enableBroadcastControls() {
@@ -850,13 +1082,11 @@
 
             screenShareButton.disabled =
                 false;
+
+            pdfButton.disabled =
+                false;
         }
 
-
-
-        /* =====================================================
-           Disable Broadcast Controls
-        ===================================================== */
 
         function disableBroadcastControls() {
 
@@ -869,11 +1099,11 @@
             screenShareButton.disabled =
                 true;
 
-            stopScreenShareButton.disabled =
+            pdfButton.disabled =
                 true;
 
-            stopScreenShareButton.style.display =
-                "none";
+            stopShareButton.disabled =
+                true;
         }
 
 
@@ -896,11 +1126,6 @@
                     );
                 }
 
-
-                /*
-                 * مهم جدًا:
-                 * نفس الطريقة القديمة.
-                 */
 
                 teacher =
                     await protectTeacherPage();
@@ -975,7 +1200,6 @@
                     "جاهز لبدء البث"
                 );
 
-
             } catch (error) {
 
                 console.error(
@@ -1038,10 +1262,6 @@
                 );
 
 
-                /*
-                 * نفس الاتصال القديم
-                 */
-
                 room =
                     await connectLiveKit(
                         lecture.roomName,
@@ -1079,18 +1299,10 @@
                     );
 
 
-                /*
-                 * نفس تشغيل الكاميرا والمايك القديم
-                 */
-
                 await enableTeacherMedia(
                     room
                 );
 
-
-                /*
-                 * نفس إظهار الكاميرا القديم
-                 */
 
                 teacherVideo.innerHTML =
                     "";
@@ -1101,10 +1313,6 @@
                     teacherVideo
                 );
 
-
-                /*
-                 * التأكد أن الكاميرا موجودة
-                 */
 
                 const cameraPublication =
                     room.localParticipant
@@ -1118,36 +1326,15 @@
                     !cameraPublication.track
                 ) {
 
-                    /*
-                     * fallback باستخدام Track.Source
-                     */
-
-                    const camera =
-                        room.localParticipant
-                            .getTrackPublication(
-                                "camera"
-                            );
-
-                    if (
-                        !camera ||
-                        !camera.track
-                    ) {
-
-                        throw new Error(
-                            "تعذر تشغيل كاميرا المدرس."
-                        );
-                    }
+                    throw new Error(
+                        "تعذر تشغيل كاميرا المدرس."
+                    );
                 }
 
 
                 placeholder.style.display =
                     "none";
 
-
-                /*
-                 * تحديث Firestore
-                 * نفس النظام القديم
-                 */
 
                 await updateDoc(
 
@@ -1211,16 +1398,7 @@
 
                 if (room) {
 
-                    try {
-
-                        await leaveLiveKit();
-
-                    } catch (leaveError) {
-
-                        console.warn(
-                            leaveError
-                        );
-                    }
+                    await leaveLiveKit();
 
                     room =
                         null;
@@ -1271,11 +1449,19 @@
 
 
                 setStatus(
-                    facingMode === "environment"
+                    facingMode ===
+                    "environment"
+
                         ? "جاري تشغيل الكاميرا الخلفية..."
+
                         : "جاري تشغيل الكاميرا الأمامية..."
                 );
 
+
+                /*
+                 * restartTrack()
+                 * يغير الكاميرا على نفس Track.
+                 */
 
                 await switchTeacherCamera(
                     room,
@@ -1284,7 +1470,7 @@
 
 
                 /*
-                 * إعادة عرض الكاميرا محليًا
+                 * إعادة تركيب الفيديو المحلي فقط.
                  */
 
                 teacherVideo
@@ -1306,8 +1492,11 @@
 
 
                 setStatus(
-                    facingMode === "environment"
+                    facingMode ===
+                    "environment"
+
                         ? "🔴 البث مباشر — الكاميرا الخلفية"
+
                         : "🔴 البث مباشر — الكاميرا الأمامية"
                 );
 
@@ -1346,10 +1535,10 @@
 
 
         /* =====================================================
-           Start Screen Share
+           Normal Screen Share
         ===================================================== */
 
-        async function handleStartScreenShare() {
+        async function handleScreenShare() {
 
             if (
                 !room ||
@@ -1379,89 +1568,8 @@
                 );
 
 
-                /*
-                 * الحصول على Track مشاركة الشاشة
-                 */
-
-                screenShareVideo.innerHTML =
-                    "";
-
-
-                let publication = null;
-
-
-                /*
-                 * أحيانًا publication يحتاج
-                 * لحظة بسيطة بعد setScreenShareEnabled
-                 */
-
-                for (
-                    let attempt = 0;
-                    attempt < 10;
-                    attempt++
-                ) {
-
-                    publication =
-                        getLocalScreenSharePublication(
-                            room
-                        );
-
-
-                    if (
-                        publication &&
-                        publication.track
-                    ) {
-
-                        break;
-                    }
-
-
-                    await new Promise(
-                        resolve =>
-                            setTimeout(
-                                resolve,
-                                100
-                            )
-                    );
-                }
-
-
-                if (
-                    !publication ||
-                    !publication.track
-                ) {
-
-                    throw new Error(
-                        "تم تشغيل مشاركة الشاشة لكن تعذر عرضها محليًا."
-                    );
-                }
-
-
-                attachLocalScreenShare(
-                    room,
-                    screenShareVideo
-                );
-
-
-                screenShareBox.classList.add(
-                    "active"
-                );
-
-
-                screenShareButton.style.display =
-                    "none";
-
-
-                stopScreenShareButton.style.display =
-                    "inline-block";
-
-
-                stopScreenShareButton.disabled =
-                    false;
-
-
                 setStatus(
-                    "🔴 البث مباشر — مشاركة الشاشة مفعلة"
+                    "🔴 البث مباشر — مشاركة الشاشة"
                 );
 
 
@@ -1477,26 +1585,9 @@
                     false;
 
 
-                screenShareBox.classList.remove(
-                    "active"
-                );
-
-
-                screenShareVideo.innerHTML =
-                    "";
-
-
-                stopScreenShareButton.style.display =
-                    "none";
-
-
-                stopScreenShareButton.disabled =
-                    true;
-
-
                 showMessage(
                     error?.message ||
-                    "تعذر بدء مشاركة الشاشة."
+                    "مشاركة الشاشة غير متاحة في هذا المتصفح. استخدم زر PDF."
                 );
 
 
@@ -1509,60 +1600,381 @@
 
 
         /* =====================================================
-           Stop Screen Share
+           PDF File Picker
         ===================================================== */
 
-        async function handleStopScreenShare() {
+        function createPDFFilePicker() {
 
-            if (!room) {
+            const input =
+                document.createElement(
+                    "input"
+                );
+
+
+            input.type =
+                "file";
+
+
+            input.accept =
+                "application/pdf,.pdf";
+
+
+            input.style.display =
+                "none";
+
+
+            document.body.appendChild(
+                input
+            );
+
+
+            input.addEventListener(
+                "change",
+                async () => {
+
+                    const file =
+                        input.files?.[0];
+
+
+                    input.remove();
+
+
+                    if (!file) {
+
+                        return;
+                    }
+
+
+                    await openPDF(
+                        file
+                    );
+                }
+            );
+
+
+            input.click();
+        }
+
+
+
+        /* =====================================================
+           Open PDF
+        ===================================================== */
+
+        async function openPDF(
+            file
+        ) {
+
+            if (
+                !room ||
+                !isBroadcasting
+            ) {
+
+                showMessage(
+                    "ابدأ البث أولًا ثم افتح ملف PDF."
+                );
+
                 return;
             }
 
 
             try {
 
-                await stopScreenShare(
-                    room
+                hideMessage();
+
+
+                pdfButton.disabled =
+                    true;
+
+
+                setStatus(
+                    "جاري تحميل الكتاب..."
+                );
+
+
+                /*
+                 * لو فيه PDF قديم
+                 * نوقفه أولًا.
+                 */
+
+                await stopPDFShare();
+
+
+                const arrayBuffer =
+                    await file.arrayBuffer();
+
+
+                pdfDocument =
+                    await pdfjsLib.getDocument({
+                        data:
+                            arrayBuffer
+                    }).promise;
+
+
+                pdfPage =
+                    1;
+
+
+                pdfFileName.textContent =
+                    file.name;
+
+
+                pdfArea.classList.add(
+                    "active"
+                );
+
+
+                await renderPDFPage();
+
+
+                /*
+                 * بعد رسم الصفحة على Canvas
+                 * نحول الـCanvas إلى Video Track
+                 * ونرسله إلى LiveKit.
+                 */
+
+                const result =
+                    await publishPDFCanvas(
+                        room,
+                        pdfCanvas,
+                        12
+                    );
+
+
+                pdfVideoTrack =
+                    result.videoTrack;
+
+
+                stopShareButton.disabled =
+                    false;
+
+
+                pdfPreviousButton.disabled =
+                    false;
+
+
+                pdfNextButton.disabled =
+                    pdfPage >=
+                    pdfDocument.numPages;
+
+
+                setStatus(
+                    "🔴 البث مباشر — الكتاب ظاهر للطلاب"
                 );
 
 
             } catch (error) {
 
-                console.warn(
-                    "Stop screen share error:",
+                console.error(
+                    "PDF error:",
                     error
                 );
+
+
+                pdfArea.classList.remove(
+                    "active"
+                );
+
+
+                showMessage(
+                    error?.message ||
+                    "تعذر تشغيل ملف PDF."
+                );
+
+
+                setStatus(
+                    "🔴 البث مباشر"
+                );
+
+            } finally {
+
+                pdfButton.disabled =
+                    false;
+            }
+        }
+
+
+
+        /* =====================================================
+           Render PDF Page
+        ===================================================== */
+
+        async function renderPDFPage() {
+
+            if (
+                !pdfDocument ||
+                pdfRendering
+            ) {
+
+                return;
             }
 
 
-            screenShareVideo.innerHTML =
-                "";
+            pdfRendering =
+                true;
 
 
-            screenShareBox.classList.remove(
+            try {
+
+                const page =
+                    await pdfDocument
+                        .getPage(
+                            pdfPage
+                        );
+
+
+                /*
+                 * جودة مناسبة للموبايل والبث.
+                 */
+
+                const viewport =
+                    page.getViewport({
+                        scale:
+                            1.5
+                    });
+
+
+                pdfCanvas.width =
+                    viewport.width;
+
+
+                pdfCanvas.height =
+                    viewport.height;
+
+
+                const context =
+                    pdfCanvas.getContext(
+                        "2d"
+                    );
+
+
+                await page.render({
+
+                    canvasContext:
+                        context,
+
+                    viewport:
+                        viewport
+
+                }).promise;
+
+
+                pdfPageInfo.textContent =
+                    `${pdfPage} / ${pdfDocument.numPages}`;
+
+
+                pdfPreviousButton.disabled =
+                    pdfPage <= 1;
+
+
+                pdfNextButton.disabled =
+                    pdfPage >=
+                    pdfDocument.numPages;
+
+            } finally {
+
+                pdfRendering =
+                    false;
+            }
+        }
+
+
+
+        /* =====================================================
+           Previous PDF Page
+        ===================================================== */
+
+        async function previousPDFPage() {
+
+            if (
+                !pdfDocument ||
+                pdfPage <= 1
+            ) {
+
+                return;
+            }
+
+
+            pdfPage--;
+
+
+            await renderPDFPage();
+        }
+
+
+
+        /* =====================================================
+           Next PDF Page
+        ===================================================== */
+
+        async function nextPDFPage() {
+
+            if (
+                !pdfDocument ||
+                pdfPage >=
+                pdfDocument.numPages
+            ) {
+
+                return;
+            }
+
+
+            pdfPage++;
+
+
+            await renderPDFPage();
+        }
+
+
+
+        /* =====================================================
+           Stop PDF Share
+        ===================================================== */
+
+        async function stopPDFShare() {
+
+            if (pdfVideoTrack) {
+
+                try {
+
+                    await stopPDFCanvas(
+                        room,
+                        pdfVideoTrack
+                    );
+
+                } catch (error) {
+
+                    console.warn(
+                        "PDF stop error:",
+                        error
+                    );
+                }
+
+
+                pdfVideoTrack =
+                    null;
+            }
+
+
+            pdfArea.classList.remove(
                 "active"
             );
 
 
-            stopScreenShareButton.style.display =
-                "none";
+            pdfPageInfo.textContent =
+                "0 / 0";
 
 
-            stopScreenShareButton.disabled =
+            stopShareButton.disabled =
                 true;
 
 
-            screenShareButton.style.display =
-                "inline-block";
+            if (isBroadcasting) {
 
-
-            screenShareButton.disabled =
-                false;
-
-
-            setStatus(
-                "🔴 البث مباشر"
-            );
+                setStatus(
+                    "🔴 البث مباشر"
+                );
+            }
         }
 
 
@@ -1579,24 +1991,19 @@
                     true;
 
 
-                /*
-                 * إيقاف مشاركة الشاشة أولًا
-                 */
+                await stopPDFShare();
+
 
                 if (
                     room &&
-                    room.localParticipant &&
                     room.localParticipant
-                        .isScreenShareEnabled
                 ) {
 
-                    await handleStopScreenShare();
+                    await stopScreenShare(
+                        room
+                    );
                 }
 
-
-                /*
-                 * تحديث Firebase
-                 */
 
                 if (lectureId) {
 
@@ -1619,10 +2026,6 @@
                     );
                 }
 
-
-                /*
-                 * الخروج من LiveKit
-                 */
 
                 await leaveLiveKit();
 
@@ -1684,6 +2087,8 @@
 
             try {
 
+                await stopPDFShare();
+
                 await leaveLiveKit();
 
             } catch (error) {
@@ -1740,13 +2145,31 @@
 
         screenShareButton.addEventListener(
             "click",
-            handleStartScreenShare
+            handleScreenShare
         );
 
 
-        stopScreenShareButton.addEventListener(
+        pdfButton.addEventListener(
             "click",
-            handleStopScreenShare
+            createPDFFilePicker
+        );
+
+
+        stopShareButton.addEventListener(
+            "click",
+            stopPDFShare
+        );
+
+
+        pdfPreviousButton.addEventListener(
+            "click",
+            previousPDFPage
+        );
+
+
+        pdfNextButton.addEventListener(
+            "click",
+            nextPDFPage
         );
 
 
