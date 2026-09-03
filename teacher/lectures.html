@@ -632,6 +632,16 @@ async function loadLectures() {
 
               </span>
 
+              ${
+                lecture.isLive
+                ? `
+                  <span class="badge green">
+                    🔴 البث مباشر الآن
+                  </span>
+                `
+                : ""
+              }
+
               <div class="actions">
 
                 <button
@@ -655,6 +665,39 @@ async function loadLectures() {
                     : "نشر"
                   }
                 </button>
+
+                ${
+                  lecture.isLive
+                  ? `
+                    <button
+                      class="btn btn-danger end-live-btn"
+                      data-id="${lecture.id}"
+                    >
+                      ⛔ إنهاء البث
+                    </button>
+                  `
+                  : `
+                    <button
+                      class="btn btn-primary start-live-btn"
+                      data-id="${lecture.id}"
+                    >
+                      🔴 بدء البث
+                    </button>
+                  `
+                }
+
+                ${
+                  lecture.isLive
+                  ? `
+                    <button
+                      class="btn btn-secondary enter-live-btn"
+                      data-id="${lecture.id}"
+                    >
+                      🎥 دخول البث
+                    </button>
+                  `
+                  : ""
+                }
 
                 <button
                   class="btn btn-primary exam-btn"
@@ -709,6 +752,42 @@ async function loadLectures() {
       button.addEventListener(
         "click",
         () => togglePublish(button.dataset.id)
+      );
+
+    });
+
+
+  document
+    .querySelectorAll(".start-live-btn")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => startLive(button.dataset.id)
+      );
+
+    });
+
+
+  document
+    .querySelectorAll(".end-live-btn")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => endLive(button.dataset.id)
+      );
+
+    });
+
+
+  document
+    .querySelectorAll(".enter-live-btn")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => enterLive(button.dataset.id)
       );
 
     });
@@ -893,21 +972,53 @@ form.addEventListener(
 
       } else {
 
-        await addDoc(
-          collection(db, "lectures"),
+        const lectureRef =
+          await addDoc(
+            collection(db, "lectures"),
+            {
+              ...data,
+
+              isPublished:
+                false,
+
+              isLive:
+                false,
+
+              roomName:
+                "",
+
+              recordingUrl:
+                "",
+
+              recordingStatus:
+                "pending",
+
+              createdAt:
+                serverTimestamp(),
+
+              updatedAt:
+                serverTimestamp()
+            }
+          );
+
+
+        const roomName =
+          `masar-lecture-${lectureRef.id}`;
+
+
+        await updateDoc(
+          lectureRef,
           {
-            ...data,
-            isPublished: false,
-            isLive: false,
-            roomName: "",
-            recordingUrl: "",
-            recordingStatus: "pending",
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
+            roomName:
+              roomName,
+
+            updatedAt:
+              serverTimestamp()
           }
         );
 
-        alert("تم إنشاء المحاضرة بنجاح.");
+
+        alert("تم إنشاء المحاضرة والغرفة بنجاح.");
       }
 
       modal.classList.remove("show");
@@ -955,6 +1066,158 @@ async function togglePublish(id) {
 
     alert("تعذر تغيير حالة النشر.");
   }
+}
+
+
+// =====================================================
+// Start Live Broadcast
+// =====================================================
+
+async function startLive(id) {
+
+  try {
+
+    const lecture =
+      lectures.find(x => x.id === id);
+
+    if (!lecture) {
+      alert("المحاضرة غير موجودة.");
+      return;
+    }
+
+
+    if (!lecture.isPublished) {
+
+      alert(
+        "يجب نشر المحاضرة للطلاب أولًا قبل بدء البث."
+      );
+
+      return;
+    }
+
+
+    let roomName =
+      lecture.roomName;
+
+
+    if (!roomName) {
+
+      roomName =
+        `masar-lecture-${id}`;
+
+
+      await updateDoc(
+        doc(db, "lectures", id),
+        {
+          roomName:
+            roomName,
+
+          updatedAt:
+            serverTimestamp()
+        }
+      );
+
+    }
+
+
+    await updateDoc(
+      doc(db, "lectures", id),
+      {
+        isLive:
+          true,
+
+        roomName:
+          roomName,
+
+        updatedAt:
+          serverTimestamp()
+      }
+    );
+
+
+    window.location.href =
+      `live.html?lectureId=${encodeURIComponent(id)}`;
+
+  } catch (error) {
+
+    console.error(
+      "Start live error:",
+      error
+    );
+
+    alert(
+      "تعذر بدء البث."
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// End Live Broadcast
+// =====================================================
+
+async function endLive(id) {
+
+  const lecture =
+    lectures.find(x => x.id === id);
+
+  if (!lecture) return;
+
+
+  const confirmed =
+    confirm(
+      `هل تريد إنهاء بث المحاضرة "${lecture.title}"؟`
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  try {
+
+    await updateDoc(
+      doc(db, "lectures", id),
+      {
+        isLive:
+          false,
+
+        updatedAt:
+          serverTimestamp()
+      }
+    );
+
+
+    await loadLectures();
+
+  } catch (error) {
+
+    console.error(
+      "End live error:",
+      error
+    );
+
+    alert(
+      "تعذر إنهاء البث."
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// Enter Live Broadcast
+// =====================================================
+
+function enterLive(id) {
+
+  window.location.href =
+    `live.html?lectureId=${encodeURIComponent(id)}`;
+
 }
 
 
