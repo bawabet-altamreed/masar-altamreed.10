@@ -98,8 +98,7 @@ export async function connectLiveKit(
 
         }
 
-        currentRoom =
-            null;
+        currentRoom = null;
 
     }
 
@@ -118,6 +117,10 @@ export async function connectLiveKit(
 
         onTrackUnsubscribed = () => {},
 
+        onLocalTrackPublished = () => {},
+
+        onLocalTrackUnpublished = () => {},
+
         onConnectionError = () => {}
 
     } = options;
@@ -126,6 +129,7 @@ export async function connectLiveKit(
     const {
 
         serverUrl,
+
         participantToken
 
     } = await getLiveKitToken(
@@ -227,6 +231,30 @@ export async function connectLiveKit(
                 track,
                 publication,
                 participant
+            );
+
+        }
+    );
+
+
+    room.on(
+        RoomEvent.LocalTrackPublished,
+        publication => {
+
+            onLocalTrackPublished(
+                publication
+            );
+
+        }
+    );
+
+
+    room.on(
+        RoomEvent.LocalTrackUnpublished,
+        publication => {
+
+            onLocalTrackUnpublished(
+                publication
             );
 
         }
@@ -351,6 +379,248 @@ export async function enableTeacherMedia(
 
 
 /* =====================================================
+   Switch Camera
+   Front <-> Back
+===================================================== */
+
+export async function switchTeacherCamera(
+    room,
+    facingMode = "environment"
+) {
+
+    if (!room) {
+
+        throw new Error(
+            "غرفة LiveKit غير متصلة."
+        );
+
+    }
+
+
+    const localParticipant =
+        room.localParticipant;
+
+
+    if (!localParticipant) {
+
+        throw new Error(
+            "تعذر الوصول إلى كاميرا المدرس."
+        );
+
+    }
+
+
+    const publication =
+        localParticipant.getTrackPublication(
+            Track.Source.Camera
+        );
+
+
+    if (
+        !publication ||
+        !publication.track
+    ) {
+
+        throw new Error(
+            "كاميرا المدرس غير مفعلة حاليًا."
+        );
+
+    }
+
+
+    const videoTrack =
+        publication.track;
+
+
+    try {
+
+        await videoTrack.restartTrack({
+
+            facingMode
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Camera switch error:",
+            error
+        );
+
+
+        throw new Error(
+            error?.message ||
+            "تعذر تبديل الكاميرا."
+        );
+
+    }
+
+
+    return videoTrack;
+
+}
+
+
+/* =====================================================
+   Start Screen Share
+===================================================== */
+
+export async function startScreenShare(
+    room
+) {
+
+    if (!room) {
+
+        throw new Error(
+            "غرفة LiveKit غير متصلة."
+        );
+
+    }
+
+
+    if (!room.localParticipant) {
+
+        throw new Error(
+            "تعذر الوصول إلى حساب المدرس داخل LiveKit."
+        );
+
+    }
+
+
+    if (
+        !navigator.mediaDevices ||
+        !navigator.mediaDevices.getDisplayMedia
+    ) {
+
+        throw new Error(
+            "متصفحك لا يدعم مشاركة الشاشة. جرّب متصفحًا حديثًا يدعم مشاركة الشاشة."
+        );
+
+    }
+
+
+    try {
+
+        await room.localParticipant.setScreenShareEnabled(
+            true,
+            {
+
+                audio: false,
+
+                contentHint:
+                    "detail"
+
+            }
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Screen share error:",
+            error
+        );
+
+
+        if (
+            error?.name ===
+            "NotAllowedError"
+        ) {
+
+            throw new Error(
+                "تم إلغاء مشاركة الشاشة أو رفض صلاحيتها."
+            );
+
+        }
+
+
+        throw new Error(
+            error?.message ||
+            "تعذر بدء مشاركة الشاشة."
+        );
+
+    }
+
+
+    const publication =
+        room.localParticipant.getTrackPublication(
+            Track.Source.ScreenShare
+        );
+
+
+    return publication?.track || null;
+
+}
+
+
+/* =====================================================
+   Stop Screen Share
+===================================================== */
+
+export async function stopScreenShare(
+    room
+) {
+
+    if (!room) {
+
+        return;
+
+    }
+
+
+    if (!room.localParticipant) {
+
+        return;
+
+    }
+
+
+    try {
+
+        await room.localParticipant.setScreenShareEnabled(
+            false
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "Stop screen share error:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   Is Screen Sharing
+===================================================== */
+
+export function isScreenSharing(
+    room
+) {
+
+    if (!room?.localParticipant) {
+
+        return false;
+
+    }
+
+
+    const publication =
+        room.localParticipant.getTrackPublication(
+            Track.Source.ScreenShare
+        );
+
+
+    return Boolean(
+        publication?.track
+    );
+
+}
+
+
+/* =====================================================
    Attach Track To Element
 ===================================================== */
 
@@ -373,11 +643,21 @@ export function attachTrack(
         track.attach();
 
 
-    element.autoplay =
-        true;
+    if (
+        element instanceof
+        HTMLVideoElement
+    ) {
 
-    element.playsInline =
-        true;
+        element.autoplay =
+            true;
+
+        element.playsInline =
+            true;
+
+        element.muted =
+            true;
+
+    }
 
 
     container.appendChild(
@@ -391,7 +671,7 @@ export function attachTrack(
 
 
 /* =====================================================
-   Attach Local Tracks
+   Attach Local Video Tracks
 ===================================================== */
 
 export function attachLocalTracks(
@@ -428,6 +708,21 @@ export function attachLocalTracks(
         }
 
 
+        /*
+          لا نعرض Audio Track محليًا
+          حتى لا يحصل Echo للمدرس.
+        */
+
+        if (
+            publication.kind !==
+            "video"
+        ) {
+
+            continue;
+
+        }
+
+
         const element =
             attachTrack(
                 publication.track,
@@ -447,6 +742,92 @@ export function attachLocalTracks(
 
 
     return elements;
+
+}
+
+
+/* =====================================================
+   Attach Camera Track
+===================================================== */
+
+export function attachCameraTrack(
+    room,
+    container
+) {
+
+    if (
+        !room ||
+        !container
+    ) {
+
+        return null;
+
+    }
+
+
+    const publication =
+        room.localParticipant.getTrackPublication(
+            Track.Source.Camera
+        );
+
+
+    if (
+        !publication ||
+        !publication.track
+    ) {
+
+        return null;
+
+    }
+
+
+    return attachTrack(
+        publication.track,
+        container
+    );
+
+}
+
+
+/* =====================================================
+   Attach Screen Track
+===================================================== */
+
+export function attachScreenTrack(
+    room,
+    container
+) {
+
+    if (
+        !room ||
+        !container
+    ) {
+
+        return null;
+
+    }
+
+
+    const publication =
+        room.localParticipant.getTrackPublication(
+            Track.Source.ScreenShare
+        );
+
+
+    if (
+        !publication ||
+        !publication.track
+    ) {
+
+        return null;
+
+    }
+
+
+    return attachTrack(
+        publication.track,
+        container
+    );
 
 }
 
