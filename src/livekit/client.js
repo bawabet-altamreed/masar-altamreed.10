@@ -3,7 +3,7 @@ import {
     RoomEvent,
     Track,
     TokenSource
-} from "https://cdn.jsdelivr.net/npm/livekit-client@2.15.3/dist/livekit-client.esm.mjs";
+} from "https://cdn.jsdelivr.net/npm/livekit-client@2.22.2/+esm";
 
 import {
     LIVEKIT_CONFIG
@@ -22,9 +22,23 @@ export async function getLiveKitToken(
 ) {
 
     if (!roomName) {
+
         throw new Error(
             "اسم غرفة المحاضرة غير موجود."
         );
+
+    }
+
+
+    if (
+        !LIVEKIT_CONFIG ||
+        !LIVEKIT_CONFIG.tokenServerId
+    ) {
+
+        throw new Error(
+            "إعدادات LiveKit غير مكتملة."
+        );
+
     }
 
 
@@ -36,8 +50,23 @@ export async function getLiveKitToken(
 
     const result =
         await tokenSource.fetch({
+
             roomName
+
         });
+
+
+    if (
+        !result ||
+        !result.serverUrl ||
+        !result.participantToken
+    ) {
+
+        throw new Error(
+            "تعذر الحصول على بيانات الاتصال بـ LiveKit."
+        );
+
+    }
 
 
     return result;
@@ -54,6 +83,27 @@ export async function connectLiveKit(
     options = {}
 ) {
 
+    if (currentRoom) {
+
+        try {
+
+            await currentRoom.disconnect();
+
+        } catch (error) {
+
+            console.warn(
+                "Previous LiveKit room disconnect error:",
+                error
+            );
+
+        }
+
+        currentRoom =
+            null;
+
+    }
+
+
     const {
 
         onConnected = () => {},
@@ -66,7 +116,9 @@ export async function connectLiveKit(
 
         onTrackSubscribed = () => {},
 
-        onTrackUnsubscribed = () => {}
+        onTrackUnsubscribed = () => {},
+
+        onConnectionError = () => {}
 
     } = options;
 
@@ -84,9 +136,11 @@ export async function connectLiveKit(
     const room =
         new Room({
 
-            adaptiveStream: true,
+            adaptiveStream:
+                true,
 
-            dynacast: true
+            dynacast:
+                true
 
         });
 
@@ -179,10 +233,27 @@ export async function connectLiveKit(
     );
 
 
-    await room.connect(
-        serverUrl,
-        participantToken
-    );
+    try {
+
+        await room.connect(
+            serverUrl,
+            participantToken
+        );
+
+    } catch (error) {
+
+        currentRoom =
+            null;
+
+
+        onConnectionError(
+            error
+        );
+
+
+        throw error;
+
+    }
 
 
     return room;
@@ -199,13 +270,79 @@ export async function enableTeacherMedia(
 ) {
 
     if (!room) {
+
         throw new Error(
             "غرفة LiveKit غير متصلة."
         );
+
     }
 
 
-    await room.localParticipant.enableCameraAndMicrophone();
+    if (!room.localParticipant) {
+
+        throw new Error(
+            "تعذر الوصول إلى حساب المدرس داخل LiveKit."
+        );
+
+    }
+
+
+    try {
+
+        await room
+            .localParticipant
+            .enableCameraAndMicrophone();
+
+    } catch (error) {
+
+        console.error(
+            "Camera/Microphone error:",
+            error
+        );
+
+
+        if (
+            error?.name ===
+            "NotAllowedError"
+        ) {
+
+            throw new Error(
+                "تم رفض صلاحية الكاميرا أو الميكروفون. اسمح للمتصفح باستخدام الكاميرا والمايك ثم حاول مرة أخرى."
+            );
+
+        }
+
+
+        if (
+            error?.name ===
+            "NotFoundError"
+        ) {
+
+            throw new Error(
+                "لم يتم العثور على كاميرا أو ميكروفون متصل بالجهاز."
+            );
+
+        }
+
+
+        if (
+            error?.name ===
+            "NotReadableError"
+        ) {
+
+            throw new Error(
+                "الكاميرا أو الميكروفون مستخدم حاليًا بواسطة برنامج آخر."
+            );
+
+        }
+
+
+        throw new Error(
+            error?.message ||
+            "تعذر تشغيل الكاميرا والميكروفون."
+        );
+
+    }
 
 
     return room.localParticipant;
@@ -222,13 +359,25 @@ export function attachTrack(
     container
 ) {
 
-    if (!track || !container) {
+    if (
+        !track ||
+        !container
+    ) {
+
         return null;
+
     }
 
 
     const element =
         track.attach();
+
+
+    element.autoplay =
+        true;
+
+    element.playsInline =
+        true;
 
 
     container.appendChild(
@@ -242,6 +391,67 @@ export function attachTrack(
 
 
 /* =====================================================
+   Attach Local Tracks
+===================================================== */
+
+export function attachLocalTracks(
+    room,
+    container
+) {
+
+    if (
+        !room ||
+        !container
+    ) {
+
+        return [];
+
+    }
+
+
+    const elements = [];
+
+
+    for (
+        const publication
+        of room.localParticipant
+            .trackPublications
+            .values()
+    ) {
+
+        if (
+            !publication.track
+        ) {
+
+            continue;
+
+        }
+
+
+        const element =
+            attachTrack(
+                publication.track,
+                container
+            );
+
+
+        if (element) {
+
+            elements.push(
+                element
+            );
+
+        }
+
+    }
+
+
+    return elements;
+
+}
+
+
+/* =====================================================
    Remove Track
 ===================================================== */
 
@@ -250,7 +460,9 @@ export function detachTrack(
 ) {
 
     if (!track) {
+
         return;
+
     }
 
 
@@ -266,18 +478,30 @@ export function detachTrack(
 export async function leaveLiveKit() {
 
     if (!currentRoom) {
+
         return;
+
     }
+
+
+    const room =
+        currentRoom;
+
+
+    currentRoom =
+        null;
 
 
     try {
 
-        await currentRoom.disconnect();
+        await room.disconnect();
 
-    } finally {
+    } catch (error) {
 
-        currentRoom =
-            null;
+        console.warn(
+            "LiveKit disconnect error:",
+            error
+        );
 
     }
 
