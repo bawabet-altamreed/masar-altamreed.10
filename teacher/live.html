@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>
+    بث المحاضرة | مسار التمريض
+</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    font-family:
+        Arial,
+        Tahoma,
+        sans-serif;
+
+    background:
+        #071923;
+
+    color:
+        white;
+
+}
+
+.live-page {
+
+    min-height:
+        100vh;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+}
+
+.header {
+
+    background:
+        #0c2735;
+
+    padding:
+        15px 20px;
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
+
+    gap:
+        15px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.08);
+
+}
+
+.title {
+
+    font-size:
+        18px;
+
+    font-weight:
+        bold;
+
+}
+
+.status {
+
+    padding:
+        7px 12px;
+
+    border-radius:
+        20px;
+
+    background:
+        #253b45;
+
+    color:
+        #b8c8cf;
+
+    font-size:
+        11px;
+
+}
+
+.status.connected {
+
+    background:
+        #123b2a;
+
+    color:
+        #72e3a8;
+
+}
+
+.status.error {
+
+    background:
+        #401d1d;
+
+    color:
+        #ff9b9b;
+
+}
+
+.main {
+
+    flex:
+        1;
+
+    padding:
+        18px;
+
+}
+
+.video-grid {
+
+    width:
+        100%;
+
+    max-width:
+        1200px;
+
+    margin:
+        auto;
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr;
+
+    gap:
+        15px;
+
+}
+
+.video-box {
+
+    position:
+        relative;
+
+    background:
+        #000;
+
+    border-radius:
+        16px;
+
+    overflow:
+        hidden;
+
+    min-height:
+        560px;
+
+}
+
+.video-box video {
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    min-height:
+        560px;
+
+    object-fit:
+        contain;
+
+}
+
+.placeholder {
+
+    position:
+        absolute;
+
+    inset:
+        0;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    color:
+        #8da0aa;
+
+    text-align:
+        center;
+
+    line-height:
+        2;
+
+}
+
+.controls {
+
+    background:
+        #0c2735;
+
+    padding:
+        15px;
+
+    display:
+        flex;
+
+    justify-content:
+        center;
+
+    gap:
+        10px;
+
+    flex-wrap:
+        wrap;
+
+}
+
+.button {
+
+    border:
+        none;
+
+    border-radius:
+        10px;
+
+    padding:
+        12px 20px;
+
+    cursor:
+        pointer;
+
+    font-family:
+        inherit;
+
+    font-weight:
+        bold;
+
+    background:
+        #087ea4;
+
+    color:
+        white;
+
+}
+
+.button.start {
+
+    background:
+        #16834f;
+
+}
+
+.button.end {
+
+    background:
+        #b42318;
+
+}
+
+.button:disabled {
+
+    opacity:
+        .5;
+
+    cursor:
+        not-allowed;
+
+}
+
+.message {
+
+    max-width:
+        1200px;
+
+    margin:
+        15px auto 0;
+
+    padding:
+        12px;
+
+    border-radius:
+        10px;
+
+    background:
+        #401d1d;
+
+    color:
+        #ffb1b1;
+
+    display:
+        none;
+
+}
+
+.message.show {
+
+    display:
+        block;
+
+}
+
+@media (max-width:700px) {
+
+    .video-box,
+    .video-box video {
+
+        min-height:
+            350px;
+
+    }
+
+    .header {
+
+        flex-direction:
+            column;
+
+        align-items:
+            stretch;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<div class="live-page">
+
+
+    <header class="header">
+
+        <div
+            class="title"
+            id="lectureTitle"
+        >
+            جاري تحميل المحاضرة...
+        </div>
+
+
+        <div
+            id="connectionStatus"
+            class="status"
+        >
+            جاري التحميل...
+        </div>
+
+    </header>
+
+
+    <main class="main">
+
+        <div class="video-grid">
+
+            <div class="video-box">
+
+                <div
+                    id="teacherVideo"
+                ></div>
+
+
+                <div
+                    id="placeholder"
+                    class="placeholder"
+                >
+
+                    🎥
+
+                    <br>
+
+                    الكاميرا لم تبدأ بعد
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="message"
+            class="message"
+        >
+        </div>
+
+    </main>
+
+
+    <footer class="controls">
+
+        <button
+            id="startButton"
+            class="button start"
+        >
+            🔴 بدء البث
+        </button>
+
+
+        <button
+            id="endButton"
+            class="button end"
+            disabled
+        >
+            ⏹ إنهاء البث
+        </button>
+
+
+        <button
+            id="leaveButton"
+            class="button"
+        >
+            خروج
+        </button>
+
+    </footer>
+
+</div>
+
+
+<script type="module">
+
+import {
+
+    doc,
+    getDoc,
+    updateDoc,
+    serverTimestamp
+
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+import {
+
+    db
+
+} from "../src/firebase/init.js";
+
+
+import {
+
+    protectTeacherPage
+
+} from "../src/teacher/teacher.js";
+
+
+import {
+
+    connectLiveKit,
+    enableTeacherMedia,
+    leaveLiveKit
+
+} from "../src/livekit/client.js";
+
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+
+const lectureId =
+    params.get(
+        "lectureId"
+    );
+
+
+const lectureTitle =
+    document.getElementById(
+        "lectureTitle"
+    );
+
+
+const connectionStatus =
+    document.getElementById(
+        "connectionStatus"
+    );
+
+
+const teacherVideo =
+    document.getElementById(
+        "teacherVideo"
+    );
+
+
+const placeholder =
+    document.getElementById(
+        "placeholder"
+    );
+
+
+const message =
+    document.getElementById(
+        "message"
+    );
+
+
+const startButton =
+    document.getElementById(
+        "startButton"
+    );
+
+
+const endButton =
+    document.getElementById(
+        "endButton"
+    );
+
+
+const leaveButton =
+    document.getElementById(
+        "leaveButton"
+    );
+
+
+let teacher = null;
+
+let lecture = null;
+
+let room = null;
+
+
+/* =====================================================
+   Error
+===================================================== */
+
+function showError(
+    text
+) {
+
+    message.textContent =
+        text;
+
+    message.classList.add(
+        "show"
+    );
+
+
+    connectionStatus.textContent =
+        "حدث خطأ";
+
+    connectionStatus.className =
+        "status error";
+
+}
+
+
+/* =====================================================
+   Load Lecture
+===================================================== */
+
+async function loadLecture() {
+
+    if (!lectureId) {
+
+        throw new Error(
+            "معرّف المحاضرة غير موجود."
+        );
+
+    }
+
+
+    const result =
+        await protectTeacherPage();
+
+
+    teacher =
+        result.teacher;
+
+
+    const lectureSnap =
+        await getDoc(
+            doc(
+                db,
+                "lectures",
+                lectureId
+            )
+        );
+
+
+    if (
+        !lectureSnap.exists()
+    ) {
+
+        throw new Error(
+            "المحاضرة غير موجودة."
+        );
+
+    }
+
+
+    lecture = {
+
+        id:
+            lectureSnap.id,
+
+        ...lectureSnap.data()
+
+    };
+
+
+    if (
+        lecture.teacherId !==
+        teacher.uid
+    ) {
+
+        throw new Error(
+            "هذه المحاضرة ليست تابعة لحسابك."
+        );
+
+    }
+
+
+    if (
+        !lecture.roomName
+    ) {
+
+        throw new Error(
+            "غرفة المحاضرة غير مجهزة."
+        );
+
+    }
+
+
+    lectureTitle.textContent =
+        lecture.title ||
+        "المحاضرة المباشرة";
+
+
+    if (
+        lecture.isLive ===
+        true
+    ) {
+
+        startButton.disabled =
+            true;
+
+        endButton.disabled =
+            false;
+
+        connectionStatus.textContent =
+            "🔴 المحاضرة مباشرة";
+
+    }
+
+}
+
+
+/* =====================================================
+   Start Broadcast
+===================================================== */
+
+startButton.addEventListener(
+    "click",
+    async () => {
+
+        if (!lecture) {
+            return;
+        }
+
+
+        startButton.disabled =
+            true;
+
+
+        try {
+
+            connectionStatus.textContent =
+                "جاري الاتصال بـ LiveKit...";
+
+
+            room =
+                await connectLiveKit(
+                    lecture.roomName,
+                    {
+
+                        onConnected() {
+
+                            connectionStatus.textContent =
+                                "🟢 متصل بـ LiveKit";
+
+                            connectionStatus.className =
+                                "status connected";
+
+                        },
+
+                        onDisconnected() {
+
+                            connectionStatus.textContent =
+                                "تم قطع الاتصال";
+
+                            connectionStatus.className =
+                                "status error";
+
+                        }
+
+                    }
+                );
+
+
+            await enableTeacherMedia(
+                room
+            );
+
+
+            const localParticipant =
+                room.localParticipant;
+
+
+            for (
+                const publication
+                of localParticipant
+                    .trackPublications
+                    .values()
+            ) {
+
+                if (
+                    publication.track
+                ) {
+
+                    const element =
+                        publication.track.attach();
+
+
+                    teacherVideo.appendChild(
+                        element
+                    );
+
+                }
+
+            }
+
+
+            placeholder.style.display =
+                "none";
+
+
+            await updateDoc(
+                doc(
+                    db,
+                    "lectures",
+                    lectureId
+                ),
+                {
+
+                    isLive:
+                        true,
+
+                    isPublished:
+                        true,
+
+                    updatedAt:
+                        serverTimestamp()
+
+                }
+            );
+
+
+            endButton.disabled =
+                false;
+
+
+        } catch (error) {
+
+            console.error(
+                "Teacher LiveKit error:",
+                error
+            );
+
+
+            startButton.disabled =
+                false;
+
+
+            showError(
+                error.message ||
+                "تعذر بدء البث."
+            );
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   End Broadcast
+===================================================== */
+
+endButton.addEventListener(
+    "click",
+    async () => {
+
+        if (
+            !confirm(
+                "هل أنت متأكد من إنهاء المحاضرة المباشرة؟"
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        endButton.disabled =
+            true;
+
+
+        try {
+
+            await updateDoc(
+                doc(
+                    db,
+                    "lectures",
+                    lectureId
+                ),
+                {
+
+                    isLive:
+                        false,
+
+                    updatedAt:
+                        serverTimestamp()
+
+                }
+            );
+
+
+            await leaveLiveKit();
+
+
+            room =
+                null;
+
+
+            connectionStatus.textContent =
+                "تم إنهاء البث";
+
+            connectionStatus.className =
+                "status";
+
+
+            startButton.disabled =
+                true;
+
+
+        } catch (error) {
+
+            console.error(
+                error
+            );
+
+
+            showError(
+                "حدث خطأ أثناء إنهاء البث."
+            );
+
+            endButton.disabled =
+                false;
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   Leave
+===================================================== */
+
+leaveButton.addEventListener(
+    "click",
+    async () => {
+
+        await leaveLiveKit();
+
+        window.location.href =
+            "lectures.html";
+
+    }
+);
+
+
+window.addEventListener(
+    "beforeunload",
+    () => {
+
+        leaveLiveKit();
+
+    }
+);
+
+
+/* =====================================================
+   Init
+===================================================== */
+
+try {
+
+    await loadLecture();
+
+} catch (error) {
+
+    console.error(
+        error
+    );
+
+    showError(
+        error.message ||
+        "تعذر تحميل المحاضرة."
+    );
+
+}
+
+</script>
+
+</body>
+</html>
