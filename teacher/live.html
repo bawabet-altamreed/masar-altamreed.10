@@ -477,7 +477,9 @@ import {
 
     connectLiveKit,
     enableTeacherMedia,
-    leaveLiveKit
+    attachLocalTracks,
+    leaveLiveKit,
+    getCurrentRoom
 
 } from "../src/livekit/client.js";
 
@@ -575,6 +577,22 @@ function showError(
 
 
 /* =====================================================
+   Clear Error
+===================================================== */
+
+function clearError() {
+
+    message.textContent =
+        "";
+
+    message.classList.remove(
+        "show"
+    );
+
+}
+
+
+/* =====================================================
    Load Lecture
 ===================================================== */
 
@@ -589,12 +607,25 @@ async function loadLecture() {
     }
 
 
+    connectionStatus.textContent =
+        "جاري تحميل المحاضرة...";
+
+
     const result =
         await protectTeacherPage();
 
 
     teacher =
         result.teacher;
+
+
+    if (!teacher) {
+
+        throw new Error(
+            "تعذر التحقق من حساب المدرس."
+        );
+
+    }
 
 
     const lectureSnap =
@@ -645,7 +676,7 @@ async function loadLecture() {
     ) {
 
         throw new Error(
-            "غرفة المحاضرة غير مجهزة."
+            "غرفة المحاضرة غير مجهزة. ارجع إلى صفحة المحاضرات وأنشئ المحاضرة من جديد."
         );
 
     }
@@ -662,13 +693,18 @@ async function loadLecture() {
     ) {
 
         startButton.disabled =
-            true;
+            false;
 
         endButton.disabled =
             false;
 
         connectionStatus.textContent =
             "🔴 المحاضرة مباشرة";
+
+    } else {
+
+        connectionStatus.textContent =
+            "جاهز لبدء البث";
 
     }
 
@@ -679,136 +715,238 @@ async function loadLecture() {
    Start Broadcast
 ===================================================== */
 
-startButton.addEventListener(
-    "click",
-    async () => {
+async function startBroadcast() {
 
-        if (!lecture) {
-            return;
+    if (!lecture) {
+
+        showError(
+            "لم يتم تحميل بيانات المحاضرة."
+        );
+
+        return;
+
+    }
+
+
+    if (!lecture.roomName) {
+
+        showError(
+            "اسم غرفة LiveKit غير موجود."
+        );
+
+        return;
+
+    }
+
+
+    clearError();
+
+
+    startButton.disabled =
+        true;
+
+    endButton.disabled =
+        true;
+
+
+    try {
+
+        connectionStatus.textContent =
+            "جاري الاتصال بـ LiveKit...";
+
+        connectionStatus.className =
+            "status";
+
+
+        room =
+            await connectLiveKit(
+                lecture.roomName,
+                {
+
+                    onConnected() {
+
+                        connectionStatus.textContent =
+                            "🟢 تم الاتصال بـ LiveKit";
+
+                        connectionStatus.className =
+                            "status connected";
+
+                    },
+
+                    onDisconnected() {
+
+                        connectionStatus.textContent =
+                            "تم قطع الاتصال";
+
+                        connectionStatus.className =
+                            "status error";
+
+                    },
+
+                    onConnectionError(
+                        error
+                    ) {
+
+                        console.error(
+                            "LiveKit connection error:",
+                            error
+                        );
+
+                    }
+
+                }
+            );
+
+
+        if (!room) {
+
+            throw new Error(
+                "تعذر إنشاء اتصال LiveKit."
+            );
+
         }
+
+
+        connectionStatus.textContent =
+            "🟢 متصل — جاري تشغيل الكاميرا...";
+
+
+        connectionStatus.className =
+            "status connected";
+
+
+        await enableTeacherMedia(
+            room
+        );
+
+
+        teacherVideo.innerHTML =
+            "";
+
+
+        attachLocalTracks(
+            room,
+            teacherVideo
+        );
+
+
+        const localParticipant =
+            room.localParticipant;
+
+
+        const hasVideo =
+            Array
+                .from(
+                    localParticipant
+                        .trackPublications
+                        .values()
+                )
+                .some(
+                    publication =>
+                        publication.track &&
+                        publication.kind ===
+                        "video"
+                );
+
+
+        if (!hasVideo) {
+
+            throw new Error(
+                "تم الاتصال بـ LiveKit لكن لم يتم تشغيل كاميرا المدرس."
+            );
+
+        }
+
+
+        placeholder.style.display =
+            "none";
+
+
+        await updateDoc(
+            doc(
+                db,
+                "lectures",
+                lectureId
+            ),
+            {
+
+                isLive:
+                    true,
+
+                isPublished:
+                    true,
+
+                roomName:
+                    lecture.roomName,
+
+                updatedAt:
+                    serverTimestamp()
+
+            }
+        );
+
+
+        lecture.isLive =
+            true;
 
 
         startButton.disabled =
             true;
 
-
-        try {
-
-            connectionStatus.textContent =
-                "جاري الاتصال بـ LiveKit...";
+        endButton.disabled =
+            false;
 
 
-            room =
-                await connectLiveKit(
-                    lecture.roomName,
-                    {
+        connectionStatus.textContent =
+            "🔴 البث مباشر الآن";
 
-                        onConnected() {
-
-                            connectionStatus.textContent =
-                                "🟢 متصل بـ LiveKit";
-
-                            connectionStatus.className =
-                                "status connected";
-
-                        },
-
-                        onDisconnected() {
-
-                            connectionStatus.textContent =
-                                "تم قطع الاتصال";
-
-                            connectionStatus.className =
-                                "status error";
-
-                        }
-
-                    }
-                );
+        connectionStatus.className =
+            "status connected";
 
 
-            await enableTeacherMedia(
-                room
-            );
+    } catch (error) {
+
+        console.error(
+            "Teacher LiveKit error:",
+            error
+        );
 
 
-            const localParticipant =
-                room.localParticipant;
+        await leaveLiveKit();
 
 
-            for (
-                const publication
-                of localParticipant
-                    .trackPublications
-                    .values()
-            ) {
-
-                if (
-                    publication.track
-                ) {
-
-                    const element =
-                        publication.track.attach();
+        room =
+            null;
 
 
-                    teacherVideo.appendChild(
-                        element
-                    );
+        startButton.disabled =
+            false;
 
-                }
-
-            }
+        endButton.disabled =
+            true;
 
 
-            placeholder.style.display =
-                "none";
+        placeholder.style.display =
+            "flex";
 
 
-            await updateDoc(
-                doc(
-                    db,
-                    "lectures",
-                    lectureId
-                ),
-                {
-
-                    isLive:
-                        true,
-
-                    isPublished:
-                        true,
-
-                    updatedAt:
-                        serverTimestamp()
-
-                }
-            );
-
-
-            endButton.disabled =
-                false;
-
-
-        } catch (error) {
-
-            console.error(
-                "Teacher LiveKit error:",
-                error
-            );
-
-
-            startButton.disabled =
-                false;
-
-
-            showError(
-                error.message ||
-                "تعذر بدء البث."
-            );
-
-        }
+        showError(
+            error?.message ||
+            "تعذر بدء البث."
+        );
 
     }
+
+}
+
+
+/* =====================================================
+   Start Button
+===================================================== */
+
+startButton.addEventListener(
+    "click",
+    startBroadcast
 );
 
 
@@ -862,6 +1000,10 @@ endButton.addEventListener(
                 null;
 
 
+            lecture.isLive =
+                false;
+
+
             connectionStatus.textContent =
                 "تم إنهاء البث";
 
@@ -870,19 +1012,33 @@ endButton.addEventListener(
 
 
             startButton.disabled =
+                false;
+
+            endButton.disabled =
                 true;
+
+
+            teacherVideo.innerHTML =
+                "";
+
+
+            placeholder.style.display =
+                "flex";
 
 
         } catch (error) {
 
             console.error(
+                "End broadcast error:",
                 error
             );
 
 
             showError(
+                error?.message ||
                 "حدث خطأ أثناء إنهاء البث."
             );
+
 
             endButton.disabled =
                 false;
@@ -910,6 +1066,10 @@ leaveButton.addEventListener(
 );
 
 
+/* =====================================================
+   Before Unload
+===================================================== */
+
 window.addEventListener(
     "beforeunload",
     () => {
@@ -931,11 +1091,20 @@ try {
 } catch (error) {
 
     console.error(
+        "Load lecture error:",
         error
     );
 
+
+    startButton.disabled =
+        true;
+
+    endButton.disabled =
+        true;
+
+
     showError(
-        error.message ||
+        error?.message ||
         "تعذر تحميل المحاضرة."
     );
 
