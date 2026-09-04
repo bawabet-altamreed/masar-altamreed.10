@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "313911491183",
+    "project_id": "masar-altamreed-62334",
+    "storage_bucket": "masar-altamreed-62334.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:313911491183:android:2befc59e31972107e2eb9a",
+        "android_client_info": {
+          "package_name": "com.masaraltamreed.teacher"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsvLGrH-aSVK67fS_SLH7s8YG8zAsujn8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
