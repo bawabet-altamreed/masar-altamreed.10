@@ -707,6 +707,13 @@ async function loadLectures() {
                 </button>
 
                 <button
+                  class="btn btn-primary open-teacher-app"
+                  data-lecture-id="${lecture.id}"
+                >
+                  📱 فتح في تطبيق المدرس
+                </button>
+
+                <button
                   class="btn btn-danger delete-btn"
                   data-id="${lecture.id}"
                 >
@@ -1219,6 +1226,45 @@ function enterLive(id) {
     `live.html?lectureId=${encodeURIComponent(id)}`;
 
 }
+
+
+// =====================================================
+// Open Lecture In Teacher App
+// =====================================================
+
+document.addEventListener(
+  "click",
+  (event) => {
+
+    const button =
+      event.target.closest(
+        ".open-teacher-app"
+      );
+
+    if (!button) {
+      return;
+    }
+
+
+    const lectureId =
+      button.dataset.lectureId;
+
+
+    if (!lectureId) {
+      return;
+    }
+
+
+    const appUrl =
+      `masaraltamreed://lecture?lectureId=${encodeURIComponent(
+        lectureId
+      )}`;
+
+
+    window.location.href =
+      appUrl;
+  }
+);
 
 
 async function deleteLecture(id) {
