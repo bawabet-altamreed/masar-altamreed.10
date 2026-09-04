@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.projection.MediaProjectionManager
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -15,6 +16,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FieldValue
+
 import io.livekit.android.LiveKit
 import io.livekit.android.renderer.SurfaceViewRenderer
 import io.livekit.android.room.Room
@@ -24,9 +29,13 @@ import io.livekit.android.token.TokenRequestOptions
 import io.livekit.android.token.TokenSource
 
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
 
     private lateinit var room: Room
 
@@ -54,10 +63,6 @@ class MainActivity : AppCompatActivity() {
         "masaraltamreed-5uoy7c"
 
 
-    private val liveKitUrl =
-        "wss://masar-al-tamreed-yao3ibc5.livekit.cloud"
-
-
     private val screenCaptureLauncher =
         registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -74,10 +79,8 @@ class MainActivity : AppCompatActivity() {
                 return@registerForActivityResult
             }
 
-
-            val permissionData =
+            val data =
                 result.data!!
-
 
             lifecycleScope.launch {
 
@@ -86,9 +89,8 @@ class MainActivity : AppCompatActivity() {
                     room.localParticipant
                         .setScreenShareEnabled(
                             true,
-                            permissionData
+                            data
                         )
-
 
                     isSharingScreen = true
 
@@ -103,12 +105,7 @@ class MainActivity : AppCompatActivity() {
                     statusText.text =
                         "فشل تشغيل مشاركة الشاشة"
 
-                    Toast.makeText(
-                        this@MainActivity,
-                        error.message
-                            ?: "خطأ غير معروف",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    showError(error)
                 }
             }
         }
@@ -129,7 +126,6 @@ class MainActivity : AppCompatActivity() {
                     Manifest.permission.RECORD_AUDIO
                 ] == true
 
-
             if (
                 cameraGranted &&
                 microphoneGranted
@@ -139,11 +135,9 @@ class MainActivity : AppCompatActivity() {
 
             } else {
 
-                Toast.makeText(
-                    this,
-                    "يجب السماح بالكاميرا والميكروفون",
-                    Toast.LENGTH_LONG
-                ).show()
+                showMessage(
+                    "يجب السماح بالكاميرا والميكروفون"
+                )
             }
         }
 
@@ -157,6 +151,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(
             R.layout.activity_main
         )
+
+
+        auth =
+            FirebaseAuth.getInstance()
+
+        db =
+            FirebaseFirestore.getInstance()
 
 
         lectureTitle =
@@ -195,26 +196,17 @@ class MainActivity : AppCompatActivity() {
         )
 
 
-        /*
-         * مؤقتًا نقرأ lectureId من Intent.
-         *
-         * مثال:
-         *
-         * teacher-app://lecture?lectureId=ABC
-         */
-
         lectureId =
-            intent.getStringExtra(
-                "lectureId"
-            )
+            getLectureIdFromIntent()
 
 
-        if (
-            lectureId.isNullOrBlank()
-        ) {
+        if (lectureId.isNullOrBlank()) {
+
+            lectureTitle.text =
+                "لم يتم تحديد المحاضرة"
 
             statusText.text =
-                "معرّف المحاضرة غير موجود"
+                "افتح المحاضرة من لوحة المدرس"
 
             startButton.isEnabled =
                 false
@@ -227,70 +219,217 @@ class MainActivity : AppCompatActivity() {
 
 
         startButton.setOnClickListener {
-
             requestPermissionsAndConnect()
         }
 
 
         switchCameraButton.setOnClickListener {
-
             switchCamera()
         }
 
 
         shareScreenButton.setOnClickListener {
-
             requestScreenShare()
         }
 
 
         stopShareButton.setOnClickListener {
-
             stopScreenShare()
         }
 
 
         endButton.setOnClickListener {
-
             endLecture()
         }
     }
 
 
+    private fun getLectureIdFromIntent(): String? {
+
+        val directExtra =
+            intent.getStringExtra(
+                "lectureId"
+            )
+
+        if (!directExtra.isNullOrBlank()) {
+            return directExtra
+        }
+
+
+        val data: Uri? =
+            intent.data
+
+
+        return data?.getQueryParameter(
+            "lectureId"
+        )
+    }
+
+
     private fun loadLecture() {
 
-        /*
-         * هنا هنربط Firebase Firestore.
-         *
-         * نجيب:
-         *
-         * lectures/{lectureId}
-         *
-         * ثم:
-         *
-         * teacherId
-         * title
-         * roomName
-         * isLive
-         *
-         * ونتأكد أن المحاضرة تخص المدرس الحالي.
-         *
-         * سيتم وضع كود Firebase Android
-         * في الخطوة التالية بعد إضافة Firebase
-         * إلى مشروع Android.
-         */
+        lifecycleScope.launch {
 
-        lectureTitle.text =
-            "المحاضرة: $lectureId"
+            try {
 
-        statusText.text =
-            "جاهز لبدء المحاضرة"
+                statusText.text =
+                    "جاري التحقق من المحاضرة..."
+
+
+                val firebaseUser =
+                    auth.currentUser
+                        ?: throw Exception(
+                            "يجب تسجيل الدخول أولًا"
+                        )
+
+
+                /*
+                 * 1
+                 * المستخدم الحالي
+                 */
+
+                val userSnapshot =
+                    db.collection("users")
+                        .document(firebaseUser.uid)
+                        .get()
+                        .await()
+
+
+                if (!userSnapshot.exists()) {
+                    throw Exception(
+                        "بيانات المدرس غير موجودة"
+                    )
+                }
+
+
+                val userData =
+                    userSnapshot.data
+                        ?: throw Exception(
+                            "بيانات المدرس غير صالحة"
+                        )
+
+
+                val role =
+                    userData["role"] as? String
+
+                val active =
+                    userData["isActive"]
+                        as? Boolean ?: false
+
+
+                if (role != "teacher") {
+                    throw Exception(
+                        "الحساب الحالي ليس حساب مدرس"
+                    )
+                }
+
+
+                if (!active) {
+                    throw Exception(
+                        "حساب المدرس غير مفعل"
+                    )
+                }
+
+
+                /*
+                 * 2
+                 * المحاضرة
+                 */
+
+                val lectureSnapshot =
+                    db.collection("lectures")
+                        .document(
+                            lectureId!!
+                        )
+                        .get()
+                        .await()
+
+
+                if (!lectureSnapshot.exists()) {
+
+                    throw Exception(
+                        "المحاضرة غير موجودة"
+                    )
+                }
+
+
+                val lecture =
+                    lectureSnapshot.data
+                        ?: throw Exception(
+                            "بيانات المحاضرة غير صالحة"
+                        )
+
+
+                /*
+                 * 3
+                 * التأكد أن المحاضرة
+                 * تخص المدرس الحالي
+                 */
+
+                val teacherId =
+                    lecture["teacherId"]
+                        as? String
+
+
+                if (
+                    teacherId !=
+                    firebaseUser.uid
+                ) {
+
+                    throw Exception(
+                        "هذه المحاضرة ليست تابعة لحسابك"
+                    )
+                }
+
+
+                /*
+                 * 4
+                 * roomName
+                 */
+
+                val loadedRoomName =
+                    lecture["roomName"]
+                        as? String
+
+
+                if (
+                    loadedRoomName.isNullOrBlank()
+                ) {
+
+                    throw Exception(
+                        "غرفة LiveKit غير مجهزة لهذه المحاضرة"
+                    )
+                }
+
+
+                roomName =
+                    loadedRoomName
+
+
+                lectureTitle.text =
+                    lecture["title"]
+                        as? String
+                        ?: "المحاضرة"
+
+
+                statusText.text =
+                    "جاهز لبدء المحاضرة"
+
+
+            } catch (error: Exception) {
+
+                startButton.isEnabled =
+                    false
+
+                showError(error)
+            }
+        }
     }
 
 
     private fun requestPermissionsAndConnect() {
 
-        val requiredPermissions =
+        val needed =
             mutableListOf<String>()
 
 
@@ -301,7 +440,7 @@ class MainActivity : AppCompatActivity() {
             ) != PackageManager.PERMISSION_GRANTED
         ) {
 
-            requiredPermissions.add(
+            needed.add(
                 Manifest.permission.CAMERA
             )
         }
@@ -314,22 +453,20 @@ class MainActivity : AppCompatActivity() {
             ) != PackageManager.PERMISSION_GRANTED
         ) {
 
-            requiredPermissions.add(
+            needed.add(
                 Manifest.permission.RECORD_AUDIO
             )
         }
 
 
-        if (
-            requiredPermissions.isEmpty()
-        ) {
+        if (needed.isEmpty()) {
 
             connectToLiveKit()
 
         } else {
 
             permissionsLauncher.launch(
-                requiredPermissions.toTypedArray()
+                needed.toTypedArray()
             )
         }
     }
@@ -341,27 +478,20 @@ class MainActivity : AppCompatActivity() {
 
             try {
 
+                val actualRoom =
+                    roomName
+                        ?: throw Exception(
+                            "اسم غرفة LiveKit غير موجود"
+                        )
+
+
                 statusText.text =
                     "جاري الاتصال بـ LiveKit..."
 
 
                 /*
-                 * بعد جلب roomName من Firestore:
+                 * Development Token Server
                  */
-
-                val actualRoomName =
-                    roomName
-
-
-                if (
-                    actualRoomName.isNullOrBlank()
-                ) {
-
-                    throw Exception(
-                        "غرفة المحاضرة غير موجودة"
-                    )
-                }
-
 
                 val tokenSource =
                     TokenSource
@@ -371,13 +501,26 @@ class MainActivity : AppCompatActivity() {
                         .cached()
 
 
-                val credentials =
+                val result =
                     tokenSource.fetch(
                         TokenRequestOptions(
-                            roomName =
-                                actualRoomName
+                            roomName = actualRoom,
+                            participantName =
+                                auth.currentUser?.email
+                                    ?: "Teacher",
+                            participantIdentity =
+                                auth.currentUser?.uid
                         )
-                    ).getOrThrow()
+                    )
+
+
+                val credentials =
+                    result.getOrElse {
+                        throw Exception(
+                            it.message
+                                ?: "تعذر الحصول على LiveKit Token"
+                        )
+                    }
 
 
                 room.connect(
@@ -408,9 +551,28 @@ class MainActivity : AppCompatActivity() {
                 )
 
 
-                statusText.text =
-                    "🟢 متصل بالمحاضرة"
+                /*
+                 * تحديث Firestore
+                 */
 
+                db.collection("lectures")
+                    .document(lectureId!!)
+                    .update(
+                        mapOf(
+                            "isLive" to true,
+                            "isPublished" to true,
+                            "updatedAt" to
+                                FieldValue.serverTimestamp()
+                        )
+                    )
+                    .await()
+
+
+                isLive = true
+
+
+                startButton.isEnabled =
+                    false
 
                 switchCameraButton.isEnabled =
                     true
@@ -421,24 +583,14 @@ class MainActivity : AppCompatActivity() {
                 endButton.isEnabled =
                     true
 
-                startButton.isEnabled =
-                    false
 
-                isLive = true
+                statusText.text =
+                    "🔴 المحاضرة مباشرة الآن"
 
 
             } catch (error: Exception) {
 
-                statusText.text =
-                    "❌ فشل الاتصال"
-
-
-                Toast.makeText(
-                    this@MainActivity,
-                    error.message
-                        ?: "تعذر الاتصال",
-                    Toast.LENGTH_LONG
-                ).show()
+                showError(error)
             }
         }
     }
@@ -452,17 +604,9 @@ class MainActivity : AppCompatActivity() {
 
                 val track =
                     cameraTrack
-
-                if (track == null) {
-
-                    Toast.makeText(
-                        this@MainActivity,
-                        "الكاميرا غير متاحة",
-                        Toast.LENGTH_SHORT
-                    ).show()
-
-                    return@launch
-                }
+                        ?: throw Exception(
+                            "الكاميرا غير متاحة"
+                        )
 
 
                 track.switchCamera()
@@ -471,14 +615,10 @@ class MainActivity : AppCompatActivity() {
                 statusText.text =
                     "🔄 تم تبديل الكاميرا"
 
+
             } catch (error: Exception) {
 
-                Toast.makeText(
-                    this@MainActivity,
-                    error.message
-                        ?: "تعذر تبديل الكاميرا",
-                    Toast.LENGTH_LONG
-                ).show()
+                showError(error)
             }
         }
     }
@@ -492,12 +632,12 @@ class MainActivity : AppCompatActivity() {
             ) as MediaProjectionManager
 
 
-        val intent =
+        val captureIntent =
             manager.createScreenCaptureIntent()
 
 
         screenCaptureLauncher.launch(
-            intent
+            captureIntent
         )
     }
 
@@ -509,9 +649,7 @@ class MainActivity : AppCompatActivity() {
             try {
 
                 room.localParticipant
-                    .setScreenShareEnabled(
-                        false
-                    )
+                    .setScreenShareEnabled(false)
 
 
                 isSharingScreen = false
@@ -523,16 +661,12 @@ class MainActivity : AppCompatActivity() {
                     false
 
                 statusText.text =
-                    "🟢 تم إيقاف مشاركة الشاشة"
+                    "تم إيقاف مشاركة الشاشة"
+
 
             } catch (error: Exception) {
 
-                Toast.makeText(
-                    this@MainActivity,
-                    error.message
-                        ?: "تعذر إيقاف مشاركة الشاشة",
-                    Toast.LENGTH_LONG
-                ).show()
+                showError(error)
             }
         }
     }
@@ -553,17 +687,24 @@ class MainActivity : AppCompatActivity() {
                 }
 
 
-                /*
-                 * هنا هنحدث:
-                 *
-                 * lectures/{lectureId}
-                 *
-                 * isLive = false
-                 *
-                 * updatedAt = ...
-                 *
-                 * باستخدام Firebase.
-                 */
+                if (
+                    lectureId != null
+                ) {
+
+                    db.collection("lectures")
+                        .document(
+                            lectureId!!
+                        )
+                        .update(
+                            mapOf(
+                                "isLive" to false,
+                                "updatedAt" to
+                                    FieldValue
+                                        .serverTimestamp()
+                            )
+                        )
+                        .await()
+                }
 
 
                 room.disconnect()
@@ -575,6 +716,9 @@ class MainActivity : AppCompatActivity() {
                 statusText.text =
                     "تم إنهاء المحاضرة"
 
+
+                startButton.isEnabled =
+                    true
 
                 switchCameraButton.isEnabled =
                     false
@@ -588,19 +732,69 @@ class MainActivity : AppCompatActivity() {
                 endButton.isEnabled =
                     false
 
-                startButton.isEnabled =
-                    true
-
 
             } catch (error: Exception) {
 
-                Toast.makeText(
-                    this@MainActivity,
-                    error.message
-                        ?: "تعذر إنهاء المحاضرة",
-                    Toast.LENGTH_LONG
-                ).show()
+                showError(error)
             }
+        }
+    }
+
+
+    private fun showMessage(
+        message: String
+    ) {
+
+        Toast.makeText(
+            this,
+            message,
+            Toast.LENGTH_LONG
+        ).show()
+    }
+
+
+    private fun showError(
+        error: Throwable
+    ) {
+
+        val message =
+            error.message
+                ?: "حدث خطأ غير معروف"
+
+
+        statusText.text =
+            "❌ $message"
+
+
+        Toast.makeText(
+            this,
+            message,
+            Toast.LENGTH_LONG
+        ).show()
+    }
+
+
+    override fun onNewIntent(
+        intent: Intent
+    ) {
+
+        super.onNewIntent(intent)
+
+        setIntent(intent)
+
+        val newLectureId =
+            getLectureIdFromIntent()
+
+
+        if (
+            !newLectureId.isNullOrBlank() &&
+            newLectureId != lectureId
+        ) {
+
+            lectureId =
+                newLectureId
+
+            loadLecture()
         }
     }
 
