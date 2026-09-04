@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="مسار التمريض - المدرس"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="16dp" />
+
+    <EditText
+        android:id="@+id/roomNameInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="اسم غرفة المحاضرة"
+        android:inputType="text"
+        android:padding="12dp" />
+
+    <Button
+        android:id="@+id/connectButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="اتصال بالمحاضرة"
+        android:layout_marginTop="12dp" />
+
+    <io.livekit.android.renderer.SurfaceViewRenderer
+        android:id="@+id/localVideo"
+        android:layout_width="match_parent"
+        android:layout_height="260dp"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="غير متصل"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:padding="12dp" />
+
+    <Button
+        android:id="@+id/screenShareButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📱 مشاركة شاشة الهاتف"
+        android:enabled="false"
+        android:layout_marginTop="8dp" />
+
+    <Button
+        android:id="@+id/stopShareButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="⏹ إيقاف مشاركة الشاشة"
+        android:enabled="false"
+        android:layout_marginTop="8dp" />
+
+</LinearLayout>
